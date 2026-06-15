@@ -9,7 +9,7 @@ namespace InterManagement.Domain.Entities
         public string FileType { get; private set; } = string.Empty;
         public DateTime ImportedAt { get; private set; }
 
-        // ── FK ────────────────────────────────
+        // ── FK 
         public int TraineeId { get; private set; }
         public Trainee Trainee { get; private set; } = null!;
 
@@ -17,16 +17,13 @@ namespace InterManagement.Domain.Entities
 
         public InternFile(
             string fileName,
-            string filePath,
             string fileType,
             int traineeId)
         {
-            // ── Validations ───────────────────
+            // ── Validations 
             if (string.IsNullOrWhiteSpace(fileName))
                 throw new DomainException("Le nom du fichier est obligatoire");
 
-            if (string.IsNullOrWhiteSpace(filePath))
-                throw new DomainException("Le chemin du fichier est obligatoire");
 
             if (string.IsNullOrWhiteSpace(fileType))
                 throw new DomainException("Le type du fichier est obligatoire");
@@ -37,22 +34,45 @@ namespace InterManagement.Domain.Entities
 
 
 
-            // ── Validations type fichier ──────
+            // ── Validations type fichier 
             var allowedTypes = new[] { ".xls", ".xlsx", ".xlsm", ".csv" };
             if (!allowedTypes.Contains(fileType.ToUpper()))   // ToUpper : Convertit en MAJUSCULES  et Contains(...)	: Vérifie si la valeur est dans la liste autorisée
                 throw new DomainException(
                     $"Le type de fichier {fileType} n'est pas autorisé. " +
                     $"Types autorisés: {string.Join(", ", allowedTypes)}"); // string.Join(", ", allowedTypes) Transforme la liste en texte avec des virgules
 
-            // ── Assignation ───────────────────
+            // ── Assignation 
             FileName   = fileName;
-            FilePath   = filePath;
+            FilePath   = string.Empty;
             FileType   = fileType.ToUpper();
             TraineeId  = traineeId;
             ImportedAt = DateTime.UtcNow;
         }
 
-        // ── Méthode métier ────────────────────
+        // ── Méthode métier 
+
+
+        
+        public void SetFilePath(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new DomainException("File path is required");
+
+            FilePath  = filePath;
+            UpdatedAt = DateTime.UtcNow;
+        }
+        
+
+        public void UpdateFileName(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                throw new DomainException("File name is required");
+
+            FileName  = fileName;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        /*
         public void UpdateFilePath(string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath))
@@ -61,5 +81,7 @@ namespace InterManagement.Domain.Entities
             FilePath  = filePath;
             UpdatedAt = DateTime.UtcNow;
         }
+        */
     }
+
 }

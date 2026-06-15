@@ -1,4 +1,4 @@
-using InterManagement.Domain.Entities;  // ← une seule ligne
+using InterManagement.Domain.Entities;  
 using Microsoft.EntityFrameworkCore;
 
 namespace InternManagement.Infrastructure.Data
@@ -19,10 +19,6 @@ namespace InternManagement.Infrastructure.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Mentor> Mentors { get; set; }
-
-        // Table "trainees" : contient les stagiaires
-        // Propriétés spécifiques : University, Specialite, Theme, StartDate, EndDate, Statut
-
         public DbSet<Trainee> Trainees { get; set; }
         public DbSet<Phase> Phases { get; set; }
 
@@ -30,23 +26,11 @@ namespace InternManagement.Infrastructure.Data
         public DbSet<WeeklyFollowUp> WeeklyFollowUps { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<InternFile> Files { get; set; }
-
-
-        // ======================================================
-        // MÉTHODE OnModelCreating
-        // S'appelle UNE SEULE FOIS au démarrage de l'application
-        // Sert à configurer COMMENT les classes C# sont transformées en tables SQL
-        // ======================================================
+        public DbSet<Week> Weeks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // ==================================================
-            // CONFIGURATION TPT (TABLE PER TYPE)
-            // Chaque classe a SA PROPRE table
-            // C'est la stratégie d'héritage pour User → Admin/Mentor/Trainee
-            // ==================================================
 
             // ── TPT : héritage User ───────────────
             modelBuilder.Entity<User>().ToTable("users");
@@ -61,6 +45,7 @@ namespace InternManagement.Infrastructure.Data
             modelBuilder.Entity<WeeklyFollowUp>().ToTable("weekly_follow_ups");
             modelBuilder.Entity<Feedback>().ToTable("feedbacks");
             modelBuilder.Entity<InternFile>().ToTable("files");
+            modelBuilder.Entity<Week>().ToTable("weeks");
 
 
             // ── Soft delete global ────────────────
@@ -75,13 +60,15 @@ namespace InternManagement.Infrastructure.Data
 
             modelBuilder.Entity<Assignment>()
                .HasQueryFilter(a => !a.IsDeleted);
-            
+            modelBuilder.Entity<Week>()
+                .HasQueryFilter(w => !w.IsDeleted);
+
             // Relations Assignment
-            modelBuilder.Entity<Assignment>()       // On configure la relation entre Assignment et Trainee
-                .HasOne(a => a.Trainee)             // Un assignment a UN stagiaire
-                .WithMany(t => t.Assignments)       // un stagiaire a plusieurs assignments
-                .HasForeignKey(a => a.TraineeId)    // → "La clé étrangère est TraineeId"
-                .OnDelete(DeleteBehavior.Restrict); // "On ne peut pas supprimer un stagiaire qui a encore des assignments"
+            modelBuilder.Entity<Assignment>()       
+                .HasOne(a => a.Trainee)             
+                .WithMany(t => t.Assignments)       
+                .HasForeignKey(a => a.TraineeId)   
+                .OnDelete(DeleteBehavior.Restrict); 
 
             modelBuilder.Entity<Assignment>()
                 .HasOne(a => a.Mentor)
@@ -131,6 +118,12 @@ namespace InternManagement.Infrastructure.Data
                 .HasOne(f => f.Trainee)
                 .WithMany(t => t.Files)
                 .HasForeignKey(f => f.TraineeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Week>()
+                .HasOne(w => w.Phase)
+                .WithMany(p => p.Weeks)
+                .HasForeignKey(w => w.PhaseId)
                 .OnDelete(DeleteBehavior.Restrict);
                 
 

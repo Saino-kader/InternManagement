@@ -1,0 +1,2700 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Admin — Intern Management</title>
+
+    <!-- =============================================
+         FONTS & ICONS
+    ============================================= -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <!-- SheetJS — Import Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+
+    <style>
+      /* =============================================
+         VARIABLES GLOBALES
+      ============================================= */
+      :root {
+        --primary:        #1e2242;
+        --primary-dark:   #151838;
+        --primary-light:  #2a2f55;
+        --primary-glow:   rgba(30, 34, 66, 0.08);
+        --primary-soft:   rgba(30, 34, 66, 0.12);
+
+        --bg:             #f5f7fa;
+        --bg-secondary:   #ffffff;
+
+        --text:           #1a1f36;
+        --text-soft:      #5a6a7a;
+        --text-light:     #8e9aab;
+
+        --success:        #10b981;
+        --success-light:  #d1fae5;
+        --warning:        #f59e0b;
+        --warning-light:  #fef3c7;
+        --danger:         #ef4444;
+        --danger-light:   #fee2e2;
+        --info:           #3b82f6;
+        --info-light:     #dbeafe;
+
+        --border:         #e5e7eb;
+        --shadow:         0 1px 3px rgba(0, 0, 0, 0.05);
+        --shadow-md:      0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-lg:      0 10px 30px rgba(0, 0, 0, 0.1);
+
+        --radius:         16px;
+        --radius-sm:      12px;
+        --radius-lg:      24px;
+      }
+
+      /* =============================================
+         RESET
+      ============================================= */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        overflow-x: hidden;
+      }
+
+      /* =============================================
+         SIDEBAR
+      ============================================= */
+      #sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100%;
+        background: var(--bg-secondary);
+        z-index: 1000;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow-x: hidden;
+        box-shadow: var(--shadow-md);
+      }
+
+      #sidebar.collapsed {
+        width: 80px;
+      }
+
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 24px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--primary);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .sidebar-brand i {
+        font-size: 1.8rem;
+        flex-shrink: 0;
+      }
+
+      .sidebar-brand span {
+        white-space: nowrap;
+      }
+
+      #sidebar.collapsed .sidebar-brand span {
+        display: none;
+      }
+
+      /* Navigation sidebar */
+      .sidebar-nav {
+        list-style: none;
+        padding: 20px 12px;
+      }
+
+      .sidebar-nav li {
+        margin-bottom: 8px;
+      }
+
+      .sidebar-nav li a {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 16px;
+        border-radius: var(--radius-sm);
+        color: var(--text-soft);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+      }
+
+      .sidebar-nav li a i {
+        width: 24px;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+
+      .sidebar-nav li a span {
+        white-space: nowrap;
+      }
+
+      #sidebar.collapsed .sidebar-nav li a span {
+        display: none;
+      }
+
+      .sidebar-nav li.active a {
+        background: var(--primary);
+        color: white;
+      }
+
+      .sidebar-nav li a:hover:not(.nav-logout) {
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      .nav-logout {
+        color: var(--danger) !important;
+      }
+
+      .nav-logout:hover {
+        background: var(--danger-light) !important;
+        color: var(--danger) !important;
+      }
+
+      /* =============================================
+         CONTENT WRAPPER
+      ============================================= */
+      #content {
+        margin-left: 280px;
+        transition: all 0.3s;
+        min-height: 100vh;
+      }
+
+      #sidebar.collapsed ~ #content {
+        margin-left: 80px;
+      }
+
+      /* =============================================
+         NAVBAR SUPÉRIEURE
+      ============================================= */
+      .top-navbar {
+        background: var(--bg-secondary);
+        padding: 12px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 99;
+      }
+
+      .sidebar-toggle-btn {
+        font-size: 1.3rem;
+        cursor: pointer;
+        color: var(--text-soft);
+        background: none;
+        border: none;
+        padding: 4px;
+      }
+
+      .search-bar {
+        display: flex;
+        align-items: center;
+        background: var(--bg);
+        border-radius: 40px;
+        padding: 8px 16px;
+        gap: 8px;
+        width: 300px;
+      }
+
+      .search-bar i {
+        color: var(--text-light);
+      }
+
+      .search-bar input {
+        border: none;
+        background: none;
+        outline: none;
+        width: 100%;
+        font-size: 0.85rem;
+        font-family: inherit;
+      }
+
+      .navbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        position: relative;
+      }
+
+      /* =============================================
+         NOTIFICATIONS DROPDOWN
+      ============================================= */
+      .notification-bell {
+        position: relative;
+        color: var(--text-soft);
+        font-size: 1.2rem;
+        cursor: pointer;
+      }
+
+      .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: var(--danger);
+        color: white;
+        font-size: 0.65rem;
+        padding: 2px 6px;
+        border-radius: 20px;
+      }
+
+      .notification-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 420px;
+        background: var(--bg-secondary);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border);
+        z-index: 1000;
+        margin-top: 12px;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        max-height: 500px;
+        overflow-y: auto;
+      }
+
+      .notification-dropdown.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .notification-dropdown-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        font-weight: 600;
+        font-size: 1rem;
+        background: var(--bg-secondary);
+        position: sticky;
+        top: 0;
+      }
+
+      .notification-item {
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border);
+        transition: background 0.2s;
+      }
+
+      .notification-item:hover {
+        background: var(--bg);
+      }
+
+      .notification-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .notification-sender-name {
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .notification-date {
+        font-size: 0.7rem;
+        color: var(--text-light);
+      }
+
+      .notification-phase-label {
+        font-size: 0.75rem;
+        color: var(--text-soft);
+        margin-bottom: 4px;
+      }
+
+      .notification-course-label {
+        font-size: 0.8rem;
+        color: var(--text-soft);
+        margin-bottom: 10px;
+      }
+
+      .notification-action-btns {
+        display: flex;
+        gap: 12px;
+        margin-top: 8px;
+      }
+
+      .notification-action-btns button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-light);
+        font-size: 0.85rem;
+        padding: 4px 8px;
+        border-radius: 8px;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .btn-notification-view:hover {
+        background: var(--info-light);
+        color: var(--info);
+      }
+
+      .btn-notification-delete:hover {
+        background: var(--danger-light);
+        color: var(--danger);
+      }
+
+      .admin-avatar img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      /* =============================================
+         CONTENU PRINCIPAL
+      ============================================= */
+      .main-content {
+        padding: 28px;
+      }
+
+      /* En-tête de page */
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .page-header h1 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .page-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        color: var(--text-light);
+        margin-top: 4px;
+      }
+
+      /* =============================================
+         BOUTONS
+      ============================================= */
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 40px;
+        font-weight: 500;
+        font-family: inherit;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: var(--bg);
+        color: var(--text-soft);
+        border: 1px solid var(--border);
+        padding: 8px 16px;
+        border-radius: 40px;
+        font-family: inherit;
+        cursor: pointer;
+      }
+
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 40px;
+        font-family: inherit;
+        cursor: pointer;
+      }
+
+      .btn-danger:hover {
+        background: #dc2626;
+      }
+
+      .btn-add-week {
+        margin-top: 16px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        border: none;
+        padding: 10px 16px;
+        border-radius: 40px;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+      }
+
+      .btn-add-week:hover {
+        background: var(--primary);
+        color: white;
+      }
+
+      /* =============================================
+         CARTES STATISTIQUES
+      ============================================= */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin-bottom: 32px;
+      }
+
+      .stat-card {
+        background: var(--bg-secondary);
+        border-radius: var(--radius);
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: var(--shadow);
+        transition: all 0.2s;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .stat-card-icon {
+        width: 56px;
+        height: 56px;
+        background: var(--primary-soft);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-size: 1.8rem;
+        flex-shrink: 0;
+      }
+
+      .stat-card-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .stat-card-label {
+        color: var(--text-light);
+        font-size: 0.85rem;
+      }
+
+      /* =============================================
+         TABLEAUX
+      ============================================= */
+      .table-section {
+        background: var(--bg-secondary);
+        border-radius: var(--radius);
+        padding: 20px;
+        margin-bottom: 28px;
+        box-shadow: var(--shadow);
+      }
+
+      .table-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .table-section-header h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .data-table th {
+        text-align: left;
+        padding: 12px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        color: var(--text-light);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .data-table td {
+        padding: 14px 12px;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.85rem;
+      }
+
+      .data-table tbody tr:hover {
+        background: var(--bg);
+      }
+
+      /* Avatar initiales */
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        background: var(--primary-soft);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-weight: 600;
+        margin-right: 8px;
+        font-size: 0.8rem;
+      }
+
+      /* =============================================
+         BADGES DE STATUT
+      ============================================= */
+      .status-badge {
+        display: inline-flex;
+        padding: 4px 12px;
+        border-radius: 30px;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+
+      /* Statuts actifs / en cours / validé */
+      .status-actif,
+      .status-en-cours,
+      .status-valide {
+        background: var(--success-light);
+        color: var(--success);
+      }
+
+      /* Statuts terminés */
+      .status-termine {
+        background: var(--info-light);
+        color: var(--info);
+      }
+
+      /* Statuts suspendus / inactifs */
+      .status-suspendu,
+      .status-inactif,
+      .status-reprendre {
+        background: var(--danger-light);
+        color: var(--danger);
+      }
+
+      /* Statuts en attente */
+      .status-en-attente {
+        background: var(--warning-light);
+        color: var(--warning);
+      }
+
+      /* =============================================
+         BOUTONS D'ACTION SUR LES LIGNES
+      ============================================= */
+      .row-action-btns {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .row-action-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-light);
+        font-size: 1rem;
+        padding: 4px;
+        transition: color 0.2s;
+      }
+
+      .row-action-btn.btn-view:hover   { color: var(--info); }
+      .row-action-btn.btn-edit:hover   { color: var(--warning); }
+      .row-action-btn.btn-delete:hover { color: var(--danger); }
+      .row-action-btn.btn-export:hover { color: var(--success); }
+
+      /* =============================================
+         ACCORDÉON PHASES
+      ============================================= */
+      .phase-accordion {
+        margin-bottom: 20px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: var(--bg-secondary);
+      }
+
+      .phase-accordion-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 24px;
+        background: var(--bg-secondary);
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .phase-accordion-header:hover {
+        background: var(--bg);
+      }
+
+      .phase-accordion-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+
+      .phase-accordion-title i {
+        color: var(--primary);
+        font-size: 1.2rem;
+      }
+
+      .phase-accordion-chevron {
+        color: var(--text-light);
+        transition: transform 0.3s ease;
+      }
+
+      .phase-accordion-body {
+        display: none;
+        padding: 20px;
+        overflow-x: auto;
+        border-top: 1px solid var(--border);
+      }
+
+      .phase-accordion-body.active {
+        display: block;
+      }
+
+      /* Onglets semaines */
+      .week-tabs-list {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .week-tab-btn {
+        padding: 8px 16px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 40px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-family: inherit;
+        transition: all 0.2s;
+      }
+
+      .week-tab-btn:hover {
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      .week-tab-btn.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+      }
+
+      /* =============================================
+         MODALS
+      ============================================= */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-overlay.active {
+        display: flex;
+      }
+
+      .modal-box {
+        background: white;
+        border-radius: var(--radius-lg);
+        max-width: 900px;
+        width: 90%;
+        max-height: 85vh;
+        overflow-y: auto;
+      }
+
+      .modal-box--sm {
+        max-width: 600px;
+      }
+
+      .modal-box--xs {
+        max-width: 400px;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .modal-header h3 {
+        font-size: 1.3rem;
+      }
+
+      .modal-close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--text-light);
+        line-height: 1;
+      }
+
+      .modal-body {
+        padding: 24px;
+      }
+
+      .modal-footer {
+        padding: 16px 24px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+
+      /* =============================================
+         FORMULAIRES
+      ============================================= */
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: var(--text-soft);
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+        background: white;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-soft);
+      }
+
+      .form-row-2col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      /* =============================================
+         SÉLECTEUR TYPE UTILISATEUR
+      ============================================= */
+      .user-type-selector {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .radio-option-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-weight: 500;
+      }
+
+      .radio-option-label input {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+      }
+
+      /* Champs conditionnels selon type utilisateur */
+      .conditional-fields {
+        display: none;
+      }
+
+      .conditional-fields.active {
+        display: block;
+      }
+
+      /* =============================================
+         MULTI-SÉLECTION STAGIAIRES
+      ============================================= */
+      .multi-select-wrapper {
+        position: relative;
+        width: 100%;
+      }
+
+      .multi-select-trigger {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.85rem;
+      }
+
+      .multi-select-options {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        margin-top: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 10;
+        display: none;
+      }
+
+      .multi-select-options.active {
+        display: block;
+      }
+
+      .multi-select-option-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-size: 0.85rem;
+      }
+
+      .multi-select-option-item:hover {
+        background: var(--bg);
+      }
+
+      .multi-select-option-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+      }
+
+      /* =============================================
+         CARDS SEMAINES (dans modal phase)
+      ============================================= */
+      .week-card-form {
+        background: var(--bg);
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        margin-bottom: 16px;
+        border: 1px solid var(--border);
+        position: relative;
+      }
+
+      .week-card-form h4 {
+        font-size: 1rem;
+        margin-bottom: 12px;
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .btn-remove-week {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--danger);
+        font-size: 1rem;
+        padding: 4px 8px;
+        border-radius: 8px;
+        transition: all 0.2s;
+      }
+
+      .btn-remove-week:hover {
+        background: var(--danger-light);
+      }
+
+      /* =============================================
+         CONTENU MESSAGE (modal)
+      ============================================= */
+      .message-detail-box {
+        background: var(--bg);
+        border-radius: var(--radius-sm);
+        padding: 20px;
+        margin-top: 16px;
+        line-height: 1.6;
+      }
+
+      /* =============================================
+         IMPORT EXCEL — PREVIEW
+      ============================================= */
+      .import-preview-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 16px;
+        font-size: 0.75rem;
+      }
+
+      .import-preview-table th,
+      .import-preview-table td {
+        border: 1px solid var(--border);
+        padding: 8px;
+        text-align: left;
+      }
+
+      .import-preview-table th {
+        background: var(--bg);
+      }
+
+      .import-status-valid { color: var(--success); }
+      .import-status-error { color: var(--danger); }
+
+      /* =============================================
+         PAGES CACHÉES
+      ============================================= */
+      .page-section {
+        display: none;
+      }
+
+      .page-section.active {
+        display: block;
+      }
+
+      /* =============================================
+         RESPONSIVE
+      ============================================= */
+      @media (max-width: 768px) {
+        #sidebar {
+          width: 80px;
+        }
+
+        #sidebar .sidebar-brand span,
+        #sidebar .sidebar-nav li a span {
+          display: none;
+        }
+
+        #content {
+          margin-left: 80px;
+        }
+
+        .form-row-2col {
+          grid-template-columns: 1fr;
+        }
+
+        .data-table {
+          font-size: 0.75rem;
+        }
+
+        .row-action-btns {
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+
+        .notification-dropdown {
+          width: 340px;
+          right: -40px;
+        }
+
+        .user-type-selector {
+          flex-direction: column;
+          gap: 10px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <!-- =============================================
+         SIDEBAR — NAVIGATION PRINCIPALE
+    ============================================= -->
+    <section id="sidebar" aria-label="Navigation principale">
+
+      <div class="sidebar-brand">
+        <i class="fas fa-code" aria-hidden="true"></i>
+        <span>Engineering & Tech</span>
+      </div>
+
+      <ul class="sidebar-nav" role="navigation">
+        <li class="active" data-page="dashboard">
+          <a href="#" aria-label="Dashboard">
+            <i class="fas fa-chart-line" aria-hidden="true"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li data-page="utilisateurs">
+          <a href="#" aria-label="Utilisateurs">
+            <i class="fas fa-users" aria-hidden="true"></i>
+            <span>Utilisateurs</span>
+          </a>
+        </li>
+        <li data-page="suivi">
+          <a href="#" aria-label="Suivi des stagiaires">
+            <i class="fas fa-calendar-check" aria-hidden="true"></i>
+            <span>Suivi</span>
+          </a>
+        </li>
+        <li data-page="phases">
+          <a href="#" aria-label="Paramètres des phases">
+            <i class="fas fa-cog" aria-hidden="true"></i>
+            <span>Paramètres</span>
+          </a>
+        </li>
+      </ul>
+
+      <ul class="sidebar-nav" style="margin-top: auto">
+        <li>
+          <a href="#" class="nav-logout" aria-label="Se déconnecter">
+            <i class="fas fa-right-from-bracket" aria-hidden="true"></i>
+            <span>Déconnexion</span>
+          </a>
+        </li>
+      </ul>
+
+    </section>
+    <!-- /SIDEBAR -->
+
+
+    <!-- =============================================
+         CONTENU PRINCIPAL
+    ============================================= -->
+    <section id="content">
+
+      <!-- ==========================================
+           NAVBAR SUPÉRIEURE
+      =========================================== -->
+      <nav class="top-navbar" aria-label="Barre de navigation">
+
+        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Ouvrir ou fermer la sidebar">
+          <i class="fas fa-bars" aria-hidden="true"></i>
+        </button>
+
+        <div class="search-bar" role="search">
+          <i class="fas fa-search" aria-hidden="true"></i>
+          <input type="search" placeholder="Rechercher..." aria-label="Rechercher dans l'application" />
+        </div>
+
+        <div class="navbar-actions">
+
+          <!-- Cloche notifications -->
+          <div class="notification-bell" id="notificationBell" aria-label="Notifications" role="button" tabindex="0">
+            <i class="fas fa-bell" aria-hidden="true"></i>
+            <span class="notification-badge" id="notificationBadge">0</span>
+
+            <div class="notification-dropdown" id="notificationDropdown" aria-live="polite">
+              <div class="notification-dropdown-header">
+                <i class="fas fa-envelope" aria-hidden="true"></i> Messages
+              </div>
+              <!-- Rempli par le backend -->
+              <div id="notificationList"></div>
+            </div>
+          </div>
+
+          <!-- Avatar admin -->
+          <div class="admin-avatar">
+            <img src="../img/people.png" alt="Photo de profil administrateur" />
+          </div>
+
+        </div>
+      </nav>
+      <!-- /NAVBAR -->
+
+
+      <!-- ==========================================
+           PAGES DE CONTENU
+      =========================================== -->
+      <main class="main-content">
+
+
+        <!-- ========================================
+             PAGE : DASHBOARD
+        ========================================= -->
+        <div id="dashboardPage" class="page-section active">
+
+          <div class="page-header">
+            <div>
+              <h1>Dashboard</h1>
+              <nav class="page-breadcrumb" aria-label="Fil d'ariane">
+                <span>Accueil</span>
+                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                <span>Dashboard</span>
+              </nav>
+            </div>
+          </div>
+
+          <!-- Cartes statistiques -->
+          <!-- Les valeurs seront injectées par le backend -->
+          <div class="stats-grid">
+
+            <div class="stat-card">
+              <div class="stat-card-icon">
+                <i class="fas fa-user-graduate" aria-hidden="true"></i>
+              </div>
+              <div>
+                <div class="stat-card-value" id="statStagiairesActifs">96</div>
+                <div class="stat-card-label">Stagiaires actifs</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-card-icon">
+                <i class="fas fa-check-circle" aria-hidden="true"></i>
+              </div>
+              <div>
+                <div class="stat-card-value" id="statStagiairesTermines">834</div>
+                <div class="stat-card-label">Stagiaires terminés</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-card-icon">
+                <i class="fas fa-chalkboard-user" aria-hidden="true"></i>
+              </div>
+              <div>
+                <div class="stat-card-value" id="statMentorsActifs">43</div>
+                <div class="stat-card-label">Mentors actifs</div>
+              </div>
+            </div>
+
+          </div>
+          <!-- /stats-grid -->
+
+          <!-- Activité récente -->
+          <!-- Les lignes seront générées par le backend (ex: @foreach en Razor) -->
+          <div class="table-section">
+            <div class="table-section-header">
+              <h3><i class="fas fa-history" aria-hidden="true"></i> Activité récente</h3>
+            </div>
+            <div style="overflow-x: auto">
+              <table class="data-table" aria-label="Tableau d'activité récente">
+                <thead>
+                  <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Utilisateur</th>
+                    <th scope="col">Action</th>
+                    <th scope="col">Détail</th>
+                  </tr>
+                </thead>
+                <tbody id="recentActivityList">
+                  <!--
+                    DONNÉES D'EXEMPLE — À remplacer par le backend :
+                    @foreach(var activity in Model.RecentActivities)
+                    {
+                      <tr>
+                        <td>@activity.Date</td>
+                        <td>@activity.User</td>
+                        <td>@activity.Action</td>
+                        <td>@activity.Detail</td>
+                      </tr>
+                    }
+                  -->
+                  <tr>
+                    <td>12/01/2025</td>
+                    <td>Admin</td>
+                    <td>Ajout utilisateur</td>
+                    <td>Moussa Diallo ajouté</td>
+                  </tr>
+                  <tr>
+                    <td>13/01/2025</td>
+                    <td>Mentor Sophie</td>
+                    <td>Feedback envoyé</td>
+                    <td>HTML/CSS validé</td>
+                  </tr>
+                  <tr>
+                    <td>14/01/2025</td>
+                    <td>Admin</td>
+                    <td>Phase validée</td>
+                    <td>Phase 1 terminée</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+        <!-- /dashboardPage -->
+
+
+        <!-- ========================================
+             PAGE : UTILISATEURS
+        ========================================= -->
+        <div id="utilisateursPage" class="page-section">
+
+          <div class="page-header">
+            <div>
+              <h1>Utilisateurs</h1>
+              <nav class="page-breadcrumb" aria-label="Fil d'ariane">
+                <span>Accueil</span>
+                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                <span>Utilisateurs</span>
+              </nav>
+            </div>
+            <button class="btn-primary" id="openAddUserBtn" aria-label="Ajouter un utilisateur">
+              <i class="fas fa-plus" aria-hidden="true"></i> Ajouter un utilisateur
+            </button>
+          </div>
+
+          <!-- Tableau Stagiaires -->
+          <!--
+            DONNÉES — À remplacer par le backend :
+            @foreach(var stagiaire in Model.Stagiaires) { <tr>...</tr> }
+          -->
+          <div class="table-section">
+            <div class="table-section-header">
+              <h3><i class="fas fa-user-graduate" aria-hidden="true"></i> Stagiaires</h3>
+            </div>
+            <div style="overflow-x: auto">
+              <table class="data-table" aria-label="Liste des stagiaires">
+                <thead>
+                  <tr>
+                    <th scope="col">Stagiaire</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Spécialité</th>
+                    <th scope="col">Structure</th>
+                    <th scope="col">Date début</th>
+                    <th scope="col">Date fin</th>
+                    <th scope="col">Statut</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="stagiairesTableBody">
+                  <tr>
+                    <td>
+                      <span class="user-avatar" aria-hidden="true">MD</span>
+                      Moussa Diallo
+                    </td>
+                    <td>moussa@email.com</td>
+                    <td>Informatique</td>
+                    <td>ESMT</td>
+                    <td>06/01/2025</td>
+                    <td>27/04/2025</td>
+                    <td><span class="status-badge status-en-cours">En cours</span></td>
+                    <td>
+                      <div class="row-action-btns">
+                        <button class="row-action-btn btn-view" aria-label="Voir détails de Moussa Diallo"><i class="fas fa-eye" aria-hidden="true"></i></button>
+                        <button class="row-action-btn btn-edit" aria-label="Modifier Moussa Diallo"><i class="fas fa-pen" aria-hidden="true"></i></button>
+                        <button class="row-action-btn btn-delete" aria-label="Supprimer Moussa Diallo"><i class="fas fa-trash" aria-hidden="true"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="user-avatar" aria-hidden="true">AD</span>
+                      Ali Diop
+                    </td>
+                    <td>ali@email.com</td>
+                    <td>Réseaux</td>
+                    <td>UCAD</td>
+                    <td>13/01/2025</td>
+                    <td>04/05/2025</td>
+                    <td><span class="status-badge status-en-cours">En cours</span></td>
+                    <td>
+                      <div class="row-action-btns">
+                        <button class="row-action-btn btn-view" aria-label="Voir détails de Ali Diop"><i class="fas fa-eye" aria-hidden="true"></i></button>
+                        <button class="row-action-btn btn-edit" aria-label="Modifier Ali Diop"><i class="fas fa-pen" aria-hidden="true"></i></button>
+                        <button class="row-action-btn btn-delete" aria-label="Supprimer Ali Diop"><i class="fas fa-trash" aria-hidden="true"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tableau Mentors -->
+          <div class="table-section">
+            <div class="table-section-header">
+              <h3><i class="fas fa-chalkboard-user" aria-hidden="true"></i> Mentors</h3>
+            </div>
+            <div style="overflow-x: auto">
+              <table class="data-table" aria-label="Liste des mentors">
+                <thead>
+                  <tr>
+                    <th scope="col">Mentor</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Spécialité</th>
+                    <th scope="col">Département</th>
+                    <th scope="col">Stagiaires</th>
+                    <th scope="col">Statut</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="mentorsTableBody">
+                  <tr>
+                    <td>Sophie Martin</td>
+                    <td>sophie@email.com</td>
+                    <td>Développement</td>
+                    <td>Engineering</td>
+                    <td>3</td>
+                    <td><span class="status-badge status-actif">Actif</span></td>
+                    <td>
+                      <div class="row-action-btns">
+                        <button class="row-action-btn btn-view" aria-label="Voir détails de Sophie Martin"><i class="fas fa-eye" aria-hidden="true"></i></button>
+                        <button class="row-action-btn btn-edit" aria-label="Modifier Sophie Martin"><i class="fas fa-pen" aria-hidden="true"></i></button>
+                        <button class="row-action-btn btn-delete" aria-label="Supprimer Sophie Martin"><i class="fas fa-trash" aria-hidden="true"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tableau Administrateurs -->
+          <div class="table-section">
+            <div class="table-section-header">
+              <h3><i class="fas fa-user-shield" aria-hidden="true"></i> Administrateurs</h3>
+            </div>
+            <div style="overflow-x: auto">
+              <table class="data-table" aria-label="Liste des administrateurs">
+                <thead>
+                  <tr>
+                    <th scope="col">Nom complet</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Rôle</th>
+                    <th scope="col">Dernière connexion</th>
+                    <th scope="col">Statut</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="adminsTableBody">
+                  <tr>
+                    <td>System Admin</td>
+                    <td>admin@stageflow.com</td>
+                    <td>Super Admin</td>
+                    <td>15/01/2025 10:30</td>
+                    <td><span class="status-badge status-actif">Actif</span></td>
+                    <td>
+                      <div class="row-action-btns">
+                        <button class="row-action-btn btn-view" aria-label="Voir détails de System Admin"><i class="fas fa-eye" aria-hidden="true"></i></button>
+                        <button class="row-action-btn btn-edit" aria-label="Modifier System Admin"><i class="fas fa-pen" aria-hidden="true"></i></button>
+                        <button class="row-action-btn btn-delete" aria-label="Supprimer System Admin"><i class="fas fa-trash" aria-hidden="true"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+        <!-- /utilisateursPage -->
+
+
+        <!-- ========================================
+             PAGE : PARAMÈTRES — CONFIGURATION PHASES
+        ========================================= -->
+        <div id="phasesPage" class="page-section">
+
+          <div class="page-header">
+            <div>
+              <h1>Configuration des phases</h1>
+              <nav class="page-breadcrumb" aria-label="Fil d'ariane">
+                <span>Accueil</span>
+                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                <span>Paramètres</span>
+              </nav>
+            </div>
+            <button class="btn-primary" id="openAddPhaseBtn" aria-label="Ajouter une phase">
+              <i class="fas fa-plus" aria-hidden="true"></i> Ajouter une phase
+            </button>
+          </div>
+
+          <!--
+            ACCORDÉONS PHASES — À générer par le backend :
+            @foreach(var phase in Model.Phases) { accordéon... }
+          -->
+
+          <!-- Phase 1 -->
+          <div class="phase-accordion" data-phase-num="1">
+            <div class="phase-accordion-header" aria-expanded="false" role="button" tabindex="0">
+              <div class="phase-accordion-title">
+                <i class="fas fa-layer-group" aria-hidden="true"></i>
+                <span>Phase 1</span>
+              </div>
+              <i class="fas fa-chevron-down phase-accordion-chevron" aria-hidden="true"></i>
+            </div>
+            <div class="phase-accordion-body">
+              <div class="week-tabs-list" id="weekTabs1"></div>
+              <div id="phase1Content"></div>
+            </div>
+          </div>
+
+          <!-- Phase 2 -->
+          <div class="phase-accordion" data-phase-num="2">
+            <div class="phase-accordion-header" aria-expanded="false" role="button" tabindex="0">
+              <div class="phase-accordion-title">
+                <i class="fas fa-layer-group" aria-hidden="true"></i>
+                <span>Phase 2</span>
+              </div>
+              <i class="fas fa-chevron-down phase-accordion-chevron" aria-hidden="true"></i>
+            </div>
+            <div class="phase-accordion-body">
+              <div class="week-tabs-list" id="weekTabs2"></div>
+              <div id="phase2Content"></div>
+            </div>
+          </div>
+
+          <!-- Phase 3 -->
+          <div class="phase-accordion" data-phase-num="3">
+            <div class="phase-accordion-header" aria-expanded="false" role="button" tabindex="0">
+              <div class="phase-accordion-title">
+                <i class="fas fa-layer-group" aria-hidden="true"></i>
+                <span>Phase 3</span>
+              </div>
+              <i class="fas fa-chevron-down phase-accordion-chevron" aria-hidden="true"></i>
+            </div>
+            <div class="phase-accordion-body">
+              <div class="week-tabs-list" id="weekTabs3"></div>
+              <div id="phase3Content"></div>
+            </div>
+          </div>
+
+          <!-- Phase 4 -->
+          <div class="phase-accordion" data-phase-num="4">
+            <div class="phase-accordion-header" aria-expanded="false" role="button" tabindex="0">
+              <div class="phase-accordion-title">
+                <i class="fas fa-layer-group" aria-hidden="true"></i>
+                <span>Phase 4</span>
+              </div>
+              <i class="fas fa-chevron-down phase-accordion-chevron" aria-hidden="true"></i>
+            </div>
+            <div class="phase-accordion-body">
+              <div class="week-tabs-list" id="weekTabs4"></div>
+              <div id="phase4Content"></div>
+            </div>
+          </div>
+
+        </div>
+        <!-- /phasesPage -->
+
+
+        <!-- ========================================
+             PAGE : SUIVI DES STAGIAIRES
+        ========================================= -->
+        <div id="suiviPage" class="page-section">
+
+          <div class="page-header">
+            <div>
+              <h1>Suivi des stagiaires</h1>
+              <nav class="page-breadcrumb" aria-label="Fil d'ariane">
+                <span>Accueil</span>
+                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                <span>Suivi</span>
+              </nav>
+            </div>
+            <button class="btn-primary" id="openImportBtn" aria-label="Importer des données Excel">
+              <i class="fas fa-download" aria-hidden="true"></i> Import
+            </button>
+          </div>
+
+          <div class="table-section">
+            <div class="table-section-header">
+              <h3><i class="fas fa-chart-line" aria-hidden="true"></i> Évaluations hebdomadaires</h3>
+              <button class="btn-primary" id="openAddSuiviBtn" aria-label="Ajouter un suivi">
+                <i class="fas fa-plus" aria-hidden="true"></i> Ajouter un suivi
+              </button>
+            </div>
+            <div style="overflow-x: auto">
+              <table class="data-table" aria-label="Tableau des suivis hebdomadaires">
+                <thead>
+                  <tr>
+                    <th scope="col">Stagiaire</th>
+                    <th scope="col">Mentor</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Semaine</th>
+                    <th scope="col">Cours</th>
+                    <th scope="col">Appréciation</th>
+                    <th scope="col">Statut</th>
+                    <th scope="col">Commentaire</th>
+                    <th scope="col">Export</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="suiviTableBody">
+                  <!--
+                    DONNÉES — À remplacer par le backend :
+                    @foreach(var suivi in Model.Suivis) { <tr>...</tr> }
+                  -->
+                  <tr>
+                    <td>Moussa Diallo</td>
+                    <td>Sophie Martin</td>
+                    <td>12/01/2025</td>
+                    <td>Semaine 1</td>
+                    <td>Introduction</td>
+                    <td>Très bien</td>
+                    <td><span class="status-badge status-valide">Validé</span></td>
+                    <td>
+                      <button class="row-action-btn btn-view" aria-label="Voir commentaire de Moussa Diallo">
+                        <i class="fas fa-eye" aria-hidden="true"></i>
+                      </button>
+                    </td>
+                    <td>
+                      <button class="row-action-btn btn-export" aria-label="Exporter le suivi de Moussa Diallo">
+                        <i class="fas fa-file-export" aria-hidden="true"></i>
+                      </button>
+                    </td>
+                    <td>
+                      <div class="row-action-btns">
+                        <button class="row-action-btn btn-edit" aria-label="Modifier le suivi de Moussa Diallo"><i class="fas fa-pen" aria-hidden="true"></i></button>
+                        <button class="row-action-btn btn-delete" aria-label="Supprimer le suivi de Moussa Diallo"><i class="fas fa-trash" aria-hidden="true"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+        <!-- /suiviPage -->
+
+
+      </main>
+    </section>
+    <!-- /content -->
+
+
+    <!-- =============================================
+         MODAL — AJOUTER / MODIFIER UTILISATEUR
+    ============================================= -->
+    <div id="userModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="userModalTitle">
+      <div class="modal-box">
+
+        <div class="modal-header">
+          <h3 id="userModalTitle"><i class="fas fa-user" aria-hidden="true"></i> Ajouter un utilisateur</h3>
+          <button class="modal-close-btn" onclick="closeModal('userModal')" aria-label="Fermer la modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+
+          <!-- Sélecteur type d'utilisateur -->
+          <div class="user-type-selector" role="radiogroup" aria-label="Type d'utilisateur">
+            <label class="radio-option-label">
+              <input type="radio" name="userType" value="stagiaire" checked> Stagiaire
+            </label>
+            <label class="radio-option-label">
+              <input type="radio" name="userType" value="mentor"> Mentor
+            </label>
+            <label class="radio-option-label">
+              <input type="radio" name="userType" value="admin"> Administrateur
+            </label>
+          </div>
+
+          <!-- Champs communs à tous les types -->
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="inputUserNom">Nom</label>
+              <input type="text" id="inputUserNom" placeholder="Dupont" autocomplete="off" required>
+            </div>
+            <div class="form-group">
+              <label for="inputUserPrenom">Prénom</label>
+              <input type="text" id="inputUserPrenom" placeholder="Jean" autocomplete="off" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="inputUserEmail">Email</label>
+            <input type="email" id="inputUserEmail" placeholder="email@exemple.com" autocomplete="off" required>
+          </div>
+
+          <div class="form-group" id="wrapperUserSpecialite">
+            <label for="inputUserSpecialite">Spécialité</label>
+            <input type="text" id="inputUserSpecialite" placeholder="Informatique" autocomplete="off">
+          </div>
+
+          <div class="form-group">
+            <label for="selectUserStatut">Statut</label>
+            <select id="selectUserStatut">
+              <option value="Actif">Actif</option>
+              <option value="Inactif">Inactif</option>
+            </select>
+          </div>
+
+          <!-- Champs spécifiques — Stagiaire -->
+          <div id="stagiaire-specific-fields" class="conditional-fields active">
+            <div class="form-group">
+              <label for="inputUserStructure">Structure</label>
+              <input type="text" id="inputUserStructure" placeholder="Université / École" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label for="inputUserTheme">Thème du stage</label>
+              <input type="text" id="inputUserTheme" placeholder="Développement Web" autocomplete="off">
+            </div>
+            <div class="form-row-2col">
+              <div class="form-group">
+                <label for="inputUserDateDebut">Date début</label>
+                <input type="date" id="inputUserDateDebut">
+              </div>
+              <div class="form-group">
+                <label for="inputUserDateFin">Date fin</label>
+                <input type="date" id="inputUserDateFin">
+              </div>
+            </div>
+          </div>
+
+          <!-- Champs spécifiques — Mentor -->
+          <div id="mentor-specific-fields" class="conditional-fields">
+            <div class="form-group">
+              <label for="inputUserDepartement">Département</label>
+              <input type="text" id="inputUserDepartement" value="Engineering" autocomplete="off">
+            </div>
+          </div>
+
+          <!-- Champs spécifiques — Admin -->
+          <div id="admin-specific-fields" class="conditional-fields">
+            <div class="form-group">
+              <label for="selectUserRole">Rôle</label>
+              <select id="selectUserRole">
+                <option>Administrateur</option>
+                <option>Super Admin</option>
+                <option>Gestionnaire</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Champ caché — ID pour mode édition -->
+          <input type="hidden" id="hiddenUserId">
+
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal('userModal')">Annuler</button>
+          <button class="btn-primary" id="saveUserBtn">Enregistrer</button>
+        </div>
+
+      </div>
+    </div>
+    <!-- /userModal -->
+
+
+    <!-- =============================================
+         MODAL — CONFIGURER UNE PHASE
+    ============================================= -->
+    <div id="phaseModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="phaseModalTitle">
+      <div class="modal-box">
+
+        <div class="modal-header">
+          <h3 id="phaseModalTitle"><i class="fas fa-diagram-project" aria-hidden="true"></i> Configurer une phase</h3>
+          <button class="modal-close-btn" onclick="closeModal('phaseModal')" aria-label="Fermer la modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="inputPhaseNumero">Numéro de phase</label>
+              <input type="number" id="inputPhaseNumero" placeholder="1" min="1">
+            </div>
+            <div class="form-group">
+              <label for="inputPhaseTitre">Titre de la phase</label>
+              <input type="text" id="inputPhaseTitre" placeholder="Découverte" autocomplete="off">
+            </div>
+          </div>
+
+          <!-- Sélection multiple stagiaires -->
+          <div class="form-group">
+            <label>Stagiaires (sélection multiple)</label>
+            <div class="multi-select-wrapper">
+              <div class="multi-select-trigger" id="multiSelectTrigger" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false">
+                <span id="multiSelectLabel">Aucun stagiaire sélectionné</span>
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+              </div>
+              <div class="multi-select-options" id="stagiairesDropdown" role="listbox" aria-multiselectable="true">
+                <!--
+                  OPTIONS — À générer par le backend :
+                  @foreach(var s in Model.Stagiaires)
+                  {
+                    <label class="multi-select-option-item">
+                      <input type="checkbox" value="@s.Id"> @s.FullName
+                    </label>
+                  }
+                -->
+                <label class="multi-select-option-item">
+                  <input type="checkbox" value="1" class="stagiaire-checkbox"> Moussa Diallo
+                </label>
+                <label class="multi-select-option-item">
+                  <input type="checkbox" value="2" class="stagiaire-checkbox"> Ali Diop
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sélection mentor -->
+          <div class="form-group">
+            <label for="selectPhaseMentor">Mentor</label>
+            <select id="selectPhaseMentor">
+              <!--
+                OPTIONS — À générer par le backend :
+                @foreach(var m in Model.Mentors)
+                {
+                  <option value="@m.Id">@m.FullName</option>
+                }
+              -->
+              <option value="">Sélectionner un mentor</option>
+              <option value="1">Sophie Martin</option>
+            </select>
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="inputPhaseDateDebut">Date début</label>
+              <input type="date" id="inputPhaseDateDebut">
+            </div>
+            <div class="form-group">
+              <label for="inputPhaseDateFin">Date fin</label>
+              <input type="date" id="inputPhaseDateFin">
+            </div>
+          </div>
+
+          <h4 style="margin: 20px 0 10px;">Planning hebdomadaire</h4>
+          <!-- Container des semaines — géré dynamiquement par JS -->
+          <div id="phaseWeeksContainer"></div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal('phaseModal')">Annuler</button>
+          <button class="btn-primary" id="savePhaseBtn">Enregistrer</button>
+        </div>
+
+      </div>
+    </div>
+    <!-- /phaseModal -->
+
+
+    <!-- =============================================
+         MODAL — AJOUTER / MODIFIER SUIVI
+    ============================================= -->
+    <div id="suiviModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="suiviModalTitle">
+      <div class="modal-box">
+
+        <div class="modal-header">
+          <h3 id="suiviModalTitle"><i class="fas fa-chart-line" aria-hidden="true"></i> Ajouter un suivi</h3>
+          <button class="modal-close-btn" onclick="closeModal('suiviModal')" aria-label="Fermer la modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="selectSuiviStagiaire">Stagiaire</label>
+              <select id="selectSuiviStagiaire">
+                <!--
+                  @foreach(var s in Model.Stagiaires)
+                  { <option value="@s.Id">@s.FullName</option> }
+                -->
+                <option value="">Sélectionner</option>
+                <option value="1">Moussa Diallo</option>
+                <option value="2">Ali Diop</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="selectSuiviMentor">Mentor</label>
+              <select id="selectSuiviMentor">
+                <!--
+                  @foreach(var m in Model.Mentors)
+                  { <option value="@m.Id">@m.FullName</option> }
+                -->
+                <option value="">Sélectionner</option>
+                <option value="1">Sophie Martin</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="inputSuiviDate">Date</label>
+              <input type="date" id="inputSuiviDate">
+            </div>
+            <div class="form-group">
+              <label for="selectSuiviSemaine">Semaine</label>
+              <select id="selectSuiviSemaine">
+                <option>Semaine 1</option>
+                <option>Semaine 2</option>
+                <option>Semaine 3</option>
+                <option>Semaine 4</option>
+                <option>Semaine 5</option>
+                <option>Semaine 6</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="inputSuiviCours">Cours</label>
+            <input type="text" id="inputSuiviCours" placeholder="Nom du cours" autocomplete="off">
+          </div>
+
+          <div class="form-group">
+            <label for="selectSuiviAppreciation">Appréciation</label>
+            <select id="selectSuiviAppreciation">
+              <option>Excellent</option>
+              <option>Très bien</option>
+              <option>Bien</option>
+              <option>Moyen</option>
+              <option>À améliorer</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="textareaSuiviCommentaire">Commentaire</label>
+            <textarea id="textareaSuiviCommentaire" rows="3" placeholder="Commentaire du mentor..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="selectSuiviStatut">Statut</label>
+            <select id="selectSuiviStatut">
+              <option>En cours</option>
+              <option>Validé</option>
+              <option>Reprendre</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal('suiviModal')">Annuler</button>
+          <button class="btn-primary" id="saveSuiviBtn">Enregistrer</button>
+        </div>
+
+      </div>
+    </div>
+    <!-- /suiviModal -->
+
+
+    <!-- =============================================
+         MODAL — VOIR DÉTAILS
+    ============================================= -->
+    <div id="viewDetailsModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="viewDetailsTitle">
+      <div class="modal-box modal-box--sm">
+        <div class="modal-header">
+          <h3 id="viewDetailsTitle"><i class="fas fa-info-circle" aria-hidden="true"></i> Détails</h3>
+          <button class="modal-close-btn" onclick="closeModal('viewDetailsModal')" aria-label="Fermer">&times;</button>
+        </div>
+        <div class="modal-body" id="viewDetailsContent"></div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal('viewDetailsModal')">Fermer</button>
+        </div>
+      </div>
+    </div>
+    <!-- /viewDetailsModal -->
+
+
+    <!-- =============================================
+         MODAL — VOIR MESSAGE
+    ============================================= -->
+    <div id="viewMessageModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="viewMessageTitle">
+      <div class="modal-box modal-box--sm">
+        <div class="modal-header">
+          <h3 id="viewMessageTitle"><i class="fas fa-envelope-open-text" aria-hidden="true"></i> Message</h3>
+          <button class="modal-close-btn" onclick="closeModal('viewMessageModal')" aria-label="Fermer">&times;</button>
+        </div>
+        <div class="modal-body" id="viewMessageContent"></div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal('viewMessageModal')">Fermer</button>
+        </div>
+      </div>
+    </div>
+    <!-- /viewMessageModal -->
+
+
+    <!-- =============================================
+         MODAL — VOIR COMMENTAIRE SUIVI
+    ============================================= -->
+    <div id="viewCommentaireModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="viewCommentaireTitle">
+      <div class="modal-box modal-box--sm">
+        <div class="modal-header">
+          <h3 id="viewCommentaireTitle"><i class="fas fa-comment" aria-hidden="true"></i> Commentaire du mentor</h3>
+          <button class="modal-close-btn" onclick="closeModal('viewCommentaireModal')" aria-label="Fermer">&times;</button>
+        </div>
+        <div class="modal-body" id="viewCommentaireContent"></div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal('viewCommentaireModal')">Fermer</button>
+        </div>
+      </div>
+    </div>
+    <!-- /viewCommentaireModal -->
+
+
+    <!-- =============================================
+         MODAL — IMPORT EXCEL
+    ============================================= -->
+    <div id="importExportModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="importModalTitle">
+      <div class="modal-box" style="max-width: 800px">
+        <div class="modal-header">
+          <h3 id="importModalTitle"><i class="fas fa-file-import" aria-hidden="true"></i> Importer des données</h3>
+          <button class="modal-close-btn" onclick="closeModal('importExportModal')" aria-label="Fermer">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="importFileInput">Fichier Excel / CSV</label>
+            <input type="file" id="importFileInput" accept=".xlsx,.xls,.csv">
+          </div>
+          <button class="btn-secondary" id="downloadTemplateBtn">
+            <i class="fas fa-download" aria-hidden="true"></i> Télécharger le modèle
+          </button>
+          <!-- Zone d'aperçu des données importées -->
+          <div id="importPreviewArea"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal('importExportModal')">Annuler</button>
+          <button class="btn-primary" id="confirmImportBtn" style="display:none">Confirmer l'import</button>
+        </div>
+      </div>
+    </div>
+    <!-- /importExportModal -->
+
+
+    <!-- =============================================
+         MODAL — CONFIRMER SUPPRESSION
+    ============================================= -->
+    <div id="deleteConfirmModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmTitle">
+      <div class="modal-box modal-box--xs">
+        <div class="modal-header">
+          <h3 id="deleteConfirmTitle"><i class="fas fa-trash" aria-hidden="true"></i> Confirmer la suppression</h3>
+          <button class="modal-close-btn" onclick="closeModal('deleteConfirmModal')" aria-label="Fermer">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p id="deleteConfirmMessage">Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal('deleteConfirmModal')">Annuler</button>
+          <button class="btn-danger" id="confirmDeleteBtn">Supprimer</button>
+        </div>
+      </div>
+    </div>
+    <!-- /deleteConfirmModal -->
+
+
+    <!-- =============================================
+         JAVASCRIPT — UI UNIQUEMENT
+         Aucune donnée métier ici.
+         Le JS gère seulement :
+         - Navigation entre pages
+         - Ouverture / fermeture modals
+         - Toggle sidebar
+         - Accordéon phases
+         - Onglets semaines
+         - Multi-sélection stagiaires
+         - Gestion semaines dynamiques dans modal phase
+         - Import Excel (lecture fichier + aperçu)
+         - Notifications dropdown
+    ============================================= -->
+    <script>
+
+      /* ============================================
+         VARIABLES D'ÉTAT UI
+         (aucune donnée métier)
+      ============================================= */
+
+      /** Callback exécuté lors de la confirmation de suppression */
+      let deleteConfirmCallback = null;
+
+      /** Données Excel lues, prêtes à être envoyées au backend */
+      let importedExcelData = null;
+
+      /** Noms des stagiaires sélectionnés dans le multi-select phase */
+      let selectedStagiaireNames = [];
+
+      /** Compteur de semaines dans le modal phase */
+      let weekCardCount = 4;
+
+      /** ID courant de l'utilisateur en mode édition (null si ajout) */
+      let currentEditingUserId = null;
+
+      /** Type courant de l'utilisateur dans le modal (stagiaire/mentor/admin) */
+      let currentUserType = "stagiaire";
+
+      /** ID courant du suivi en mode édition */
+      let currentEditingSuiviId = null;
+
+      /** ID courant de la phase en mode édition */
+      let currentEditingPhaseId = null;
+
+
+      /* ============================================
+         NAVIGATION — CHANGEMENT DE PAGE
+      ============================================= */
+
+      /**
+       * Initialise la navigation par onglets sidebar.
+       * Cache toutes les pages et affiche seulement celle demandée.
+       */
+      function initNavigation() {
+        document.querySelectorAll(".sidebar-nav > li[data-page]").forEach(navItem => {
+          navItem.addEventListener("click", () => {
+            const targetPage = navItem.dataset.page;
+
+            // Retirer la classe active de tous les items
+            document.querySelectorAll(".sidebar-nav > li").forEach(li => li.classList.remove("active"));
+            navItem.classList.add("active");
+
+            // Cacher toutes les pages
+            document.querySelectorAll(".page-section").forEach(page => page.classList.remove("active"));
+
+            // Afficher la page cible
+            const pageMap = {
+              dashboard:    "dashboardPage",
+              utilisateurs: "utilisateursPage",
+              phases:       "phasesPage",
+              suivi:        "suiviPage"
+            };
+
+            const targetId = pageMap[targetPage];
+            if (targetId) {
+              document.getElementById(targetId).classList.add("active");
+            }
+          });
+        });
+      }
+
+
+      /* ============================================
+         SIDEBAR — TOGGLE COLLAPSE
+      ============================================= */
+
+      /**
+       * Bascule l'état collapsed de la sidebar.
+       */
+      function initSidebarToggle() {
+        document.getElementById("sidebarToggleBtn").addEventListener("click", () => {
+          document.getElementById("sidebar").classList.toggle("collapsed");
+        });
+      }
+
+
+      /* ============================================
+         MODALS — OUVERTURE / FERMETURE
+      ============================================= */
+
+      /**
+       * Ouvre un modal par son ID.
+       * @param {string} modalId - L'ID de l'overlay modal à afficher
+       */
+      function openModal(modalId) {
+        document.getElementById(modalId).classList.add("active");
+      }
+
+      /**
+       * Ferme un modal par son ID.
+       * @param {string} modalId - L'ID de l'overlay modal à masquer
+       */
+      function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove("active");
+      }
+
+      /**
+       * Ferme un modal en cliquant sur l'overlay (fond sombre).
+       */
+      function initModalOverlayClose() {
+        document.querySelectorAll(".modal-overlay").forEach(overlay => {
+          overlay.addEventListener("click", (e) => {
+            if (e.target === overlay) {
+              overlay.classList.remove("active");
+            }
+          });
+        });
+      }
+
+
+      /* ============================================
+         MODAL UTILISATEUR — TOGGLE CHAMPS
+      ============================================= */
+
+      /**
+       * Affiche ou masque les champs spécifiques selon le type sélectionné.
+       * Appelé à chaque changement de radio "userType".
+       */
+      function toggleUserTypeFields() {
+        const selectedType = document.querySelector('input[name="userType"]:checked').value;
+        currentUserType = selectedType;
+
+        document.getElementById("stagiaire-specific-fields").classList.toggle("active", selectedType === "stagiaire");
+        document.getElementById("mentor-specific-fields").classList.toggle("active",   selectedType === "mentor");
+        document.getElementById("admin-specific-fields").classList.toggle("active",    selectedType === "admin");
+
+        // Masquer "Spécialité" pour les admins
+        document.getElementById("wrapperUserSpecialite").style.display =
+          selectedType === "admin" ? "none" : "block";
+      }
+
+      /**
+       * Ouvre le modal utilisateur en mode "Ajout".
+       * Réinitialise tous les champs.
+       */
+      function openAddUserModal() {
+        currentEditingUserId = null;
+        document.getElementById("userModalTitle").innerHTML =
+          '<i class="fas fa-user" aria-hidden="true"></i> Ajouter un utilisateur';
+
+        // Type par défaut : stagiaire
+        document.querySelector('input[name="userType"][value="stagiaire"]').checked = true;
+        toggleUserTypeFields();
+
+        // Vider tous les champs
+        document.getElementById("inputUserNom").value        = "";
+        document.getElementById("inputUserPrenom").value     = "";
+        document.getElementById("inputUserEmail").value      = "";
+        document.getElementById("inputUserSpecialite").value = "";
+        document.getElementById("selectUserStatut").value    = "Actif";
+        document.getElementById("inputUserStructure").value  = "";
+        document.getElementById("inputUserTheme").value      = "";
+        document.getElementById("inputUserDateDebut").value  = "";
+        document.getElementById("inputUserDateFin").value    = "";
+        document.getElementById("inputUserDepartement").value = "Engineering";
+        document.getElementById("selectUserRole").value      = "Administrateur";
+        document.getElementById("hiddenUserId").value        = "";
+
+        openModal("userModal");
+      }
+
+      /**
+       * Ouvre le modal utilisateur en mode "Édition".
+       * Pré-remplit les champs avec les données de la ligne cliquée.
+       * @param {HTMLElement} btn - Le bouton edit cliqué
+       */
+      function openEditUserModal(btn) {
+        const row      = btn.closest("tr");
+        const userType = row.dataset.userType || "stagiaire";
+
+        currentEditingUserId = row.dataset.userId || null;
+
+        document.getElementById("userModalTitle").innerHTML =
+          `<i class="fas fa-user" aria-hidden="true"></i> Modifier l'utilisateur`;
+
+        document.querySelector(`input[name="userType"][value="${userType}"]`).checked = true;
+        toggleUserTypeFields();
+
+        // Pré-remplir depuis les data-attributes de la ligne
+        document.getElementById("inputUserNom").value        = row.dataset.nom        || "";
+        document.getElementById("inputUserPrenom").value     = row.dataset.prenom     || "";
+        document.getElementById("inputUserEmail").value      = row.dataset.email      || "";
+        document.getElementById("inputUserSpecialite").value = row.dataset.specialite || "";
+        document.getElementById("selectUserStatut").value    = row.dataset.statut     || "Actif";
+
+        if (userType === "stagiaire") {
+          document.getElementById("inputUserStructure").value = row.dataset.structure  || "";
+          document.getElementById("inputUserTheme").value     = row.dataset.theme      || "";
+          document.getElementById("inputUserDateDebut").value = row.dataset.dateDebut  || "";
+          document.getElementById("inputUserDateFin").value   = row.dataset.dateFin    || "";
+        } else if (userType === "mentor") {
+          document.getElementById("inputUserDepartement").value = row.dataset.departement || "Engineering";
+        } else if (userType === "admin") {
+          document.getElementById("selectUserRole").value = row.dataset.role || "Administrateur";
+        }
+
+        openModal("userModal");
+      }
+
+
+      /* ============================================
+         MODAL PHASE — SEMAINES DYNAMIQUES
+      ============================================= */
+
+      /**
+       * Génère le HTML d'une carte semaine dans le modal phase.
+       * @param {number} weekIndex - Numéro de la semaine
+       * @param {object} [data={}]  - Données pré-remplies (mode édition)
+       * @returns {string} HTML de la carte
+       */
+      function buildWeekCardHTML(weekIndex, data = {}) {
+        return `
+          <div class="week-card-form" data-week-index="${weekIndex}">
+            <button type="button" class="btn-remove-week" onclick="removeWeekCard(this)" aria-label="Supprimer la semaine ${weekIndex}">
+              <i class="fas fa-trash" aria-hidden="true"></i>
+            </button>
+            <h4>Semaine ${weekIndex}</h4>
+            <div class="form-group">
+              <label for="weekCours${weekIndex}">Cours</label>
+              <input type="text" id="weekCours${weekIndex}" placeholder="Nom du cours" value="${data.cours || ''}" autocomplete="off">
+            </div>
+            <div class="form-row-2col">
+              <div class="form-group">
+                <label for="weekDebut${weekIndex}">Date début</label>
+                <input type="date" id="weekDebut${weekIndex}" value="${data.debut || ''}">
+              </div>
+              <div class="form-group">
+                <label for="weekFin${weekIndex}">Date fin</label>
+                <input type="date" id="weekFin${weekIndex}" value="${data.fin || ''}">
+              </div>
+            </div>
+          </div>`;
+      }
+
+      /**
+       * Ajoute une nouvelle carte semaine dans le modal phase.
+       */
+      function addWeekCard() {
+        weekCardCount++;
+        const container = document.getElementById("phaseWeeksContainer");
+        const addBtn    = document.getElementById("addWeekCardBtn");
+
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = buildWeekCardHTML(weekCardCount);
+
+        // Insérer avant le bouton "Ajouter"
+        container.insertBefore(tempDiv.firstElementChild, addBtn);
+      }
+
+      /**
+       * Supprime une carte semaine du modal phase.
+       * @param {HTMLElement} btn - Le bouton de suppression cliqué
+       */
+      function removeWeekCard(btn) {
+        btn.closest(".week-card-form").remove();
+      }
+
+      /**
+       * Génère le bouton "Ajouter une semaine" et l'ajoute au container.
+       */
+      function appendAddWeekButton() {
+        const existing = document.getElementById("addWeekCardBtn");
+        if (existing) return;
+
+        const btn = document.createElement("button");
+        btn.type      = "button";
+        btn.id        = "addWeekCardBtn";
+        btn.className = "btn-add-week";
+        btn.setAttribute("aria-label", "Ajouter une semaine");
+        btn.innerHTML = '<i class="fas fa-plus" aria-hidden="true"></i> Ajouter une semaine';
+        btn.onclick   = addWeekCard;
+
+        document.getElementById("phaseWeeksContainer").appendChild(btn);
+      }
+
+      /**
+       * Ouvre le modal phase en mode "Ajout".
+       * Initialise 4 semaines par défaut.
+       */
+      function openAddPhaseModal() {
+        currentEditingPhaseId = null;
+        weekCardCount         = 4;
+        selectedStagiaireNames = [];
+
+        document.getElementById("phaseModalTitle").innerHTML =
+          '<i class="fas fa-diagram-project" aria-hidden="true"></i> Ajouter une phase';
+
+        document.getElementById("inputPhaseNumero").value  = "";
+        document.getElementById("inputPhaseTitre").value   = "";
+        document.getElementById("inputPhaseDateDebut").value = "";
+        document.getElementById("inputPhaseDateFin").value  = "";
+        document.getElementById("multiSelectLabel").textContent = "Aucun stagiaire sélectionné";
+
+        // Générer 4 semaines vides
+        let weeksHTML = "";
+        for (let i = 1; i <= 4; i++) {
+          weeksHTML += buildWeekCardHTML(i);
+        }
+        document.getElementById("phaseWeeksContainer").innerHTML = weeksHTML;
+        appendAddWeekButton();
+
+        openModal("phaseModal");
+      }
+
+
+      /* ============================================
+         MULTI-SELECT STAGIAIRES
+      ============================================= */
+
+      /**
+       * Bascule l'affichage de la liste déroulante multi-select.
+       */
+      function toggleMultiSelectDropdown() {
+        const dropdown = document.getElementById("stagiairesDropdown");
+        const trigger  = document.getElementById("multiSelectTrigger");
+        const isOpen   = dropdown.classList.toggle("active");
+        trigger.setAttribute("aria-expanded", isOpen);
+      }
+
+      /**
+       * Met à jour le label du multi-select après sélection.
+       */
+      function updateMultiSelectLabel() {
+        const checkedBoxes = document.querySelectorAll(".stagiaire-checkbox:checked");
+        selectedStagiaireNames = Array.from(checkedBoxes).map(cb => cb.closest("label").textContent.trim());
+
+        document.getElementById("multiSelectLabel").textContent =
+          selectedStagiaireNames.length
+            ? selectedStagiaireNames.join(", ")
+            : "Aucun stagiaire sélectionné";
+      }
+
+      /**
+       * Initialise les événements de la liste déroulante multi-select.
+       */
+      function initMultiSelect() {
+        document.getElementById("multiSelectTrigger").addEventListener("click", toggleMultiSelectDropdown);
+
+        document.querySelectorAll(".stagiaire-checkbox").forEach(cb => {
+          cb.addEventListener("change", updateMultiSelectLabel);
+        });
+
+        // Fermer en cliquant ailleurs
+        document.addEventListener("click", (e) => {
+          const wrapper = document.querySelector(".multi-select-wrapper");
+          if (wrapper && !wrapper.contains(e.target)) {
+            document.getElementById("stagiairesDropdown").classList.remove("active");
+            document.getElementById("multiSelectTrigger").setAttribute("aria-expanded", "false");
+          }
+        });
+      }
+
+
+      /* ============================================
+         ACCORDÉON PHASES
+      ============================================= */
+
+      /**
+       * Initialise le comportement d'ouverture/fermeture des accordéons.
+       * Ouvre automatiquement le premier.
+       */
+      function initPhaseAccordion() {
+        document.querySelectorAll(".phase-accordion-header").forEach(header => {
+          header.addEventListener("click", () => {
+            const body    = header.nextElementSibling;
+            const chevron = header.querySelector(".phase-accordion-chevron");
+            const isOpen  = body.classList.toggle("active");
+
+            header.setAttribute("aria-expanded", isOpen);
+            chevron.classList.toggle("fa-chevron-down",  !isOpen);
+            chevron.classList.toggle("fa-chevron-right",  isOpen);
+          });
+        });
+
+        // Ouvrir le premier accordéon par défaut
+        const firstHeader = document.querySelector(".phase-accordion-header");
+        if (firstHeader) firstHeader.click();
+      }
+
+
+      /* ============================================
+         ONGLETS SEMAINES (accordéon phases)
+      ============================================= */
+
+      /**
+       * Active l'onglet semaine cliqué et met à jour l'affichage.
+       * Le contenu réel sera chargé depuis le backend.
+       * @param {HTMLElement} btn        - Le bouton onglet cliqué
+       * @param {number}      phaseNum   - Numéro de la phase
+       * @param {number}      weekNum    - Numéro de la semaine
+       */
+      function switchWeekTab(btn, phaseNum, weekNum) {
+        // Désactiver tous les onglets de cette phase
+        const phaseAccordion = btn.closest(".phase-accordion");
+        phaseAccordion.querySelectorAll(".week-tab-btn").forEach(tab => {
+          tab.classList.remove("active");
+        });
+
+        btn.classList.add("active");
+
+        // Afficher un message placeholder — le backend injectera les vraies données
+        const contentDiv = document.getElementById(`phase${phaseNum}Content`);
+        if (contentDiv) {
+          contentDiv.innerHTML = `
+            <p style="color: var(--text-soft); padding: 16px 0;">
+              Contenu de la semaine ${weekNum} — sera chargé depuis le backend.
+            </p>`;
+        }
+      }
+
+
+      /* ============================================
+         MODAL SUIVI — OUVERTURE
+      ============================================= */
+
+      /**
+       * Ouvre le modal suivi en mode "Ajout".
+       */
+      function openAddSuiviModal() {
+        currentEditingSuiviId = null;
+        document.getElementById("suiviModalTitle").innerHTML =
+          '<i class="fas fa-chart-line" aria-hidden="true"></i> Ajouter un suivi';
+
+        document.getElementById("inputSuiviDate").value              = new Date().toISOString().split("T")[0];
+        document.getElementById("inputSuiviCours").value             = "";
+        document.getElementById("textareaSuiviCommentaire").value    = "";
+        document.getElementById("selectSuiviStatut").value           = "En cours";
+
+        openModal("suiviModal");
+      }
+
+
+      /* ============================================
+         NOTIFICATIONS DROPDOWN
+      ============================================= */
+
+      /**
+       * Initialise le dropdown de notifications (cloche).
+       */
+      function initNotificationDropdown() {
+        const bell     = document.getElementById("notificationBell");
+        const dropdown = document.getElementById("notificationDropdown");
+
+        bell.addEventListener("click", (e) => {
+          e.stopPropagation();
+          dropdown.classList.toggle("active");
+        });
+
+        // Fermer en cliquant ailleurs
+        document.addEventListener("click", () => {
+          dropdown.classList.remove("active");
+        });
+      }
+
+
+      /* ============================================
+         SUPPRESSION — MODAL CONFIRMATION
+      ============================================= */
+
+      /**
+       * Ouvre le modal de confirmation de suppression.
+       * @param {string}   message  - Message affiché dans le modal
+       * @param {Function} callback - Fonction à exécuter si confirmé
+       */
+      function openDeleteConfirmModal(message, callback) {
+        document.getElementById("deleteConfirmMessage").textContent = message;
+        deleteConfirmCallback = callback;
+        openModal("deleteConfirmModal");
+      }
+
+      /**
+       * Initialise le bouton de confirmation de suppression.
+       */
+      function initDeleteConfirm() {
+        document.getElementById("confirmDeleteBtn").addEventListener("click", () => {
+          if (deleteConfirmCallback) {
+            deleteConfirmCallback();
+            deleteConfirmCallback = null;
+          }
+          closeModal("deleteConfirmModal");
+        });
+      }
+
+
+      /* ============================================
+         IMPORT EXCEL — LECTURE FICHIER + APERÇU
+      ============================================= */
+
+      /**
+       * Lit le fichier Excel sélectionné et affiche un aperçu.
+       * Aucune validation métier ici — le backend validera les données.
+       */
+      function initExcelImport() {
+        document.getElementById("importFileInput").addEventListener("change", function(e) {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          const reader = new FileReader();
+          reader.onload = function(evt) {
+            const data     = new Uint8Array(evt.target.result);
+            const workbook = XLSX.read(data, { type: "array" });
+            const sheet    = workbook.Sheets[workbook.SheetNames[0]];
+            const rows     = XLSX.utils.sheet_to_json(sheet);
+
+            importedExcelData = rows;
+
+            // Afficher un aperçu des 5 premières lignes
+            if (rows.length === 0) {
+              document.getElementById("importPreviewArea").innerHTML =
+                '<p class="import-status-error">Aucune donnée trouvée dans le fichier.</p>';
+              document.getElementById("confirmImportBtn").style.display = "none";
+              return;
+            }
+
+            const headers    = Object.keys(rows[0]);
+            const previewMax = Math.min(5, rows.length);
+
+            let previewHTML = `
+              <p class="import-status-valid" style="margin-top:16px;">
+                ✓ ${rows.length} ligne(s) lue(s)
+              </p>
+              <p style="margin-top:12px;"><strong>Aperçu (${previewMax} premières lignes) :</strong></p>
+              <table class="import-preview-table">
+                <thead>
+                  <tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr>
+                </thead>
+                <tbody>`;
+
+            rows.slice(0, previewMax).forEach(row => {
+              previewHTML += `<tr>${headers.map(h => `<td>${row[h] ?? ""}</td>`).join("")}</tr>`;
+            });
+
+            if (rows.length > 5) {
+              previewHTML += `<tr><td colspan="${headers.length}" style="text-align:center; color:var(--text-light);">... et ${rows.length - 5} autre(s) ligne(s)</td></tr>`;
+            }
+
+            previewHTML += "</tbody></table>";
+            document.getElementById("importPreviewArea").innerHTML = previewHTML;
+            document.getElementById("confirmImportBtn").style.display = "inline-flex";
+          };
+          reader.readAsArrayBuffer(file);
+        });
+      }
+
+      /**
+       * Télécharge un modèle Excel vide pour l'import.
+       */
+      function downloadImportTemplate() {
+        const templateRow = [{
+          Stagiaire:    "Moussa Diallo",
+          Mentor:       "Sophie Martin",
+          Date:         "2025-01-12",
+          Semaine:      "Semaine 1",
+          Cours:        "Introduction",
+          Appreciation: "Très bien",
+          Commentaire:  "Bon travail",
+          Statut:       "Validé"
+        }];
+
+        const ws = XLSX.utils.json_to_sheet(templateRow);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Template_Suivi");
+        XLSX.writeFile(wb, "template_suivi_stagiaires.xlsx");
+      }
+
+
+      /* ============================================
+         INITIALISATION — EVENTS BUTTONS
+      ============================================= */
+
+      function initButtonEvents() {
+
+        // Bouton "Ajouter utilisateur"
+        document.getElementById("openAddUserBtn").addEventListener("click", openAddUserModal);
+
+        // Bouton "Ajouter phase"
+        document.getElementById("openAddPhaseBtn").addEventListener("click", openAddPhaseModal);
+
+        // Bouton "Import" suivi
+        document.getElementById("openImportBtn").addEventListener("click", () => {
+          document.getElementById("importFileInput").value  = "";
+          document.getElementById("importPreviewArea").innerHTML = "";
+          document.getElementById("confirmImportBtn").style.display = "none";
+          importedExcelData = null;
+          openModal("importExportModal");
+        });
+
+        // Bouton "Ajouter suivi"
+        document.getElementById("openAddSuiviBtn").addEventListener("click", openAddSuiviModal);
+
+        // Bouton "Télécharger modèle"
+        document.getElementById("downloadTemplateBtn").addEventListener("click", downloadImportTemplate);
+
+        // Radio userType
+        document.querySelectorAll('input[name="userType"]').forEach(radio => {
+          radio.addEventListener("change", toggleUserTypeFields);
+        });
+
+        // Bouton "Enregistrer" utilisateur (placeholder — brancher au backend)
+        document.getElementById("saveUserBtn").addEventListener("click", () => {
+          // TODO : envoyer les données au backend via fetch / form submit
+          closeModal("userModal");
+        });
+
+        // Bouton "Enregistrer" phase (placeholder)
+        document.getElementById("savePhaseBtn").addEventListener("click", () => {
+          // TODO : envoyer les données au backend
+          closeModal("phaseModal");
+        });
+
+        // Bouton "Enregistrer" suivi (placeholder)
+        document.getElementById("saveSuiviBtn").addEventListener("click", () => {
+          // TODO : envoyer les données au backend
+          closeModal("suiviModal");
+        });
+
+        // Bouton "Confirmer import"
+        document.getElementById("confirmImportBtn").addEventListener("click", () => {
+          if (importedExcelData) {
+            // TODO : envoyer importedExcelData au backend via fetch
+            closeModal("importExportModal");
+          }
+        });
+      }
+
+
+      /* ============================================
+         POINT D'ENTRÉE — INITIALISATION GLOBALE
+      ============================================= */
+
+      document.addEventListener("DOMContentLoaded", () => {
+        initNavigation();
+        initSidebarToggle();
+        initModalOverlayClose();
+        initPhaseAccordion();
+        initMultiSelect();
+        initNotificationDropdown();
+        initDeleteConfirm();
+        initExcelImport();
+        initButtonEvents();
+      });
+
+
+      /* ============================================
+         EXPOSITION GLOBALE
+         (nécessaire pour les onclick inline HTML)
+      ============================================= */
+      window.openModal            = openModal;
+      window.closeModal           = closeModal;
+      window.openDeleteConfirmModal = openDeleteConfirmModal;
+      window.switchWeekTab        = switchWeekTab;
+      window.removeWeekCard       = removeWeekCard;
+      window.toggleMultiSelectDropdown = toggleMultiSelectDropdown;
+
+    </script>
+
+  </body>
+</html>

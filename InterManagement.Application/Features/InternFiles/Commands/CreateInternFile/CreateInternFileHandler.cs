@@ -18,6 +18,7 @@ namespace InterManagement.Application.Features.InternFiles.Commands.CreateIntern
             _traineeRepository = traineeRepository;
         }
 
+
         public async Task<InternFileDto> Handle(
             CreateInternFileCommand command)
         {
@@ -25,8 +26,7 @@ namespace InterManagement.Application.Features.InternFiles.Commands.CreateIntern
             var trainee = await _traineeRepository
                 .GetByIdAsync(command.Data.TraineeId);
             if (trainee == null)
-                throw new TraineeNotFoundException(
-                    command.Data.TraineeId);
+                throw new TraineeNotFoundException(command.Data.TraineeId);
 
             // 2. Vérifier fichier pas déjà existant
             var exists = await _repository.FileExistsAsync(
@@ -36,18 +36,23 @@ namespace InterManagement.Application.Features.InternFiles.Commands.CreateIntern
                 throw new InternFileAlreadyExistsException(
                     command.Data.FileName);
 
-            // 3. Créer le fichier
+            // 3. Créer le fichier SANS FilePath
             var file = new InternFile(
                 command.Data.FileName,
-                command.Data.FilePath,
                 command.Data.FileType,
                 command.Data.TraineeId
+                // FilePath supprimé ← sera défini après upload
             );
 
             // 4. Sauvegarder
             await _repository.AddAsync(file);
 
-            // 5. Retourner DTO
+            // 5. Générer le FilePath automatiquement
+            var filePath = $"/uploads/trainees/{file.TraineeId}/{file.Id}_{file.FileName}";
+            file.SetFilePath(filePath);
+            await _repository.UpdateAsync(file);
+
+            // 6. Retourner DTO
             return new InternFileDto
             {
                 Id          = file.Id,
@@ -59,5 +64,13 @@ namespace InterManagement.Application.Features.InternFiles.Commands.CreateIntern
                 TraineeName = $"{trainee.FirstName} {trainee.LastName}"
             };
         }
+
+
+
+
+
+
+
+
     }
 }

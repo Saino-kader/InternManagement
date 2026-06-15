@@ -1,4 +1,5 @@
 using InterManagement.Domain.Entities;
+using InterManagement.Shared.Enums;
 
 namespace InterManagement.Application.Features.WeeklyFollowUps.DTOs
 {

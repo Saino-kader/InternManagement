@@ -1,4 +1,5 @@
 using InterManagement.Domain.Exceptions;
+using InterManagement.Shared.Enums;
 
 
 

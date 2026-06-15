@@ -14,7 +14,7 @@ namespace InternManagement.Infrastructure.Repositories
             _context = context;
         }
 
-        // ── CRUD de base ──────────────────────
+        // ── CRUD de base 
 
         public async Task<IEnumerable<Admin>> GetAllAsync()
         {
@@ -51,7 +51,7 @@ namespace InternManagement.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        // ── Méthode spéciale ──────────────────
+        // ── Méthode spéciale 
 
         public async Task<bool> EmailExistsAsync(string email)
         {

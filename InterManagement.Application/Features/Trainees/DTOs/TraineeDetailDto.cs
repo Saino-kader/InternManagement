@@ -1,6 +1,7 @@
 using InterManagement.Application.Features.Feedbacks.DTOs;
 using InterManagement.Application.Features.Phases.DTOs;
 using InterManagement.Domain.Entities;
+using InterManagement.Shared.Enums;
 
 
 namespace InterManagement.Application.Features.Trainees.DTOs;

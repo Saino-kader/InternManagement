@@ -1,4 +1,5 @@
 using InterManagement.Domain.Exceptions;
+using InterManagement.Shared.Enums;
 
 namespace InterManagement.Domain.Entities
 {
@@ -11,13 +12,15 @@ namespace InterManagement.Domain.Entities
         public DateOnly EndDate { get; private set; }
         public PhaseStatus Status { get; private set; }
 
-        // ── FK ────────────────────────────────
+        // ── FK 
         public int TraineeId { get; private set; }
         public Trainee Trainee { get; private set; } = null!;
 
-        // ── Collections ───────────────────────
+        // ── Collections 
         public ICollection<WeeklyFollowUp> WeeklyFollowUps { get; private set; } = [];
         public ICollection<Assignment> Assignments { get; private set; } = [];
+
+        public ICollection<Week> Weeks { get; private set; } = [];
 
         private Phase() { }
 
@@ -29,7 +32,7 @@ namespace InterManagement.Domain.Entities
             DateOnly endDate,
             int traineeId)
         {
-            // ── Validations ───────────────────
+            // ── Validations 
             if (phaseNumber <= 0)
                 throw new DomainException("Le numéro de phase doit être supérieur à 0");
 
@@ -45,7 +48,7 @@ namespace InterManagement.Domain.Entities
             if (traineeId <= 0)
                 throw new DomainException("L'ID du stagiaire est requis");
 
-            // ── Assignation ───────────────────
+            // ── Assignation 
             PhaseNumber = phaseNumber;
             Title       = title;
             Objective   = objective;
@@ -55,7 +58,7 @@ namespace InterManagement.Domain.Entities
             Status      = PhaseStatus.InProgress;
         }
 
-        // ── Méthode Update ────────────────────
+        // ── Méthode Update 
         public void Update(
             string title,
             string objective,
@@ -80,4 +83,5 @@ namespace InterManagement.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
     }
+
 }

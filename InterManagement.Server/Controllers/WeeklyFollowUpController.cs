@@ -7,6 +7,7 @@ using InterManagement.Application.Features.WeeklyFollowUps.Queries.GetWeeklyFoll
 using InterManagement.Application.Features.WeeklyFollowUps.DTOs;
 using InterManagement.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using InterManagement.Application.Features.WeeklyFollowUps.Commands.UpdateWeeklyFollowUp;
 
 namespace InterManagement.Server.Controllers
 {
@@ -20,6 +21,7 @@ namespace InterManagement.Server.Controllers
         private readonly DeleteWeeklyFollowUpHandler  _deleteHandler;
         private readonly GetWeeklyFollowUpsHandler    _getHandler;
         private readonly GetWeeklyFollowUpByIdHandler _getByIdHandler;
+        private readonly UpdateWeeklyFollowUpHandler  _updateHandler;
 
         public WeeklyFollowUpController(
             CreateWeeklyFollowUpHandler  createHandler,
@@ -27,7 +29,8 @@ namespace InterManagement.Server.Controllers
             MarkMissedHandler            missedHandler,
             DeleteWeeklyFollowUpHandler  deleteHandler,
             GetWeeklyFollowUpsHandler    getHandler,
-            GetWeeklyFollowUpByIdHandler getByIdHandler)
+            GetWeeklyFollowUpByIdHandler getByIdHandler,
+            UpdateWeeklyFollowUpHandler  updateHandler)
         {
             _createHandler   = createHandler;
             _completeHandler = completeHandler;
@@ -35,6 +38,7 @@ namespace InterManagement.Server.Controllers
             _deleteHandler   = deleteHandler;
             _getHandler      = getHandler;
             _getByIdHandler  = getByIdHandler;
+            _updateHandler   = updateHandler;
         }
 
         // GET api/weeklyfollowup
@@ -93,6 +97,17 @@ namespace InterManagement.Server.Controllers
         {
             var command = new MarkMissedCommand(id);
             await _missedHandler.Handle(command);
+            return NoContent();
+        }
+
+        // PUT api/weeklyfollowup/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(
+            int id,
+            [FromBody] UpdateWeeklyFollowUpDto dto)
+        {
+            var command = new UpdateWeeklyFollowUpCommand(id, dto);
+            await _updateHandler.Handle(command);
             return NoContent();
         }
 

@@ -14,7 +14,7 @@ namespace InternManagement.Infrastructure.Repositories
             _context = context;
         }
 
-        // ── CRUD de base ──────────────────────
+        // ── CRUD de base 
 
         public async Task<IEnumerable<Mentor>> GetAllAsync()
         {

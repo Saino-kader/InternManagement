@@ -1,5 +1,6 @@
 
 using InterManagement.Domain.Exceptions;
+using InterManagement.Shared.Enums;
 
 namespace InterManagement.Domain.Entities
 {
@@ -80,6 +81,16 @@ namespace InterManagement.Domain.Entities
 
             Comment   = comment;
             UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void Update(DateOnly followUpDate, string comment)
+        {
+            if (string.IsNullOrWhiteSpace(comment))
+                throw new DomainException("Comment is required");
+
+            FollowUpDate = followUpDate;
+            Comment      = comment;
+            UpdatedAt    = DateTime.UtcNow;
         }
     }
 }

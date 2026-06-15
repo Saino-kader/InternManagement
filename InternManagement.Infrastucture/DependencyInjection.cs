@@ -13,12 +13,12 @@ namespace InternManagement.Infrastructure
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            // ── Base de données ───────────────────
+            // ── Base de données 
             services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(
                     configuration.GetConnectionString("DefaultConnection")));
 
-            // ── Repositories ──────────────────────
+            // ── Repositories 
             services.AddScoped<ITraineeRepository, TraineeRepository>();
 
             services.AddScoped<IMentorRepository, MentorRepository>();
@@ -28,6 +28,7 @@ namespace InternManagement.Infrastructure
             services.AddScoped<IWeeklyFollowUpRepository, WeeklyFollowUpRepository>();
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();
             services.AddScoped<IInternFileRepository, InternFileRepository>();
+            services.AddScoped<IWeekRepository, WeekRepository>();
             
 
             return services;

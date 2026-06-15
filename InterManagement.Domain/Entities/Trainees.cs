@@ -1,4 +1,6 @@
 using InterManagement.Domain.Exceptions;
+using InterManagement.Shared.Enums;
+
 
 namespace InterManagement.Domain.Entities
 {
@@ -12,7 +14,7 @@ namespace InterManagement.Domain.Entities
         public DateOnly EndDate { get; private set; }
         public  TraineeStatus Status { get; private set;} = TraineeStatus.InProgress;
 
-        // ── Collections de relations ────────────────────
+        // ── Collections de relations 
         public ICollection<Assignment> Assignments { get; private set; } = []; // Un stagiaire (Trainee) peut avoir plusieurs assignments
         public ICollection<WeeklyFollowUp> WeeklyFollowUps { get; private set; } = [];  //  Un stagiaire peut avoir plusieurs suivi hebdo (WeeklyFollowUp)
         public ICollection<Feedback> Feedbacks { get; private set; } = [];
@@ -25,7 +27,7 @@ namespace InterManagement.Domain.Entities
         {
             
                     
-            // ── Champs obligatoires ────────────────────
+            // ── Champs obligatoires 
             if (string.IsNullOrWhiteSpace(university))
                 throw new DomainException("L'université est obligatoire");
 
@@ -35,7 +37,7 @@ namespace InterManagement.Domain.Entities
             if (string.IsNullOrWhiteSpace(theme))
                 throw new DomainException("Le thème est obligatoire");
 
-            // ── Règle métier dates ─────────────────────
+            // ── Règle métier dates 
             if (endDate <= startDate)
                 throw new DomainException("La date de fin doit être après la date de début");
 

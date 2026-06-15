@@ -5,6 +5,7 @@ using InterManagement.Application.Features.InternFiles.Queries.GetInternFileById
 using InterManagement.Application.Features.InternFiles.DTOs;
 using InterManagement.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using InterManagement.Application.Features.InternFiles.Commands.UpdateInternFile;
 
 namespace InterManagement.Server.Controllers
 {
@@ -16,17 +17,20 @@ namespace InterManagement.Server.Controllers
         private readonly DeleteInternFileHandler  _deleteHandler;
         private readonly GetInternFilesHandler    _getHandler;
         private readonly GetInternFileByIdHandler _getByIdHandler;
+        private readonly UpdateInternFileHandler _updateHandler;
 
         public InternFileController(
             CreateInternFileHandler  createHandler,
             DeleteInternFileHandler  deleteHandler,
             GetInternFilesHandler    getHandler,
-            GetInternFileByIdHandler getByIdHandler)
+            GetInternFileByIdHandler getByIdHandler,
+            UpdateInternFileHandler updateHandler)
         {
             _createHandler  = createHandler;
             _deleteHandler  = deleteHandler;
             _getHandler     = getHandler;
             _getByIdHandler = getByIdHandler;
+            _updateHandler  = updateHandler;
         }
 
         // GET api/internfile
@@ -66,6 +70,16 @@ namespace InterManagement.Server.Controllers
                 nameof(GetById),
                 new { id = result.Id },
                 result);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(
+            int id,
+            [FromBody] UpdateInternFileDto dto)
+        {
+            var command = new UpdateInternFileCommand(id, dto);
+            var result  = await _updateHandler.Handle(command);
+            return Ok(result);
         }
 
         // DELETE api/internfile/5

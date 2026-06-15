@@ -1,25 +1,31 @@
-namespace InterManagement.Shared.Enum
+namespace InterManagement.Shared.Enums;
+
+public enum UserRole
 {
+    Admin,
+    Mentor,
+    Trainee
+}
 
-    public enum UserRole
-    {
-        Admin,
-        Mentor,
-        Trainee
-    }
+public enum TraineeStatus
+{
+    InProgress,
+    Completed,
+    Suspended
+}
 
-    public enum TraineeStatus
-    {
-        InProgress,
-        Completed,
-        Suspended
-    }
+public enum PhaseStatus
+{
+    InProgress,
+    Validated,
+    Suspended
+}
 
-    public enum EvaluationCriteria
-    {
-
-        
-    }
+public enum WeeklyFollowUpStatus
+{
+    InProgress,
+    Validated,
+    Suspended
 }
 
 

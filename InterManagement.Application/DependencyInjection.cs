@@ -39,6 +39,14 @@ using InterManagement.Application.Features.InternFiles.Commands.DeleteInternFile
 using InterManagement.Application.Features.InternFiles.Commands.CreateInternFile;
 using InterManagement.Application.Features.WeeklyFollowUps.Commands.CompleteFollowUp;
 using InterManagement.Application.Features.WeeklyFollowUps.Commands.MarkMissed;
+using InterManagement.Application.Features.Weeks.Commands.CreateWeek;
+using InterManagement.Application.Features.Weeks.Commands.UpdateWeek;
+using InterManagement.Application.Features.Weeks.Commands.DeleteWeek;
+using InterManagement.Application.Features.Weeks.Queries.GetWeeks;
+using InterManagement.Application.Features.Weeks.Queries.GetWeekById;
+using InterManagement.Application.Features.InternFiles.Commands.UpdateInternFile;
+using InterManagement.Application.Features.InternFiles.Commands.SetFilePath;
+using InterManagement.Application.Features.WeeklyFollowUps.Commands.UpdateWeeklyFollowUp;
 
 namespace InterManagement.Application
 {
@@ -92,6 +100,7 @@ namespace InterManagement.Application
             services.AddScoped<DeleteWeeklyFollowUpHandler>();
             services.AddScoped<GetWeeklyFollowUpsHandler>();
             services.AddScoped<GetWeeklyFollowUpByIdHandler>();
+            services.AddScoped<UpdateWeeklyFollowUpHandler>();
 
             // Pour feedback
             services.AddScoped<CreateFeedbackHandler>();
@@ -105,7 +114,16 @@ namespace InterManagement.Application
             services.AddScoped<DeleteInternFileHandler>();
             services.AddScoped<GetInternFilesHandler>();
             services.AddScoped<GetInternFileByIdHandler>();
+            services.AddScoped<UpdateInternFileHandler>();
+            services.AddScoped<SetFilePathHandler>();
 
+            // Pour Week
+            services.AddScoped<CreateWeekHandler>();
+            services.AddScoped<UpdateWeekHandler>();
+            services.AddScoped<DeleteWeekHandler>();
+            services.AddScoped<GetWeeksHandler>();
+            services.AddScoped<GetWeekByIdHandler>();
+            
             return services;   
 
         }

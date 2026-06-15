@@ -7,7 +7,7 @@ namespace InterManagement.Domain.Entities
         public string Message { get; private set; } = string.Empty;
         public DateTime SentAt { get; private set; }
 
-        // ── FK ────────────────────────────────
+        // ── FK 
         public int TraineeId { get; private set; }
         public Trainee Trainee { get; private set; } = null!;
 

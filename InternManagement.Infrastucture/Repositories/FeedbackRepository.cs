@@ -14,7 +14,7 @@ namespace InternManagement.Infrastructure.Repositories
             _context = context;
         }
 
-        // ── CRUD de base ──────────────────────
+        // ── CRUD de base 
 
         public async Task<IEnumerable<Feedback>> GetAllAsync()
         {
@@ -51,7 +51,7 @@ namespace InternManagement.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        // ── Méthodes spéciales ────────────────
+        // ── Méthodes spéciales 
 
         public async Task<IEnumerable<Feedback>> GetByTraineeAsync(
             int traineeId)

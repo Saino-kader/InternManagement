@@ -1,4 +1,5 @@
 using InterManagement.Domain.Entities;
+using InterManagement.Shared.Enums;
 using InterManagement.Domain.Repositories;
 using InterManagement.Infrastucture.Repositories;
 using InternManagement.Infrastructure.Data;
@@ -8,7 +9,7 @@ namespace InternManagement.Infrastructure.Repositories
 {
     public class TraineeRepository(AppDbContext context) : BaseRepository<Trainee>(context), ITraineeRepository
     {
-        // ── Méthodes spéciales ────────────────────
+        // ── Méthodes spéciales 
 
         public async Task<IEnumerable<Trainee>> GetActiveTraineesAsync()
         {
@@ -19,10 +20,10 @@ namespace InternManagement.Infrastructure.Repositories
 
         public async Task<IEnumerable<Trainee>> GetAllWithFiltersAsync(TraineeStatus? status)
         {
-            var query = _context.Trainees.AsQueryable();     // .AsQueryable() transforme en "requête Morceau par Morceau
+            var query = _context.Trainees.AsQueryable();     
 
-            if (status.HasValue)                             // .HasValue → Vérifie si le nullable contient une valeur ou est null
-                query = query.Where(t => t.Status == status.Value);    // .Value → Extrait la VALEUR RÉELLE d'un type nullable (TraineeStatus? → TraineeStatus)
+            if (status.HasValue)                             
+                query = query.Where(t => t.Status == status.Value);
 
             return await query.ToListAsync();
         }

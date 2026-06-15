@@ -6,25 +6,19 @@ using InterManagement.Application.Features.Trainees.Queries.GetTraineeById;
 using InterManagement.Application.Features.Trainees.DTOs;
 using InterManagement.Domain.Entities;
 using InterManagement.Domain.Exceptions;
+using InterManagement.Shared.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InterManagement.Server.Controllers
 {
-    [ApiController] //  → Attribut qui indique que cette classe est un contrôleur API
+    [ApiController] 
 
-    [Route("api/[controller]")] // → Définit le chemin d'accès à l'API
-
-    //   - "api" → préfixe standard pour les APIs
-    //   - "[controller]" → remplacé par le nom de la classe sans "Controller" : /api/trainee
+    [Route("api/[controller]")] 
 
     public class TraineeController : ControllerBase
         {
         
-        // ==================================================
-        // CHAMPS (VARIABLES DE CLASSE)
-        // ==================================================
-        
-        // Chaque champ stocke un Handler qui sera injecté dans le constructeur
+
         private readonly CreateTraineeHandler _createHandler;
         private readonly UpdateTraineeHandler _updateHandler;
         private readonly DeleteTraineeHandler _deleteHandler;
@@ -32,14 +26,7 @@ namespace InterManagement.Server.Controllers
         private readonly GetTraineeByIdHandler _getByIdHandler;
 
 
-        // ==================================================
-        // CONSTRUCTEUR
-        // ==================================================
-        
-        // Le constructeur reçoit TOUS les Handlers par injection de dépendances
-        // C'est le conteneur DI qui fournit automatiquement ces instances
-        // Chaque Handler est enregistré avec AddScoped dans DependencyInjection.cs
-        public TraineeController(
+                public TraineeController(
             CreateTraineeHandler createHandler,
             UpdateTraineeHandler updateHandler,
             DeleteTraineeHandler deleteHandler,
@@ -54,61 +41,47 @@ namespace InterManagement.Server.Controllers
         }
 
 
-        // ==================================================
-        // MÉTHODE 1 : GET tous les stagiaires (LISTE)
-        // ==================================================
-        [HttpGet] // → cette méthode répond aux requêtes HTTP GET : GET /api/trainee
+       
+        [HttpGet] 
 
-        // IActionResult → interface qui permet de retourner différents résultats HTTP (Ok, NotFound, etc.)
         public async Task<IActionResult> GetAll(
-            [FromQuery] TraineeStatus? status)  //    [FromQuery] TraineeStatus? status → paramètre optionnel dans l'URL
-                //   Exemple : GET /api/trainee?status=InProgress → filtre sur les actifs
-
-
+            [FromQuery] TraineeStatus? status)
         
         {
-            // 1. Créer la Query avec le filtre (status peut être null)
             var query  = new GetTraineesQuery { Status = status };
 
-            // 2. Exécuter le Handler qui va chercher les données en base
             var result = await _getHandler.Handle(query);
 
-            return Ok(result);          // 3. Retourner 200 OK avec la liste des TraineeDto
+            return Ok(result);          
 
         }
 
 
-        // ==================================================
-        // MÉTHODE 2 : GET un stagiaire par son ID (DÉTAIL)
-        // ==================================================
+  
         
-        [HttpGet("{id}")] // → paramètre "id" dans l'URL  :  URL : GET /api/trainee/5
+        [HttpGet("{id}")] 
         public async Task<IActionResult> GetById(int id)
         {
             try
             {
-                // Créer la Query avec l'Id reçu
                 var query  = new GetTraineeByIdQuery(id);
 
-                // Exécuter le Handler
                 var result = await _getByIdHandler.Handle(query);
-                return Ok(result);     // Retourner 200 OK avec le TraineeDetailDto
+                return Ok(result);     
 
             }
             catch (TraineeNotFoundException ex)
             {
-                return NotFound(ex.Message);             // Retourner 404 Not Found avec le message d'erreur
+                return NotFound(ex.Message);             
 
             }
         }
 
-        // ==================================================
-        // MÉTHODE 3 : POST créer un nouveau stagiaire
-        // ==================================================
+
         
-        [HttpPost] // → répond aux requêtes HTTP POST : POST /api/trainee
+        [HttpPost] 
         public async Task<IActionResult> Create(
-            [FromBody] CreateTraineeDto dto) //      [FromBody] CreateTraineeDto dto → les données sont dans le corps (body) de la requête : [FromBody] les lit et les met dans dto
+            [FromBody] CreateTraineeDto dto) 
 
         {
             try
@@ -119,29 +92,23 @@ namespace InterManagement.Server.Controllers
                 var result  = await _createHandler.Handle(command);
 
             
-                // 3. Retourner 201 Created avec :
-                //    - Header Location: /api/trainee/{id}
-                //    - Body: le TraineeDto créé
+
                 return CreatedAtAction(
-                    nameof(GetById),           // Nom de la méthode qui récupère le détail : nameof(GetById) Une expression qui donne le NOM de la méthode `GetById` sous forme de **string**.
-                    new { id = result.Id },    // Un objet anonyme qui contient les paramètres à passer à la méthode `GetById`
-                    result);                   // Le DTO créé
+                    nameof(GetById),           
+                    new { id = result.Id },    
+                    result);                   
 
             }
             catch (TraineeAlreadyExistsException ex)         
 
             {
-                return Conflict(ex.Message);     // Si l'email existe déjà → 409 Conflict
-            }
+                return Conflict(ex.Message);                 }
             catch (DomainException ex)
             {
                 return BadRequest(ex.Message); // → 400 Bad Request  (champ vide, date invalide) 
             }
         }
 
-        // ==================================================
-        // MÉTHODE 4 : PUT modifier un stagiaire existant
-        // ==================================================
         [HttpPut("{id}")] // → paramètre "id" dans l'URL  : PUT /api/trainee/5
         public async Task<IActionResult> Update(
             int id,

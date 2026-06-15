@@ -4,19 +4,18 @@ namespace InterManagement.Domain.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
-        // ── Repositories ──────────────────────────
+        // ── Repositories 
         ITraineeRepository Trainees { get; }
         IMentorRepository Mentors { get; }
         
         IAdminRepository Admins { get; }
-        //IPhaseRepository Phases { get; }
-        //IAssignmentRepository Assignments { get; }
-        //IWeeklyFollowUpRepository WeeklyFollowUps { get; }
-        //IEvaluationRepository Evaluations { get; }
-        //IFeedbackRepository Feedbacks { get; }
-        //IInternFileRepository Files { get; }
+        IPhaseRepository Phases { get; }
+        IAssignmentRepository Assignments { get; }
+        IWeeklyFollowUpRepository WeeklyFollowUps { get; }
+        IFeedbackRepository Feedbacks { get; }
+        IInternFileRepository Files { get; }
 
-        // ── Transaction ───────────────────────────
+        // ── Transaction 
         Task<int> SaveChangesAsync();
         Task BeginTransactionAsync();
         Task CommitAsync();

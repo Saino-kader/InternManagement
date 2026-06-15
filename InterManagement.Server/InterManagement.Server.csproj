@@ -24,6 +24,7 @@
     <ProjectReference Include="../InterManagement.Application/InterManagement.Application.csproj" />
     <ProjectReference Include="../InterManagement.Domain/InterManagement.Domain.csproj" />
     <ProjectReference Include="..\InternManagement.Infrastucture\InternManagement.Infrastucture.csproj" />
+    <ProjectReference Include="..\InterManagement.Shared\InterManagement.Shared.csproj" />
   </ItemGroup>
 
 </Project>

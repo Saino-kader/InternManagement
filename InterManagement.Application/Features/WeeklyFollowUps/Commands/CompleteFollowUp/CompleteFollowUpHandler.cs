@@ -1,6 +1,7 @@
 using InterManagement.Domain.Entities;
 using InterManagement.Domain.Exceptions;
 using InterManagement.Domain.Repositories;
+using InterManagement.Shared.Enums;
 
 namespace InterManagement.Application.Features.WeeklyFollowUps.Commands.CompleteFollowUp
 {

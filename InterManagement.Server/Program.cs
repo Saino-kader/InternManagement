@@ -75,6 +75,9 @@ app.UseExceptionHandler(appError =>
             InternFileAlreadyExistsException  => 409,  // ← InternFile
             InternFileTypeNotAllowedException => 400,  // ← InternFile
 
+            WeekNotFoundException      => 404,  // ← Week
+            WeekAlreadyExistsException => 409,  // ← Week
+
             DomainException               => 400,
             _                             => 500
         };
