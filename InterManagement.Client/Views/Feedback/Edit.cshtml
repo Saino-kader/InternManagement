@@ -1,0 +1,36 @@
+@*
+=================================================
+MODIFICATION FEEDBACK
+=================================================
+*@
+@model InterManagement.Application.Features.Feedbacks.DTOs.UpdateFeedbackDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Modifier feedback";
+    ViewData["ActivePage"] = "feedbacks";
+}
+
+<div class="head-title">
+    <div>
+        <h1>Modifier le feedback</h1>
+        <div class="breadcrumb">
+            <span>Accueil</span>
+            <i class="fas fa-chevron-right"></i>
+            <span>Feedbacks</span>
+            <i class="fas fa-chevron-right"></i>
+            <span>Modifier</span>
+        </div>
+    </div>
+</div>
+
+<form asp-action="Edit" asp-route-id="@ViewBag.FeedbackId" method="post" class="table-container">
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label for="Message">Message</label>
+        <textarea asp-for="Message"></textarea>
+    </div>
+    <div style="display:flex; gap: 1rem; margin-top: 1.5rem;">
+        <a asp-action="Index" class="btn-secondary">Annuler</a>
+        <button type="submit" class="btn-primary">Enregistrer</button>
+    </div>
+</form>

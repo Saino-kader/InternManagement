@@ -1,0 +1,48 @@
+@*
+=================================================
+TABLEAU ACTIVITÉ RÉCENTE
+Affiche les dernières actions effectuées sur la
+plateforme. Données venant de l'API
+(GET /api/dashboard/recent-activity).
+// Model.Any() = Vérifie s'il y a au moins un élément dans la liste
+=================================================
+*@
+@model List<InterManagement.Application.Features.Dashboard.DTOs.ActivityLogDto>
+
+<div class="table-container">
+    <div class="table-header">
+        <h3><i class="fas fa-history"></i> Activité récente</h3>
+    </div>
+    <div style="overflow-x: auto">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Utilisateur</th>
+                    <th>Action</th>
+                    <th>Détail</th>
+                </tr>
+            </thead>
+            <tbody id="activiteList">
+                @if (!Model.Any())  
+                {
+                    <tr>
+                        <td colspan="4" style="text-align:center;">Aucune activité récente</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var activity in Model)
+                    {
+                        <tr>
+                            <td>@activity.OccurredAt.ToString("dd/MM/yyyy")</td>
+                            <td>@activity.UserName</td>
+                            <td>@activity.Action</td>
+                            <td>@activity.Detail</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

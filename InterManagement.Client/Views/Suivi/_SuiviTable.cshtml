@@ -1,0 +1,101 @@
+@*
+=================================================
+TABLEAU SUIVI DES STAGIAIRES
+Liste tous les suivis hebdomadaires avec leurs
+actions (voir commentaire, exporter, modifier,
+supprimer). Les data-attributes alimentent le
+modal commentaire et le modal d'édition côté JS.
+=================================================
+*@
+@model List<InterManagement.Application.Features.WeeklyFollowUps.DTOs.WeeklyFollowUpDto>
+
+<div class="table-container">
+    <div class="table-header">
+        <h3><i class="fas fa-chart-line"></i> Évaluations hebdomadaires</h3>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-secondary" id="openImportBtn">
+                <i class="fas fa-file-import"></i> Importer
+            </button>
+            <button class="btn-primary" id="openAddSuiviBtn">
+                <i class="fas fa-plus"></i> Ajouter un suivi
+            </button>
+        </div>
+    </div>
+    <div style="overflow-x: auto">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Stagiaire</th>
+                    <th>Mentor</th>
+                    <th>Date</th>
+                    <th>Semaine</th>
+                    <th>Cours</th>
+                    <th>Appréciation</th>
+                    <th>Statut</th>
+                    <th>Commentaire</th>
+                    <th>Export</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="suiviList">
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="10" style="text-align:center;">Aucun suivi enregistré</td></tr>
+                }
+                else
+                {
+                    @foreach (var s in Model)
+                    {
+                        <tr data-suivi-id="@s.Id"
+                            data-trainee-id="@s.TraineeId"
+                            data-mentor-id="@s.MentorId"
+                            data-stagiaire-nom="@s.TraineeName"
+                            data-mentor-nom="@s.MentorName"
+                            data-date="@s.FollowUpDate.ToString("yyyy-MM-dd")"
+                            data-week-id="@s.WeekId"
+                            data-week-number="@s.WeekNumber"
+                            data-cours="@s.CourseName"
+                            data-appreciation="@s.Appreciation"
+                            data-commentaire="@s.Comment"
+                            data-statut="@s.Status">
+
+                            <td>@s.TraineeName</td>
+                            <td>@s.MentorName</td>
+                            <td>@s.FollowUpDate.ToString("dd/MM/yyyy")</td>
+                            <td>Semaine @s.WeekNumber</td>
+                            <td>@s.CourseName</td>
+                            <td>@s.Appreciation</td>
+                            <td>
+                                @await Html.PartialAsync("~/Views/Shared/Components/_StatusBadge.cshtml", s.Status.ToString())
+                            </td>
+                            <td>
+                                <button class="action-btn view" onclick="viewCommentaire(this)"
+                                        aria-label="Voir le commentaire">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                            <td>
+                                <a asp-controller="Suivi" asp-action="Export" asp-route-traineeId="@s.TraineeId"
+                                   class="action-btn export" aria-label="Exporter le suivi de @s.TraineeName">
+                                    <i class="fas fa-file-export"></i>
+                                </a>
+                            </td>
+                            <td class="action-btns">
+                                <button class="action-btn edit" onclick="openEditSuiviModal(this)"
+                                        aria-label="Modifier le suivi">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                                <button class="action-btn delete"
+                                        data-delete-url="/Suivi/Delete/@s.Id"
+                                        data-delete-name="Suivi semaine @s.WeekNumber de @s.TraineeName"
+                                        aria-label="Supprimer le suivi">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

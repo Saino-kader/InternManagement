@@ -1,0 +1,40 @@
+@*
+=================================================
+PAGE SUIVI DES STAGIAIRES
+Tableau de suivi + modals (ajout/édition, import,
+commentaire).
+=================================================
+*@
+@model InterManagement.Client.Models.SuiviViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Suivi des stagiaires";
+    ViewData["ActivePage"] = "suivi";
+}
+
+<div class="head-title">
+    <div>
+        <h1>Suivi des stagiaires</h1>
+        <div class="breadcrumb">
+            <span>Accueil</span>
+            <i class="fas fa-chevron-right"></i>
+            <span>Suivi</span>
+        </div>
+    </div>
+</div>
+
+@* TABLEAU 1 — Suivis manuels *@
+@await Html.PartialAsync("_SuiviTable", Model.Suivis)
+
+@* TABLEAU 2 — Suivis importés depuis Excel *@
+@await Html.PartialAsync("_SuiviImporteTable", Model.SuivisImportes)
+
+@await Html.PartialAsync("_SuiviModal", Model)
+@await Html.PartialAsync("_ImportModal")
+@await Html.PartialAsync("_CommentaireModal")
+
+
+
+@section Scripts {
+    <script src="~/js/suivi.js"></script>
+}

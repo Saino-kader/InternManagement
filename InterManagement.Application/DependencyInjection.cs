@@ -24,7 +24,10 @@ using InterManagement.Application.Features.Assignments.Commands.DeactivateAssign
 using InterManagement.Application.Features.Assignments.Queries.GetAssignments;
 using InterManagement.Application.Features.Assignments.Commands.DeleteAssignment;
 using InterManagement.Application.Features.Assignments.Queries.GetAssignmentById;
+using InterManagement.Application.Features.Assignments.Queries.GetMentorAssignments;
 using InterManagement.Application.Features.WeeklyFollowUps.Commands.CreateWeeklyFollowUp;
+using InterManagement.Application.Features.WeeklyFollowUps.Commands.ValidatedFollowUp;
+using InterManagement.Application.Features.WeeklyFollowUps.Commands.SuspendedCommand;
 using InterManagement.Application.Features.WeeklyFollowUps.Queries.GetWeeklyFollowUpById;
 using InterManagement.Application.Features.WeeklyFollowUps.Queries.GetWeeklyFollowUps;
 using InterManagement.Application.Features.WeeklyFollowUps.Commands.DeleteWeeklyFollowUp;
@@ -33,20 +36,26 @@ using InterManagement.Application.Features.Feedbacks.Commands.UpdateFeedback;
 using InterManagement.Application.Features.Feedbacks.Commands.DeleteFeedback;
 using InterManagement.Application.Features.Feedbacks.Queries.GetFeedbacks;
 using InterManagement.Application.Features.Feedbacks.Queries.GetFeedbackById;
-using InterManagement.Application.Features.InternFiles.Queries.GetInternFileById;
-using InterManagement.Application.Features.InternFiles.Queries.GetInternFiles;
-using InterManagement.Application.Features.InternFiles.Commands.DeleteInternFile;
-using InterManagement.Application.Features.InternFiles.Commands.CreateInternFile;
-using InterManagement.Application.Features.WeeklyFollowUps.Commands.CompleteFollowUp;
-using InterManagement.Application.Features.WeeklyFollowUps.Commands.MarkMissed;
 using InterManagement.Application.Features.Weeks.Commands.CreateWeek;
 using InterManagement.Application.Features.Weeks.Commands.UpdateWeek;
 using InterManagement.Application.Features.Weeks.Commands.DeleteWeek;
 using InterManagement.Application.Features.Weeks.Queries.GetWeeks;
 using InterManagement.Application.Features.Weeks.Queries.GetWeekById;
-using InterManagement.Application.Features.InternFiles.Commands.UpdateInternFile;
-using InterManagement.Application.Features.InternFiles.Commands.SetFilePath;
 using InterManagement.Application.Features.WeeklyFollowUps.Commands.UpdateWeeklyFollowUp;
+using InterManagement.Application.Features.WeeklyFollowUps.Commands.ImportWeeklyFollowUps;
+using InterManagement.Application.Features.WeeklyFollowUps.Queries.ExportWeeklyFollowUpsByTrainee;
+using InterManagement.Domain.Repositories;
+using InterManagement.Application.Features.WeeklyFollowUps.Export;
+using InterManagement.Application.Features.WeeklyFollowUps.Import;
+using InterManagement.Application.Features.Dashboard.Queries.GetDashboardStats;
+using InterManagement.Application.Features.Dashboard.Queries.GetRecentActivity;
+using InterManagement.Application.Features.Phases.Commands.CreatePhaseForMultipleTrainees;
+using InterManagement.Application.Features.ImportedFollowUps.Queries.GetImportedFollowUps;
+using InterManagement.Application.Features.ImportedFollowUps.Commands.ImportExcel;
+using InterManagement.Application.Features.ImportedFollowUps.Commands.UpdateImportedFollowUp;
+using InterManagement.Application.Features.ImportedFollowUps.Commands.DeleteImportedFollowUp;
+
+using InterManagement.Application.Common;
 
 namespace InterManagement.Application
 {
@@ -65,7 +74,6 @@ namespace InterManagement.Application
             services.AddScoped<GetTraineesHandler>();
             services.AddScoped<GetTraineeByIdHandler>();
 
-                // Pour Mentors
             services.AddScoped<CreateMentorHandler>();
             services.AddScoped<UpdateMentorHandler>();
             services.AddScoped<DeleteMentorHandler>();
@@ -86,47 +94,68 @@ namespace InterManagement.Application
             services.AddScoped<GetPhasesHandler>();
             services.AddScoped<GetPhaseByIdHandler>();
 
-                // Pour Assignment
             services.AddScoped<CreateAssignmentHandler>();
             services.AddScoped<DeactivateAssignmentHandler>();
             services.AddScoped<DeleteAssignmentHandler>();
             services.AddScoped<GetAssignmentsHandler>();
             services.AddScoped<GetAssignmentByIdHandler>();
+            services.AddScoped<GetMentorAssignmentsHandler>();
 
-                // Pour WeekFollowUpHanler
+                // Pour WeekFollowUpHandler
             services.AddScoped<CreateWeeklyFollowUpHandler>();
-            services.AddScoped<CompleteFollowUpHandler>();
-            services.AddScoped<MarkMissedHandler>();
+            services.AddScoped<ValidatedFollowUpHandler>();
+            services.AddScoped<SuspendedHandler>();
             services.AddScoped<DeleteWeeklyFollowUpHandler>();
             services.AddScoped<GetWeeklyFollowUpsHandler>();
             services.AddScoped<GetWeeklyFollowUpByIdHandler>();
             services.AddScoped<UpdateWeeklyFollowUpHandler>();
 
-            // Pour feedback
             services.AddScoped<CreateFeedbackHandler>();
             services.AddScoped<UpdateFeedbackHandler>();
             services.AddScoped<DeleteFeedbackHandler>();
             services.AddScoped<GetFeedbacksHandler>();
             services.AddScoped<GetFeedbackByIdHandler>();
 
-            // Pour InternFiles
-            services.AddScoped<CreateInternFileHandler>();
-            services.AddScoped<DeleteInternFileHandler>();
-            services.AddScoped<GetInternFilesHandler>();
-            services.AddScoped<GetInternFileByIdHandler>();
-            services.AddScoped<UpdateInternFileHandler>();
-            services.AddScoped<SetFilePathHandler>();
-
-            // Pour Week
             services.AddScoped<CreateWeekHandler>();
             services.AddScoped<UpdateWeekHandler>();
             services.AddScoped<DeleteWeekHandler>();
             services.AddScoped<GetWeeksHandler>();
             services.AddScoped<GetWeekByIdHandler>();
-            
+
+            // ── Import / Export WeeklyFollowUps 
+            services.AddScoped<IWeeklyFollowUpFileParser, WeeklyFollowUpFileParser>();
+            services.AddScoped<IWeeklyFollowUpExportService, WeeklyFollowUpExportService>();
+            services.AddScoped<ImportWeeklyFollowUpsHandler>();
+            services.AddScoped<ExportWeeklyFollowUpsByTraineeHandler>();
+
+            // ── Dashboard 
+            services.AddScoped<GetDashboardStatsHandler>();
+            services.AddScoped<GetRecentActivityHandler>();
+
+            // ── Phase multi-stagiaires 
+            services.AddScoped<GetDashboardStatsHandler>();
+            services.AddScoped<GetRecentActivityHandler>();
+
+            // ── Phase multi-stagiaires 
+            services.AddScoped<CreatePhaseForMultipleTraineesHandler>();
+
+            // ── Activity Logger 
+            services.AddScoped<IActivityLogger, ActivityLogger>();
+
+
+            services.AddScoped<GetDashboardStatsHandler>();
+            services.AddScoped<GetRecentActivityHandler>();
+
+            services.AddScoped<GetImportedFollowUpsHandler>();
+            services.AddScoped<ImportExcelHandler>();
+            services.AddScoped<UpdateImportedFollowUpHandler>();
+            services.AddScoped<DeleteImportedFollowUpHandler>();
+                        
             return services;   
 
         }
     }
 }
+
+
 

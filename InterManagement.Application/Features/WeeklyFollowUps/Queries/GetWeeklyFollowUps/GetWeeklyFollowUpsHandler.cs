@@ -31,16 +31,17 @@ namespace InterManagement.Application.Features.WeeklyFollowUps.Queries.GetWeekly
             return followUps.Select(w => new WeeklyFollowUpDto
             {
                 Id           = w.Id,
-                WeekNumber   = w.WeekNumber,
                 FollowUpDate = w.FollowUpDate,
                 Status       = w.Status,
                 Comment      = w.Comment,
+                CourseName   = w.CourseName,
+                Appreciation = w.Appreciation,
+                WeekNumber   = w.Week.WeekNumber,
+                WeekId       = w.WeekId,
                 TraineeId    = w.TraineeId,
                 TraineeName  = $"{w.Trainee.FirstName} {w.Trainee.LastName}",
                 MentorId     = w.MentorId,
-                MentorName   = $"{w.Mentor.FirstName} {w.Mentor.LastName}",
-                PhaseId      = w.PhaseId,
-                PhaseTitle   = w.Phase.Title
+                MentorName   = $"{w.Mentor.FirstName} {w.Mentor.LastName}"
             });
         }
     }

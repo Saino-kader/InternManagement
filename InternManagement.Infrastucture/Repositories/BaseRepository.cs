@@ -45,8 +45,10 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseModel
         var entity = await GetByIdAsync(id);
         if (entity != null)
         {
-            _dbSet.Remove(entity); 
-            await _context.SaveChangesAsync(); 
+            entity.IsDeleted = true;
+            entity.UpdatedAt = DateTime.UtcNow;
+            _dbSet.Update(entity);
+            await _context.SaveChangesAsync();
         }
     }
 }

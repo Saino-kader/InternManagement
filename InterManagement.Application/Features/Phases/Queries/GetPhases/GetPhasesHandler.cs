@@ -28,11 +28,19 @@ namespace InterManagement.Application.Features.Phases.Queries.GetPhases
                 Id          = p.Id,
                 PhaseNumber = p.PhaseNumber,
                 Title       = p.Title,
-                Objective   = p.Objective,
                 StartDate   = p.StartDate,
                 EndDate     = p.EndDate,
                 Status      = p.Status,
-                TraineeId   = p.TraineeId
+                TraineeId   = p.TraineeId,
+                MentorId    = p.Assignments
+                    .OrderByDescending(a => a.AssignmentDate)
+                    .Select(a => (int?)a.MentorId)
+                    .FirstOrDefault(),
+                MentorName  = p.Assignments
+                    .OrderByDescending(a => a.AssignmentDate)
+                    .Select(a => a.Mentor.FirstName + " " + a.Mentor.LastName)
+                    .FirstOrDefault() ?? string.Empty
+                
             });
         }
     }

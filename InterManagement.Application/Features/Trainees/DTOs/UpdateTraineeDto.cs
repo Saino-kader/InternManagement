@@ -16,4 +16,5 @@ public class UpdateTraineeDto
     public DateOnly StartDate { get; set; }                      
     public DateOnly EndDate { get; set; }
     public TraineeStatus Status { get; set; }
+    public bool IsActive { get; set; } = true;
 }

@@ -1,0 +1,201 @@
+@{
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    ViewData["Title"] = "Accès refusé";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" />
+    <style>
+        .access-denied-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            padding: 2rem;
+        }
+
+        .access-denied-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 3.5rem 3rem;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Halo décoratif en haut de la carte */
+        .access-denied-card::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(
+                ellipse,
+                rgba(30, 34, 66, 0.08) 0%,
+                transparent 70%
+            );
+            pointer-events: none;
+        }
+
+        .access-denied-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(30, 34, 66, 0.2);
+        }
+
+        .access-denied-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        .access-denied-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+        }
+
+        .access-denied-desc {
+            font-size: 0.95rem;
+            color: var(--text-soft);
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+        }
+
+        .access-denied-divider {
+            width: 40px;
+            height: 2px;
+            background: var(--accent-gradient);
+            margin: 0 auto 2rem;
+            border-radius: 2px;
+        }
+
+        .access-denied-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--accent-gradient);
+            color: white;
+            padding: 0.9rem 2rem;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.01em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(30, 34, 66, 0.2);
+        }
+
+        .access-denied-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(30, 34, 66, 0.3);
+        }
+
+        .access-denied-btn i {
+            font-size: 0.9rem;
+        }
+
+        .access-denied-role-badge {
+            display: inline-block;
+            background: rgba(30, 34, 66, 0.08);
+            color: var(--text-soft);
+            font-size: 0.78rem;
+            font-weight: 500;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+    </style>
+}
+
+@{
+    var role = Context.Session.GetString("UserRole");
+    var roleLabel = role switch
+    {
+        "Trainee" => "Stagiaire",
+        "Mentor"  => "Mentor",
+        "Admin"   => "Administrateur",
+        _         => "Visiteur"
+    };
+}
+
+<div class="access-denied-page">
+    <div class="access-denied-card">
+
+        @* Icône verrou *@
+        <div class="access-denied-icon">
+            <i class="fas fa-lock"></i>
+        </div>
+
+        @* Badge rôle *@
+        @if (role != null)
+        {
+            <div class="access-denied-role-badge">
+                <i class="fas fa-user-circle" style="margin-right:4px;"></i>
+                Connecté en tant que @roleLabel
+            </div>
+        }
+
+        @* Titre *@
+        <h1 class="access-denied-title">Accès refusé</h1>
+
+        @* Séparateur *@
+        <div class="access-denied-divider"></div>
+
+        @* Description *@
+        <p class="access-denied-desc">
+            Vous n'avez pas les droits nécessaires pour accéder
+            à cette page. Veuillez retourner à votre espace personnel.
+        </p>
+
+        @* Bouton selon le rôle *@
+        @if (role == "Trainee")
+        {
+            var id = Context.Session.GetInt32("EntityId") ?? 0;
+            <a asp-controller="Stagiaire" asp-action="Index"
+               asp-route-traineeId="@id"
+               class="access-denied-btn">
+                <i class="fas fa-user-graduate"></i>
+                Mon espace stagiaire
+            </a>
+        }
+        else if (role == "Mentor")
+        {
+            var id = Context.Session.GetInt32("EntityId") ?? 0;
+            <a asp-controller="MentorSpace" asp-action="Index"
+               asp-route-mentorId="@id"
+               class="access-denied-btn">
+                <i class="fas fa-chalkboard-teacher"></i>
+                Mon espace mentor
+            </a>
+        }
+        else
+        {
+            <a asp-controller="Home" asp-action="Index"
+               class="access-denied-btn">
+                <i class="fas fa-home"></i>
+                Retour à l'accueil
+            </a>
+        }
+
+    </div>
+</div>

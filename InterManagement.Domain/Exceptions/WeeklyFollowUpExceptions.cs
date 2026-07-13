@@ -10,11 +10,10 @@ namespace InterManagement.Domain.Exceptions
     public class WeeklyFollowUpAlreadyExistsException : DomainException
     {
         public WeeklyFollowUpAlreadyExistsException(
-            int traineeId, int phaseId, int weekNumber)
+            int traineeId, int weekId)
             : base($"A follow-up already exists for " +
                    $"Trainee {traineeId}, " +
-                   $"Phase {phaseId}, " +
-                   $"Week {weekNumber}")
+                   $"Week {weekId}")
         { }
     }
 

@@ -1,0 +1,224 @@
+@*
+=================================================
+TABLEAU SUIVIS IMPORTÉS DEPUIS EXCEL
+Mêmes colonnes que _SuiviTable.cshtml :
+Stagiaire | Mentor | Date | Semaine | Cours |
+Appréciation | Statut | Commentaire | Actions
+Données en texte brut — sans lien aux entités.
+=================================================
+*@
+@model List<InterManagement.Application.Features.ImportedFollowUps.DTOs.ImportedFollowUpDto>
+
+<div class="table-container" style="margin-top: 2rem;">
+    <div class="table-header">
+        <h3>
+            <i class="fas fa-file-import"></i>
+            Suivis importés depuis Excel
+            @if (Model.Any())
+            {
+                <span style="font-size:0.8rem; font-weight:400;
+                             color:var(--text-soft); margin-left:8px;">
+                    (@Model.Count ligne(s))
+                </span>
+            }
+        </h3>
+    </div>
+
+    <div style="overflow-x: auto">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Stagiaire</th>
+                    <th>Mentor</th>
+                    <th>Date</th>
+                    <th>Phase</th>
+                    <th>Semaine</th>
+                    <th>Cours</th>
+                    <th>Appréciation</th>
+                    <th>Statut</th>
+                    <th>Commentaire</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="10"
+                            style="text-align:center; padding:2rem; color:var(--text-light);">
+                            <i class="fas fa-file-import"
+                               style="font-size:1.5rem; margin-bottom:0.5rem; display:block;"></i>
+                            Aucun suivi importé.
+                            Utilisez le bouton "Importer" pour ajouter des suivis depuis Excel.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var s in Model)
+                    {
+                        <tr data-imported-id="@s.Id"
+                            data-cours="@s.Cours"
+                            data-appreciation="@s.Appreciation"
+                            data-commentaire="@s.Commentaire"
+                            data-statut="@s.Statut">
+
+                            <td>@s.Stagiaire</td>
+                            <td>@s.Mentor</td>
+                            <td>@s.Date.ToString("dd/MM/yyyy")</td>
+                            <td>Phase @s.PhaseNumber</td>
+                            <td>Semaine @s.WeekNumber</td>
+                            <td>@s.Cours</td>
+                            <td>@s.Appreciation</td>
+                            <td>
+                                @await Html.PartialAsync(
+                                    "~/Views/Shared/Components/_StatusBadge.cshtml",
+                                    s.Statut)
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(s.Commentaire))
+                                {
+                                    <button class="action-btn view"
+                                            onclick="viewImportedComment(this)"
+                                            aria-label="Voir le commentaire">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <span style="color:var(--text-light);">—</span>
+                                }
+                            </td>
+                            <td class="action-btns">
+
+                                @* Modifier *@
+                                <button class="action-btn edit"
+                                        onclick="openEditImportedModal(this)"
+                                        aria-label="Modifier">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+
+                                @* Supprimer *@
+                                <form asp-controller="Suivi"
+                                      asp-action="DeleteImported"
+                                      asp-route-id="@s.Id"
+                                      method="post"
+                                      style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit"
+                                            class="action-btn delete"
+                                            onclick="return confirm('Supprimer ce suivi importé ?')"
+                                            aria-label="Supprimer">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@* Modal modification suivi importé *@
+<div id="editImportedModal" class="modal">
+    <div class="modal-content" style="max-width: 520px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-pen"></i> Modifier le suivi importé</h3>
+            <button class="modal-close"
+                    onclick="closeModal('editImportedModal')">&times;</button>
+        </div>
+        <form method="post" id="editImportedForm"
+              asp-controller="Suivi" asp-action="EditImported">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="editImportedId" name="id" />
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Cours</label>
+                    <input type="text" name="Cours" id="editImportedCours"
+                           autocomplete="off" />
+                </div>
+                <div class="form-group">
+                    <label>Appréciation</label>
+                    <select name="Appreciation" id="editImportedAppreciation">
+                        <option value="Passable">Passable</option>
+                        <option value="Assez bien">Assez bien</option>
+                        <option value="Bien">Bien</option>
+                        <option value="Très bien">Très bien</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Commentaire</label>
+                    <textarea name="Commentaire" id="editImportedCommentaire"
+                              rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Statut</label>
+                    <select name="Statut" id="editImportedStatut">
+                        <option value="En cours">En cours</option>
+                        <option value="Validé">Validé</option>
+                        <option value="Manqué">Manqué</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary"
+                        onclick="closeModal('editImportedModal')">Annuler</button>
+                <button type="submit" class="btn-primary">Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@* Modal commentaire *@
+<div id="importedCommentModal" class="modal">
+    <div class="modal-content" style="max-width: 480px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-comment"></i> Commentaire</h3>
+            <button class="modal-close"
+                    onclick="closeModal('importedCommentModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="importedCommentContent"
+                 style="background:var(--bg); border-radius:var(--radius-sm);
+                        padding:1rem; line-height:1.7;"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary"
+                    onclick="closeModal('importedCommentModal')">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openEditImportedModal(btn) {
+        const row = btn.closest('tr');
+        const id  = row.dataset.importedId;
+
+        document.getElementById('editImportedId').value = id;
+        document.getElementById('editImportedForm').action =
+            `/Suivi/EditImported/${id}`;
+        document.getElementById('editImportedCours').value =
+            row.dataset.cours || '';
+        document.getElementById('editImportedAppreciation').value =
+            row.dataset.appreciation || 'Bien';
+        document.getElementById('editImportedCommentaire').value =
+            row.dataset.commentaire || '';
+        document.getElementById('editImportedStatut').value =
+            row.dataset.statut || 'En cours';
+
+        openModal('editImportedModal');
+    }
+
+    function viewImportedComment(btn) {
+        const row = btn.closest('tr');
+        document.getElementById('importedCommentContent').textContent =
+            row.dataset.commentaire || '—';
+        openModal('importedCommentModal');
+    }
+
+    window.openEditImportedModal = openEditImportedModal;
+    window.viewImportedComment   = viewImportedComment;
+</script>

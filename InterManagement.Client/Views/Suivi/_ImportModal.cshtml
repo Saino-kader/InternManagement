@@ -1,0 +1,46 @@
+@*
+=================================================
+MODAL IMPORT EXCEL
+Permet d'importer un fichier Excel/CSV contenant
+1 à plusieurs stagiaires. L'aperçu est généré côté
+navigateur (suivi.js, lecture seule) ; la validation
+réelle et l'enregistrement se font côté backend
+(POST /Suivi/Import → ImportWeeklyFollowUpsHandler).
+=================================================
+*@
+<div id="importExportModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-file-import"></i> Importer un suivi</h3>
+            <button class="modal-close" onclick="closeModal('importExportModal')">&times;</button>
+        </div>
+
+        <form id="importForm" method="post" enctype="multipart/form-data"
+              asp-controller="Suivi" asp-action="Import">
+            @Html.AntiForgeryToken()
+
+            <div class="modal-body">
+                <p>Formats acceptés : .xlsx, .xls, .xlsm, .csv</p>
+
+                <button type="button" class="btn-secondary" id="downloadTemplateBtn">
+                    <i class="fas fa-download"></i> Télécharger un modèle
+                </button>
+
+                <div class="form-group" style="margin-top: 16px;">
+                    <label for="importFile">Fichier à importer</label>
+                    <input type="file" name="file" id="importFile"
+                           accept=".xlsx,.xls,.xlsm,.csv" />
+                </div>
+
+                <div id="importPreview"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('importExportModal')">Annuler</button>
+                <button type="submit" class="btn-primary" id="confirmImportBtn" style="display:none;">
+                    Confirmer l'import
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

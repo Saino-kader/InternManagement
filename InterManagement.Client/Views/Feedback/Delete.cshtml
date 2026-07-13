@@ -1,0 +1,35 @@
+@*
+=================================================
+CONFIRMATION SUPPRESSION FEEDBACK
+=================================================
+*@
+@model InterManagement.Application.Features.Feedbacks.DTOs.FeedbackDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Supprimer feedback";
+    ViewData["ActivePage"] = "feedbacks";
+}
+
+<div class="head-title">
+    <div>
+        <h1>Supprimer le feedback</h1>
+        <div class="breadcrumb">
+            <span>Accueil</span>
+            <i class="fas fa-chevron-right"></i>
+            <span>Feedbacks</span>
+            <i class="fas fa-chevron-right"></i>
+            <span>Supprimer</span>
+        </div>
+    </div>
+</div>
+
+<div class="table-container">
+    <p>Voulez-vous vraiment supprimer le feedback de <strong>@Model.TraineeName</strong> ?</p>
+    <p class="message-content">@Model.Message</p>
+
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post" style="margin-top:1.5rem; display:flex; gap:1rem;">
+        @Html.AntiForgeryToken()
+        <a asp-action="Index" class="btn-secondary">Annuler</a>
+        <button type="submit" class="btn-danger">Supprimer</button>
+    </form>
+</div>

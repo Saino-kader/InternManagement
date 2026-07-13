@@ -1,30 +1,38 @@
+using InterManagement.Application.Common;
 using InterManagement.Application.Features.Trainees.DTOs;
 using InterManagement.Domain.Exceptions;
 using InterManagement.Domain.Repositories;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace InterManagement.Application.Features.Trainees.Commands.UpdateTrainee
 {
     public class UpdateTraineeHandler
     {
         private readonly ITraineeRepository _repository;
+        private readonly IActivityLogger _activityLogger;
+        private readonly IMemoryCache _cache;
+        private const string CacheKey = "trainees:all";
 
-        public UpdateTraineeHandler(ITraineeRepository repository)
+        public UpdateTraineeHandler(
+            ITraineeRepository repository,
+            IActivityLogger activityLogger,
+            IMemoryCache cache)
         {
             _repository = repository;
+            _activityLogger = activityLogger;
+            _cache = cache;
         }
 
         public async Task<TraineeDto> Handle(UpdateTraineeCommand command)
         {
-            // 1. Chercher le stagiaire
             var trainee = await _repository.GetByIdAsync(command.Id);
             if (trainee == null)
                 throw new TraineeNotFoundException(command.Id);
 
-            // 2. Vérifier qu'il est actif
-            if (!trainee.IsActive)
-                throw new TraineeNotActiveException(command.Id);
+              var emailExists = await _repository.EmailExistsAsync(command.Data.Email);
+            if (emailExists && trainee.Email != command.Data.Email)
+                throw new TraineeAlreadyExistsException(command.Data.Email);
 
-            // 3. Modifier les champs
             trainee.Update(
                 command.Data.FirstName,
                 command.Data.LastName,
@@ -37,11 +45,19 @@ namespace InterManagement.Application.Features.Trainees.Commands.UpdateTrainee
                 command.Data.Status
             );
 
-            
-            // 4. Sauvegarder
+            trainee.IsActive = command.Data.IsActive;
+
             await _repository.UpdateAsync(trainee);
 
-            // 5. Retourner le DTO
+            // Invalide le cache
+            _cache.Remove(CacheKey);
+
+            await _activityLogger.LogAsync(
+                "Admin",
+                "Modification",
+                $"{trainee.FirstName} {trainee.LastName} modifié"
+            );
+
             return new TraineeDto
             {
                 Id         = trainee.Id,
@@ -59,40 +75,3 @@ namespace InterManagement.Application.Features.Trainees.Commands.UpdateTrainee
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

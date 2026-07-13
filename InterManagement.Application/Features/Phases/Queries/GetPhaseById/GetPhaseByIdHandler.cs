@@ -1,4 +1,5 @@
 using InterManagement.Application.Features.Phases.DTOs;
+using InterManagement.Application.Features.Weeks.DTOs;
 using InterManagement.Domain.Exceptions;
 using InterManagement.Domain.Repositories;
 
@@ -25,12 +26,25 @@ namespace InterManagement.Application.Features.Phases.Queries.GetPhaseById
                 Id          = phase.Id,
                 PhaseNumber = phase.PhaseNumber,
                 Title       = phase.Title,
-                Objective   = phase.Objective,
                 StartDate   = phase.StartDate,
                 EndDate     = phase.EndDate,
                 Status      = phase.Status,
-                TraineeId   = phase.TraineeId
+                TraineeId   = phase.TraineeId,
+                Weeks       = phase.Weeks
+                    .OrderBy(w => w.WeekNumber)
+                    .Select(w => new WeekDto
+                    {
+                        Id = w.Id,
+                        WeekNumber = w.WeekNumber,
+                        Course = w.Course,
+                        StartDate = w.StartDate,
+                        EndDate = w.EndDate,
+                        PhaseId = w.PhaseId,
+                        PhaseTitle = phase.Title
+                    })
+                    .ToList()
             };
         }
     }
 }
+

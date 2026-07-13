@@ -1,0 +1,45 @@
+@*
+=================================================
+PAGE ESPACE MENTOR
+Hero + tableau stagiaires assignés + formulaire
+feedback + historique des feedbacks + modals.
+=================================================
+*@
+@model InterManagement.Client.Models.MentorViewModel
+@{
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    ViewData["Title"] = "Espace Mentor";
+    ViewData["PublicNavActive"] = "Mentor";
+    ViewData["CurrentMentorId"] = Model.MentorId;
+    ViewData["CurrentTraineeId"] = Model.StagiairesAssignes
+        .Select(s => (int?)s.TraineeId)
+        .FirstOrDefault();
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/mentor.css" />
+}
+
+<div class="cursor"></div>
+<div class="cursor-follower"></div>
+<div class="bg-aura"></div>
+<div class="bg-grain"></div>
+
+@await Html.PartialAsync("~/Views/Shared/_Header.cshtml")
+
+<main class="main" id="main">
+
+    @await Html.PartialAsync("~/Views/Mentor/_MentorHero.cshtml", Model)
+    @await Html.PartialAsync("~/Views/Mentor/_StagiairesAssignesTable.cshtml", Model.StagiairesAssignes)
+    @await Html.PartialAsync("~/Views/Mentor/_MentorFeedbackForm.cshtml", Model)
+    @await Html.PartialAsync("~/Views/Mentor/_HistoriqueFeedbacksTable.cshtml", Model.HistoriqueFeedbacks)
+
+</main>
+
+@await Html.PartialAsync("~/Views/Home/_Footer.cshtml")
+@await Html.PartialAsync("~/Views/Home/_LoginModal.cshtml")
+@await Html.PartialAsync("~/Views/Mentor/_MentorModals.cshtml")
+
+@section Scripts {
+    <script src="~/js/mentor-space.js"></script>
+}

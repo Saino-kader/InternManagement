@@ -1,10 +1,10 @@
+// Server/Controllers/FeedbackController.cs
 using InterManagement.Application.Features.Feedbacks.Commands.CreateFeedback;
 using InterManagement.Application.Features.Feedbacks.Commands.UpdateFeedback;
 using InterManagement.Application.Features.Feedbacks.Commands.DeleteFeedback;
 using InterManagement.Application.Features.Feedbacks.Queries.GetFeedbacks;
 using InterManagement.Application.Features.Feedbacks.Queries.GetFeedbackById;
 using InterManagement.Application.Features.Feedbacks.DTOs;
-using InterManagement.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InterManagement.Server.Controllers
@@ -36,14 +36,17 @@ namespace InterManagement.Server.Controllers
         // GET api/feedback
         // GET api/feedback?traineeId=5
         // GET api/feedback?traineeId=5&count=3
+        // GET api/feedback?mentorId=7      ← NOUVEAU
         [HttpGet]
         public async Task<IActionResult> GetAll(
             [FromQuery] int? traineeId,
+            [FromQuery] int? mentorId,    // ← AJOUTÉ
             [FromQuery] int? count)
         {
             var query = new GetFeedbacksQuery
             {
                 TraineeId = traineeId,
+                MentorId  = mentorId,     // ← AJOUTÉ
                 Count     = count
             };
             var result = await _getHandler.Handle(query);
@@ -61,22 +64,17 @@ namespace InterManagement.Server.Controllers
 
         // POST api/feedback
         [HttpPost]
-        public async Task<IActionResult> Create(
-            [FromBody] CreateFeedbackDto dto)
+        public async Task<IActionResult> Create([FromBody] CreateFeedbackDto dto)
         {
             var command = new CreateFeedbackCommand(dto);
             var result  = await _createHandler.Handle(command);
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id = result.Id },
-                result);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
         // PUT api/feedback/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(
-            int id,
-            [FromBody] UpdateFeedbackDto dto)
+            int id, [FromBody] UpdateFeedbackDto dto)
         {
             var command = new UpdateFeedbackCommand(id, dto);
             var result  = await _updateHandler.Handle(command);

@@ -13,5 +13,11 @@ namespace InterManagement.Domain.Repositories
         // Supprimer par phase et numéro
         Task DeleteByPhaseAndNumberAsync(
             int phaseId, int weekNumber);
+
+
+        // APRÈS — nouvelle signature simplifiée
+        Task<WeeklyFollowUp?> GetByTraineeAndWeekAsync(
+            int traineeId, int weekId);
+
     }
 }

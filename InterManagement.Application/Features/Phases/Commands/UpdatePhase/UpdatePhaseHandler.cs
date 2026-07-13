@@ -32,7 +32,6 @@ namespace InterManagement.Application.Features.Phases.Commands.UpdatePhase
             // 3. Modifier
             phase.Update(
                 command.Data.Title,
-                command.Data.Objective,
                 command.Data.StartDate,
                 command.Data.EndDate,
                 command.Data.Status
@@ -47,7 +46,6 @@ namespace InterManagement.Application.Features.Phases.Commands.UpdatePhase
                 Id          = phase.Id,
                 PhaseNumber = phase.PhaseNumber,
                 Title       = phase.Title,
-                Objective   = phase.Objective,
                 StartDate   = phase.StartDate,
                 EndDate     = phase.EndDate,
                 Status      = phase.Status,
@@ -56,3 +54,4 @@ namespace InterManagement.Application.Features.Phases.Commands.UpdatePhase
         }
     }
 }
+

@@ -24,16 +24,17 @@ namespace InterManagement.Application.Features.WeeklyFollowUps.Queries.GetWeekly
             return new WeeklyFollowUpDto
             {
                 Id           = followUp.Id,
-                WeekNumber   = followUp.WeekNumber,
                 FollowUpDate = followUp.FollowUpDate,
                 Status       = followUp.Status,
                 Comment      = followUp.Comment,
+                CourseName   = followUp.CourseName,
+                Appreciation = followUp.Appreciation,
+                WeekNumber   = followUp.Week.WeekNumber,
+                WeekId       = followUp.WeekId,
                 TraineeId    = followUp.TraineeId,
                 TraineeName  = $"{followUp.Trainee.FirstName} {followUp.Trainee.LastName}",
                 MentorId     = followUp.MentorId,
-                MentorName   = $"{followUp.Mentor.FirstName} {followUp.Mentor.LastName}",
-                PhaseId      = followUp.PhaseId,
-                PhaseTitle   = followUp.Phase.Title
+                MentorName   = $"{followUp.Mentor.FirstName} {followUp.Mentor.LastName}"
             };
         }
     }

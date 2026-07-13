@@ -1,0 +1,35 @@
+@*
+=================================================
+FORMULAIRE FEEDBACK
+Formulaire unifié avec la page Mentor.
+Le modèle Feedback persiste uniquement TraineeId +
+Message, donc aucun sélecteur de semaine/phase.
+=================================================
+*@
+@model InterManagement.Client.Models.StagiaireViewModel
+
+<div class="feedback-premium">
+    <div class="feedback-premium-header">
+        <h3><i class="fas fa-pen-fancy"></i> Envoyer un feedback</h3>
+        <p>Partagez vos observations, difficultés et suggestions.</p>
+    </div>
+
+    <form id="feedbackForm" method="post" asp-controller="Stagiaire" asp-action="SendFeedback">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="TraineeId" value="@Model.TraineeId" />
+
+        <div class="form-grid">
+            <div class="form-group form-full">
+                <label for="feedbackMessage">Commentaire</label>
+                <textarea name="Message" id="feedbackMessage"
+                          placeholder="Partagez vos pensées, difficultés, suggestions..." required></textarea>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-paper-plane"></i> Envoyer feedback
+            </button>
+        </div>
+    </form>
+</div>

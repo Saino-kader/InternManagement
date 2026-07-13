@@ -1,0 +1,19 @@
+@*
+=================================================
+ONGLETS DE NAVIGATION DES PHASES
+4 boutons "Phase 1" à "Phase 4". Le changement
+d'onglet actif est géré en JS (stagiaire-space.js),
+le contenu de chaque phase est déjà tout présent
+dans le HTML (caché/affiché via la classe .active).
+=================================================
+*@
+@model List<InterManagement.Client.Models.StagiairePhaseItem>
+
+<div class="phase-orbit">
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <button class="phase-orbit-btn @(i == 0 ? "active" : "")" data-phase="@Model[i].PhaseNumber">
+            Phase @Model[i].PhaseNumber
+        </button>
+    }
+</div>

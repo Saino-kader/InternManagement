@@ -4,6 +4,7 @@ using InterManagement.Application.Features.Phases.Commands.DeletePhase;
 using InterManagement.Application.Features.Phases.Queries.GetPhases;
 using InterManagement.Application.Features.Phases.Queries.GetPhaseById;
 using InterManagement.Application.Features.Phases.DTOs;
+using InterManagement.Application.Features.Phases.Commands.CreatePhaseForMultipleTrainees;
 using InterManagement.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,19 +19,22 @@ namespace InterManagement.Server.Controllers
         private readonly DeletePhaseHandler  _deleteHandler;
         private readonly GetPhasesHandler    _getHandler;
         private readonly GetPhaseByIdHandler _getByIdHandler;
+        private readonly CreatePhaseForMultipleTraineesHandler _multiCreateHandler;
 
         public PhaseController(
             CreatePhaseHandler  createHandler,
             UpdatePhaseHandler  updateHandler,
             DeletePhaseHandler  deleteHandler,
             GetPhasesHandler    getHandler,
-            GetPhaseByIdHandler getByIdHandler)
+            GetPhaseByIdHandler getByIdHandler,
+            CreatePhaseForMultipleTraineesHandler multiCreateHandler)
         {
             _createHandler  = createHandler;
             _updateHandler  = updateHandler;
             _deleteHandler  = deleteHandler;
             _getHandler     = getHandler;
             _getByIdHandler = getByIdHandler;
+            _multiCreateHandler = multiCreateHandler;
         }
 
         // GET api/phase
@@ -65,6 +69,17 @@ namespace InterManagement.Server.Controllers
                 new { id = result.Id },
                 result);
         }
+
+        // POST api/phase/multi-create
+        [HttpPost("multi-create")]
+        public async Task<IActionResult> CreateForMultipleTrainees(
+            [FromBody] CreatePhaseForMultipleTraineesDto dto)
+        {
+            var command = new CreatePhaseForMultipleTraineesCommand(dto);
+            var result = await _multiCreateHandler.Handle(command);
+            return Ok(result);
+        }
+
 
         // PUT api/phase/5
         [HttpPut("{id}")]

@@ -1,0 +1,25 @@
+@*
+=================================================
+HERO MENTOR
+Message de bienvenue + nombre de stagiaires
+assignés (calculé depuis les vraies données).
+=================================================
+*@
+@model InterManagement.Client.Models.MentorViewModel
+
+<div class="mentor-hero">
+    <div class="welcome-card">
+        <div class="welcome-text">
+            <h1>Bienvenue, @Model.MentorName</h1>
+            <p>Consultez vos stagiaires assignés et envoyez vos retours hebdomadaires.</p>
+        </div>
+        <div class="stats-mini">
+            <div class="stat-mini-card">
+                <div class="stat-number" id="totalStagiaires">
+                    @Model.StagiairesAssignes.Select(s => s.TraineeId).Distinct().Count()
+                </div>
+                <div class="stat-label">Stagiaires assignés</div>
+            </div>
+        </div>
+    </div>
+</div>

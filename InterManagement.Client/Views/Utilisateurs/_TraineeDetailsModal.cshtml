@@ -1,0 +1,64 @@
+@*
+=================================================
+MODAL DETAIL STAGIAIRE
+Affiche les informations détaillées depuis la ligne
+sélectionnée du tableau stagiaires.
+=================================================
+*@
+<div id="traineeDetailsModal" class="modal">
+    <div class="modal-content" style="max-width: 680px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-user-graduate"></i> Détail stagiaire</h3>
+            <button class="modal-close" onclick="closeModal('traineeDetailsModal')">&times;</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nom complet</label>
+                    <input type="text" id="detailTraineeFullName" readonly />
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" id="detailTraineeEmail" readonly />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Spécialité</label>
+                    <input type="text" id="detailTraineeSpecialty" readonly />
+                </div>
+                <div class="form-group">
+                    <label>Structure</label>
+                    <input type="text" id="detailTraineeUniversity" readonly />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Thème</label>
+                <input type="text" id="detailTraineeTheme" readonly />
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Date début</label>
+                    <input type="text" id="detailTraineeStartDate" readonly />
+                </div>
+                <div class="form-group">
+                    <label>Date fin</label>
+                    <input type="text" id="detailTraineeEndDate" readonly />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Statut</label>
+                <input type="text" id="detailTraineeStatus" readonly />
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeModal('traineeDetailsModal')">Fermer</button>
+        </div>
+    </div>
+</div>

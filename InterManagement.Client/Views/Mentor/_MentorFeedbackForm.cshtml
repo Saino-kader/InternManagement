@@ -1,0 +1,34 @@
+@*
+=================================================
+FORMULAIRE FEEDBACK MENTOR
+Un seul champ textarea.
+Le mentor écrit son message et l'envoie à l'Admin.
+Pas de sélection de stagiaire.
+=================================================
+*@
+@model InterManagement.Client.Models.MentorViewModel
+
+<div class="feedback-premium">
+    <div class="feedback-premium-header">
+        <h3><i class="fas fa-pen-fancy"></i> Envoyer un message</h3>
+        <p>Écrivez votre message à destination de l'administrateur.</p>
+    </div>
+
+    <form method="post" asp-controller="MentorSpace" asp-action="SendFeedback">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="mentorId" value="@Model.MentorId" />
+
+        <div class="form-group">
+            <label for="feedbackMessage">Message</label>
+            <textarea name="message" id="feedbackMessage" rows="5"
+                      placeholder="Écrivez votre message ici..."
+                      required></textarea>
+        </div>
+
+        <div class="form-actions" style="margin-top: 1rem;">
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-paper-plane"></i> Envoyer
+            </button>
+        </div>
+    </form>
+</div>

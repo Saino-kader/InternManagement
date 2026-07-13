@@ -1,0 +1,125 @@
+@*
+=================================================
+PAGE DE CONNEXION — UNIFORMISÉE
+Même design que _LoginModal.cshtml
+Affichée quand un utilisateur non connecté
+essaie d'accéder à une page protégée.
+=================================================
+*@
+@model InterManagement.Client.Services.LoginDto
+@{
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    ViewData["Title"] = "Connexion";
+}
+
+@section Styles {
+    @* On charge home.css qui contient déjà toutes les
+       classes du modal : login-modal-content,
+       login-input-group, login-input-wrapper,
+       login-submit-btn, login-password-toggle *@
+    <link rel="stylesheet" href="~/css/home.css" />
+}
+
+@* Même fond sombre que le modal *@
+<div style="min-height: 100vh; display: flex;
+            align-items: center; justify-content: center;
+            background: var(--bg-dark, #0a0a0f);">
+
+    @* On réutilise EXACTEMENT la même boîte blanche du modal *@
+    <div class="login-modal-content" style="position: relative;
+         transform: none; max-width: 450px; width: 100%;
+         margin: 2rem;">
+
+        @* Logo GABERA en haut *@
+        <div class="login-modal-header">
+            <a asp-controller="Home" asp-action="Index"
+               style="text-decoration: none;">
+                <h1 style="font-size: 1.8rem; font-weight: 800;
+                            color: white; margin-bottom: 0.5rem;">
+                    GABERA<span style="color: var(--accent, #6c63ff);">.</span>
+                </h1>
+            </a>
+            <h2>Bienvenue</h2>
+            <p>Connectez-vous pour accéder à votre espace</p>
+        </div>
+
+        @* Message d'erreur — affiché seulement si erreur *@
+        @if (ViewBag.Error != null)
+        {
+            <div style="background: rgba(255,50,50,0.15);
+                        border: 1px solid rgba(255,50,50,0.3);
+                        color: #ff6b6b; padding: 1rem;
+                        border-radius: 12px; margin: 0 2rem 1rem;
+                        font-size: 0.9rem;">
+                <i class="fas fa-exclamation-circle"></i>
+                @ViewBag.Error
+            </div>
+        }
+
+        @* Formulaire — même structure que _LoginModal.cshtml *@
+        <form class="login-modal-form" method="post"
+              asp-controller="Account" asp-action="Login"
+              asp-route-returnUrl="@ViewBag.ReturnUrl">
+            @Html.AntiForgeryToken()
+
+            <div class="login-input-group">
+                <label for="loginEmail">Email</label>
+                <div class="login-input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" name="Email" id="loginEmail"
+                           placeholder="votre@email.com"
+                           required autocomplete="off" />
+                </div>
+            </div>
+
+            <div class="login-input-group">
+                <label for="loginPassword">Mot de passe</label>
+                <div class="login-input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="Password" id="loginPassword"
+                           placeholder="••••••••"
+                           required autocomplete="off" />
+                    <button type="button"
+                            class="login-password-toggle"
+                            id="passwordToggle">
+                        <i class="fas fa-eye" id="eyeIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="login-submit-btn">
+                <span>Se connecter</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+
+        </form>
+
+        @* Lien retour accueil *@
+        <div style="text-align: center; padding: 1rem 2rem 2rem;">
+            <a asp-controller="Home" asp-action="Index"
+               style="color: rgba(255,255,255,0.4);
+                      font-size: 0.85rem; text-decoration: none;">
+                ← Retour à l'accueil
+            </a>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Toggle affichage/masquage du mot de passe
+        document.getElementById('passwordToggle')
+            ?.addEventListener('click', function () {
+                const input = document.getElementById('loginPassword');
+                const icon = document.getElementById('eyeIcon');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.className = 'fas fa-eye-slash';
+                } else {
+                    input.type = 'password';
+                    icon.className = 'fas fa-eye';
+                }
+            });
+    </script>
+}

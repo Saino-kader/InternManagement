@@ -1,0 +1,66 @@
+@*
+=================================================
+CONTENU D'UNE PHASE — CARTES DE SEMAINES
+Affiche les vraies cartes "week-card" directement
+en Razor, à partir des données de l'API (WeekDto).
+Plus de data-* vides à reconstruire en JS : Razor
+génère directement le HTML final.
+=================================================
+*@
+@model InterManagement.Client.Models.StagiairePhaseItem
+
+<div id="phase@(Model.PhaseNumber)"
+     class="phase-dimension @(Model.PhaseNumber == 1 ? "active" : "")"
+     data-phase-id="@Model.PhaseNumber">
+
+    <div class="weeks-universe" id="weeks@(Model.PhaseNumber)">
+        @if (!Model.Weeks.Any())
+        {
+            <p>Aucune semaine configurée pour cette phase.</p>
+        }
+        else
+        {
+            @foreach (var week in Model.Weeks.OrderBy(w => w.WeekNumber))
+            {
+                <div class="week-card">
+                    <div class="week-header">
+                        <div class="week-badge">semaine @week.WeekNumber</div>
+                        <h3>@week.Course</h3>
+                    </div>
+                    <div class="week-body">
+
+
+                        <div class="week-info-row">
+                            <div class="week-info-icon">
+                                <i class="fas fa-chalkboard-user"></i>
+                            </div>
+                            <div class="week-info-content">
+                                <div class="week-info-label">Mentor</div>
+                                <div class="week-info-value">
+                                    @(string.IsNullOrWhiteSpace(Model.MentorName) ? "Non assigné" : Model.MentorName)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="week-info-row">
+                            <div class="week-info-icon">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="week-info-content">
+                                <div class="week-info-label">@(string.IsNullOrWhiteSpace(Model.Title) ? $"Phase {Model.PhaseNumber}" : Model.Title)</div>
+                                <div class="week-info-value">
+                                    @week.StartDate.ToString("d MMM",
+                                        new System.Globalization.CultureInfo("fr-FR"))
+                                    →
+                                    @week.EndDate.ToString("d MMM",
+                                        new System.Globalization.CultureInfo("fr-FR"))
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

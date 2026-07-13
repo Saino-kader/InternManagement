@@ -1,0 +1,63 @@
+@*
+=================================================
+MODALS DE L'ESPACE MENTOR
+- Détails d'un stagiaire (avec son historique)
+- Détail complet d'un commentaire
+- Confirmation de suppression
+Le contenu de chaque modal est injecté par
+mentor-space.js à partir des data-attributes,
+pas de données mockées.
+=================================================
+*@
+
+<div class="modal" id="viewStagiaireModal">
+    <div class="modal-backdrop" onclick="closeModal('viewStagiaireModal')"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-user-graduate"></i> Détails du stagiaire</h3>
+            <button class="modal-close" onclick="closeModal('viewStagiaireModal')">&times;</button>
+        </div>
+        <div class="modal-body" id="viewStagiaireContent"></div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal('viewStagiaireModal')">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="viewCommentModal">
+    <div class="modal-backdrop" onclick="closeModal('viewCommentModal')"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-comment"></i> Détail du commentaire</h3>
+            <button class="modal-close" onclick="closeModal('viewCommentModal')">&times;</button>
+        </div>
+        <div class="modal-body" id="viewCommentContent"></div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal('viewCommentModal')">Fermer</button>
+        </div>
+    </div>
+</div>
+
+@* Le modal de suppression générique (#deleteModal) est déjà
+   fourni par _DeleteConfirmModal.cshtml côté Admin — mais
+   cette page publique mentor n'utilise pas le Layout Admin,
+   donc on le redéclare ici avec le même comportement
+   (data-delete-url branché automatiquement par site.js) *@
+<div class="modal" id="deleteModal">
+    <div class="modal-backdrop" onclick="closeModal('deleteModal')"></div>
+    <div class="modal-content" style="max-width: 400px">
+        <div class="modal-header">
+            <h3><i class="fas fa-trash"></i> Confirmer la suppression</h3>
+            <button class="modal-close" onclick="closeModal('deleteModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p id="deleteModalMessage">
+                Êtes-vous sûr de vouloir supprimer ce feedback ? Cette action est irréversible.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal('deleteModal')">Annuler</button>
+            <button class="btn-primary" id="confirmDeleteBtn" style="background: var(--danger)">Supprimer</button>
+        </div>
+    </div>
+</div>

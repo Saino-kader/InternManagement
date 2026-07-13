@@ -1,0 +1,157 @@
+@*
+=================================================
+PAGE ADMIN — MESSAGES
+Affiche TOUS les messages (Stagiaires + Mentors).
+Colonnes : Nom | Date | Message (œil) | Action
+=================================================
+*@
+@model List<InterManagement.Application.Features.Feedbacks.DTOs.FeedbackDto>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Messages";
+    ViewData["ActivePage"] = "feedbacks";
+}
+
+<div class="head-title">
+    <div>
+        <h1><i class="fas fa-envelope-open-text"></i> Messages</h1>
+        <div class="breadcrumb">
+            <span>Accueil</span>
+            <i class="fas fa-chevron-right"></i>
+            <span>Messages</span>
+        </div>
+    </div>
+</div>
+
+@* Token CSRF pour suppressions *@
+<form style="display:none;">@Html.AntiForgeryToken()</form>
+
+<div class="table-container">
+    <div style="overflow-x: auto">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Date</th>
+                    <th>Message</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="4" style="text-align:center; padding:2rem;">
+                            Aucun message disponible
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var f in Model)
+                    {
+                        <tr data-feedback-id="@f.Id"
+                            data-nom="@f.SenderName"
+                            data-date="@f.SentAt.ToString("dd/MM/yyyy HH:mm")"
+                            data-message="@f.Message"
+                            data-sender-type="@f.SenderType">
+
+                            @* NOM avec icône selon le type *@
+                            <td>
+                                @if (f.SenderType == "Mentor")
+                                {
+                                    <i class="fas fa-chalkboard-user"
+                                       style="color:var(--primary); margin-right:6px;"></i>
+                                }
+                                else
+                                {
+                                    <i class="fas fa-user-graduate"
+                                       style="color:var(--success); margin-right:6px;"></i>
+                                }
+                                @f.SenderName
+                            </td>
+
+                            @* DATE *@
+                            <td>@f.SentAt.ToString("dd/MM/yyyy")</td>
+
+                            @* ICÔNE ŒIL *@
+                            <td>
+                                <button class="action-btn view"
+                                        onclick="openAdminMessageDetail(this)"
+                                        aria-label="Voir le message">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+
+                            @* SUPPRESSION *@
+                            <td>
+                                <button class="action-btn delete"
+                                        data-delete-url="/Feedback/Delete/@f.Id"
+                                        data-delete-name="ce message"
+                                        aria-label="Supprimer le message">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@* Modal détail message *@
+<div id="adminMessageModal" class="modal">
+    <div class="modal-content" style="max-width: 520px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-envelope-open-text"></i> Détail du message</h3>
+            <button class="modal-close"
+                    onclick="closeModal('adminMessageModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div style="display:flex; flex-direction:column; gap:1.2rem;">
+
+                <div>
+                    <div style="font-size:0.75rem; color:var(--text-light);
+                                text-transform:uppercase; letter-spacing:0.05em;
+                                margin-bottom:4px;">Nom</div>
+                    <div id="adminMsgNom" style="font-weight:600;"></div>
+                </div>
+
+                <div>
+                    <div style="font-size:0.75rem; color:var(--text-light);
+                                text-transform:uppercase; letter-spacing:0.05em;
+                                margin-bottom:4px;">Date</div>
+                    <div id="adminMsgDate" style="color:var(--text-soft);"></div>
+                </div>
+
+                <div>
+                    <div style="font-size:0.75rem; color:var(--text-light);
+                                text-transform:uppercase; letter-spacing:0.05em;
+                                margin-bottom:4px;">Message</div>
+                    <div id="adminMsgContent"
+                         style="background:var(--bg); border-radius:var(--radius-sm);
+                                padding:1rem; line-height:1.7;"></div>
+                </div>
+
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary"
+                    onclick="closeModal('adminMessageModal')">Fermer</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function openAdminMessageDetail(btn) {
+        const row = btn.closest('tr');
+        document.getElementById('adminMsgNom').textContent     = row.dataset.nom;
+        document.getElementById('adminMsgDate').textContent    = row.dataset.date;
+        document.getElementById('adminMsgContent').textContent = row.dataset.message;
+        openModal('adminMessageModal');
+    }
+    window.openAdminMessageDetail = openAdminMessageDetail;
+</script>
+}

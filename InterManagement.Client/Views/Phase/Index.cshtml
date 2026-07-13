@@ -1,0 +1,55 @@
+@*
+=================================================
+PAGE PHASES (Paramètres)
+Affiche les accordéons par numéro de phase.
+Chaque accordéon contient 1 bloc par stagiaire,
+avec ses semaines indépendantes.
+=================================================
+*@
+@model InterManagement.Client.Models.PhasesViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Paramètres des phases";
+    ViewData["ActivePage"] = "phases";
+}
+
+<div class="head-title">
+    <div>
+        <h1>Paramètres des phases</h1>
+        <div class="breadcrumb">
+            <span>Accueil</span>
+            <i class="fas fa-chevron-right"></i>
+            <span>Phases</span>
+        </div>
+    </div>
+    <button class="btn-primary" id="openPhaseBtn">
+        <i class="fas fa-plus"></i> Ajouter une phase
+    </button>
+</div>
+
+@if (!Model.AccordionItems.Any())
+{
+    <div style="text-align:center; padding:3rem; color:var(--text-soft);">
+        <i class="fas fa-layer-group" style="font-size:3rem; margin-bottom:1rem; display:block;"></i>
+        Aucune phase configurée. Cliquez sur "Ajouter une phase" pour commencer.
+    </div>
+}
+else
+{
+    <div id="phasesAccordionContainer">
+        @foreach (var item in Model.AccordionItems)
+        {
+            @await Html.PartialAsync("_PhaseAccordion", item)
+        }
+    </div>
+}
+
+@* Modal Ajouter une phase *@
+@await Html.PartialAsync("_PhaseModal", Model)
+
+@* Modal Ajouter une semaine (ouvert depuis chaque bloc stagiaire) *@
+@await Html.PartialAsync("_AddWeekModal")
+
+@section Scripts {
+    <script src="~/js/phases.js"></script>
+}

@@ -1,0 +1,37 @@
+@*
+=================================================
+SECTION STATISTIQUES
+3 cartes : stagiaires actifs, terminés, mentors actifs.
+Les valeurs viennent de l'API (GET /api/dashboard/stats),
+plus aucune valeur n'est codée en dur dans le HTML.
+=================================================
+*@
+@model InterManagement.Application.Features.Dashboard.DTOs.DashboardStatsDto
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+        <div class="stat-info">
+            <h3 id="totalStagiairesActifs">@Model.ActiveTraineesCount</h3>
+            <p>Stagiaires actifs</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-info">
+            <h3 id="totalStagiairesTermines">@Model.CompletedTraineesCount</h3>
+            <p>Stagiaires terminés</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-chalkboard-user"></i></div>
+        <div class="stat-info">
+            <h3 id="totalMentorsActifs">@Model.ActiveMentorsCount</h3>
+            <p>Mentors actifs</p>
+        </div>
+    </div>
+
+</div>

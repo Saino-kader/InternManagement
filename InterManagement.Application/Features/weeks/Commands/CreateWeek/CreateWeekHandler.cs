@@ -1,3 +1,4 @@
+// Application/Features/Weeks/Commands/CreateWeek/CreateWeekHandler.cs
 using InterManagement.Application.Features.Weeks.DTOs;
 using InterManagement.Domain.Entities;
 using InterManagement.Domain.Exceptions;
@@ -7,36 +8,43 @@ namespace InterManagement.Application.Features.Weeks.Commands.CreateWeek
 {
     public class CreateWeekHandler
     {
-        private readonly IWeekRepository  _repository;
+        private readonly IWeekRepository  _weekRepository;
         private readonly IPhaseRepository _phaseRepository;
 
         public CreateWeekHandler(
             IWeekRepository  weekRepository,
             IPhaseRepository phaseRepository)
         {
-            _repository      = weekRepository;
+            _weekRepository  = weekRepository;
             _phaseRepository = phaseRepository;
         }
 
         public async Task<WeekDto> Handle(CreateWeekCommand command)
         {
-            // 1. Vérifier Phase existe
-            var phase = await _phaseRepository
-                .GetByIdAsync(command.Data.PhaseId);
+            // 1. Vérifier que la phase existe
+            var phase = await _phaseRepository.GetByIdAsync(command.Data.PhaseId);
             if (phase == null)
-                throw new PhaseNotFoundException(
-                    command.Data.PhaseId);
+                throw new PhaseNotFoundException(command.Data.PhaseId);
 
-            // 2. Vérifier semaine pas déjà existante
-            var exists = await _repository.WeekExistsAsync(
+            // 2. Vérifier l'unicité du numéro de semaine dans cette phase
+            //    WeekExistsAsync(phaseId, weekNumber) existe déjà dans WeekRepository ✅
+            var exists = await _weekRepository.WeekExistsAsync(
                 command.Data.PhaseId,
                 command.Data.WeekNumber);
+
             if (exists)
                 throw new WeekAlreadyExistsException(
                     command.Data.PhaseId,
                     command.Data.WeekNumber);
 
-            // 3. Créer la semaine
+            // 3. Vérifications métier
+            if (command.Data.WeekNumber <= 0)
+                throw new DomainException("Le numéro de semaine doit être supérieur à 0");
+
+            if (command.Data.EndDate <= command.Data.StartDate)
+                throw new DomainException("La date de fin doit être après la date de début");
+
+            // 4. Créer la semaine
             var week = new Week(
                 command.Data.WeekNumber,
                 command.Data.Course,
@@ -45,10 +53,8 @@ namespace InterManagement.Application.Features.Weeks.Commands.CreateWeek
                 command.Data.PhaseId
             );
 
-            // 4. Sauvegarder
-            await _repository.AddAsync(week);
+            await _weekRepository.AddAsync(week);
 
-            // 5. Retourner DTO
             return new WeekDto
             {
                 Id         = week.Id,

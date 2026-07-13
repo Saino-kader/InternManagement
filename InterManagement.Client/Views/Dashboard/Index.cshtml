@@ -1,0 +1,71 @@
+@*
+=================================================
+PAGE DASHBOARD
+Vue d'ensemble : statistiques et activité récente.
+Les données viennent de Model (DashboardViewModel),
+rempli par DashboardController depuis l'API.
+=================================================
+*@
+@model InterManagement.Client.Models.DashboardViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Dashboard";
+    ViewData["ActivePage"] = "dashboard";
+}
+
+<div class="head-title">
+    <div>
+        <h1>Dashboard</h1>
+        <div class="breadcrumb">
+            <span>Accueil</span>
+            <i class="fas fa-chevron-right"></i>
+            <span>Dashboard</span>
+        </div>
+    </div>
+</div>
+
+@* ===== CARTES STATISTIQUES ===== *@
+@await Html.PartialAsync("_StatsSection", Model.Stats)
+
+@* ===== TABLEAU ACTIVITÉ RÉCENTE ===== *@
+@await Html.PartialAsync("_RecentActivityTable", Model.RecentActivities)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

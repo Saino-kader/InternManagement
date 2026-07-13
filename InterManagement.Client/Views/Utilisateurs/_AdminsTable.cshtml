@@ -1,0 +1,80 @@
+@*
+=================================================
+TABLEAU ADMINISTRATEURS
+=================================================
+*@
+@model List<InterManagement.Application.Features.Admins.DTOs.AdminDto>
+
+<div class="table-container">
+    <div class="table-header">
+        <h3><i class="fas fa-user-shield"></i> Administrateurs</h3>
+    </div>
+    <div style="overflow-x: auto">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Nom complet</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="adminsList">
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="5" style="text-align:center;">Aucun administrateur</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var a in Model)
+                    {
+                        var isActive = a.IsActive;
+                        <tr data-user-id="@a.Id"
+                            data-user-type="admin"
+                            data-nom="@a.LastName"
+                            data-prenom="@a.FirstName"
+                            data-email="@a.Email"
+                            data-statut="@(isActive ? "Actif" : "Inactif")">
+                            <td>@a.FirstName @a.LastName</td>
+                            <td>@a.Email</td>
+                            <td>Administrateur</td>
+                            <td>
+                                @await Html.PartialAsync(
+                                    "~/Views/Shared/Components/_StatusBadge.cshtml",
+                                    isActive ? "Actif" : "Inactif")
+                            </td>
+                            <td class="action-btns">
+                                @if (isActive)
+                                {
+                                    <button class="action-btn edit"
+                                            onclick="openEditUserModal(this)"
+                                            aria-label="Modifier @a.FirstName @a.LastName">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                    <button class="action-btn delete"
+                                            data-delete-url="/Utilisateurs/DeleteAdmin/@a.Id"
+                                            data-delete-name="@a.FirstName @a.LastName"
+                                            aria-label="Supprimer @a.FirstName @a.LastName">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="action-btn edit" disabled aria-label="Utilisateur inactif">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                    <button class="action-btn delete" disabled aria-label="Utilisateur inactif">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

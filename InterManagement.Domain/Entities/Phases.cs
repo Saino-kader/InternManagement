@@ -7,7 +7,6 @@ namespace InterManagement.Domain.Entities
     {
         public int PhaseNumber { get; private set; }
         public string Title { get; private set; } = string.Empty;
-        public string Objective { get; private set; } = string.Empty;
         public DateOnly StartDate { get; private set; }
         public DateOnly EndDate { get; private set; }
         public PhaseStatus Status { get; private set; }
@@ -27,7 +26,6 @@ namespace InterManagement.Domain.Entities
         public Phase(
             int phaseNumber,
             string title,
-            string objective,
             DateOnly startDate,
             DateOnly endDate,
             int traineeId)
@@ -39,19 +37,15 @@ namespace InterManagement.Domain.Entities
             if (string.IsNullOrWhiteSpace(title))
                 throw new DomainException("Le titre est obligatoire");
 
-            if (string.IsNullOrWhiteSpace(objective))
-                throw new DomainException("L'objectif est obligatoire");
-
             if (endDate <= startDate)
                 throw new DomainException("La date de fin doit être après la date de début");
 
             if (traineeId <= 0)
-                throw new DomainException("L'ID du stagiaire est requis");
+                throw new DomainException("Le nom du stagiaire  est obligatoire");
 
             // ── Assignation 
             PhaseNumber = phaseNumber;
             Title       = title;
-            Objective   = objective;
             StartDate   = startDate;
             EndDate     = endDate;
             TraineeId   = traineeId;
@@ -61,7 +55,6 @@ namespace InterManagement.Domain.Entities
         // ── Méthode Update 
         public void Update(
             string title,
-            string objective,
             DateOnly startDate,
             DateOnly endDate,
             PhaseStatus status)
@@ -69,14 +62,10 @@ namespace InterManagement.Domain.Entities
             if (string.IsNullOrWhiteSpace(title))
                 throw new DomainException("Le titre est obligatoire");
 
-            if (string.IsNullOrWhiteSpace(objective))
-                throw new DomainException("L'objectif est obligatoire");
-
             if (endDate <= startDate)
                 throw new DomainException("La date de fin doit être après la date de début");
 
             Title     = title;
-            Objective = objective;
             StartDate = startDate;
             EndDate   = endDate;
             Status    = status;
@@ -85,3 +74,4 @@ namespace InterManagement.Domain.Entities
     }
 
 }
+

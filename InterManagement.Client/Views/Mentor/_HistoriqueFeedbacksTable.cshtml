@@ -1,0 +1,105 @@
+@*
+=================================================
+TABLEAU HISTORIQUE DES FEEDBACKS MENTOR
+3 colonnes uniquement :
+Date | Message (icône œil → modal) | Action (poubelle)
+=================================================
+*@
+@model List<InterManagement.Application.Features.Feedbacks.DTOs.FeedbackDto>
+
+<div class="section-header">
+    <div>
+        <h2 class="section-title">Mes messages envoyés</h2>
+        <div class="section-title-line"></div>
+    </div>
+</div>
+
+<div class="table-container">
+    <div style="overflow-x: auto">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Message</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="3" style="text-align:center; padding:2rem;">
+                            Aucun message envoyé
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var f in Model)
+                    {
+                        <tr data-feedback-id="@f.Id"
+                            data-message="@f.Message"
+                            data-date="@f.SentAt.ToString("dd/MM/yyyy HH:mm")">
+
+                            @* Date *@
+                            <td>@f.SentAt.ToString("dd/MM/yyyy")</td>
+
+                            @* Icône œil → ouvre le modal avec le message *@
+                            <td>
+                                <button class="action-btn view"
+                                        onclick="viewMentorMessage(this)"
+                                        aria-label="Voir le message">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+
+                            @* Icône poubelle → supprime *@
+                            <td>
+                                <button class="action-btn delete"
+                                        data-delete-url="/MentorSpace/DeleteFeedback/@f.Id?mentorId=@ViewBag.MentorId"
+                                        data-delete-name="ce message"
+                                        aria-label="Supprimer le message">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@* Modal pour afficher le message complet *@
+<div id="mentorMessageModal" class="modal">
+    <div class="modal-backdrop" onclick="closeModal('mentorMessageModal')"></div>
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-envelope-open-text"></i> Message</h3>
+            <button class="modal-close"
+                    onclick="closeModal('mentorMessageModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:0.85rem; color:var(--text-light);
+                      margin-bottom:0.5rem;" id="mentorMsgDate"></p>
+            <div id="mentorMsgContent"
+                 style="background:var(--bg); border-radius:var(--radius-sm);
+                        padding:1rem; line-height:1.7;">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary"
+                    onclick="closeModal('mentorMessageModal')">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function viewMentorMessage(btn) {
+        const row = btn.closest('tr');
+        document.getElementById('mentorMsgDate').textContent    = row.dataset.date;
+        document.getElementById('mentorMsgContent').textContent = row.dataset.message;
+        openModal('mentorMessageModal');
+    }
+    window.viewMentorMessage = viewMentorMessage;
+</script>

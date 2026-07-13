@@ -1,0 +1,57 @@
+@*
+=================================================
+PAGE ESPACE STAGIAIRE
+Affiche les 4 phases du parcours (onglets + cartes
+de semaines) et le formulaire de feedback.
+Réutilise le header/footer/modal de connexion de
+la page publique pour garder le même style.
+=================================================
+*@
+@model InterManagement.Client.Models.StagiaireViewModel
+@{
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    ViewData["Title"] = "Espace Stagiaire";
+    ViewData["PublicNavActive"] = "Stagiaire";
+    ViewData["CurrentTraineeId"] = Model.TraineeId;
+    ViewData["CurrentMentorId"] = Model.Phases
+        .Select(p => p.MentorId)
+        .FirstOrDefault(id => id.HasValue);
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/stagiaire.css" />
+}
+
+<div class="cursor"></div>
+<div class="cursor-follower"></div>
+<div class="bg-aura"></div>
+<div class="bg-grain"></div>
+
+@await Html.PartialAsync("~/Views/Shared/_Header.cshtml")
+
+<main class="main" id="main">
+
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">phases du stage</h2>
+            <div class="section-title-line"></div>
+        </div>
+    </div>
+
+    @await Html.PartialAsync("_PhaseTabs", Model.Phases)
+
+    @foreach (var phase in Model.Phases)
+    {
+        @await Html.PartialAsync("_WeekContent", phase)
+    }
+
+    @await Html.PartialAsync("_FeedbackForm", Model)
+
+</main>
+
+@await Html.PartialAsync("~/Views/Home/_Footer.cshtml")
+@await Html.PartialAsync("~/Views/Home/_LoginModal.cshtml")
+
+@section Scripts {
+    <script src="~/js/stagiaire-space.js"></script>
+}

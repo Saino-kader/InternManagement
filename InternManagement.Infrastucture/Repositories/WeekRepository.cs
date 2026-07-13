@@ -14,7 +14,7 @@ namespace InternManagement.Infrastructure.Repositories
             _context = context;
         }
 
-        // ── CRUD de base ──────────────────────
+        // ── CRUD de base 
 
         public async Task<IEnumerable<Week>> GetAllAsync()
         {
@@ -53,12 +53,13 @@ namespace InternManagement.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        // ── Méthodes spéciales ────────────────
+        // ── Méthodes spéciales 
 
         public async Task<IEnumerable<Week>> GetByPhaseAsync(
             int phaseId)
         {
             return await _context.Weeks
+                .Include(w => w.Phase)
                 .Where(w => w.PhaseId == phaseId)
                 .OrderBy(w => w.WeekNumber)
                 .ToListAsync();
@@ -86,6 +87,15 @@ namespace InternManagement.Infrastructure.Repositories
             week.IsDeleted = true;
             week.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<WeeklyFollowUp?> GetByTraineeAndWeekAsync(
+            int traineeId, int weekId)
+        {
+            return await _context.WeeklyFollowUps
+                .FirstOrDefaultAsync(w =>
+                    w.TraineeId == traineeId &&
+                    w.WeekId    == weekId);
         }
     }
 }

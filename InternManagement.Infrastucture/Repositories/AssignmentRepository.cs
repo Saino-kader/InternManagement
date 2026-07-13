@@ -1,3 +1,4 @@
+// Infrastructure/Repositories/AssignmentRepository.cs
 using InterManagement.Domain.Entities;
 using InterManagement.Domain.Repositories;
 using InternManagement.Infrastructure.Data;
@@ -13,8 +14,6 @@ namespace InternManagement.Infrastructure.Repositories
         {
             _context = context;
         }
-
-        // ── CRUD de base 
 
         public async Task<IEnumerable<Assignment>> GetAllAsync()
         {
@@ -57,48 +56,71 @@ namespace InternManagement.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        // ── Méthodes spéciales 
-
-        public async Task<Assignment?> GetActiveAssignmentAsync(
-            int traineeId, int phaseId)
-        {
-            return await _context.Assignments
-                .Include(a => a.Mentor)
-                .Where(a => a.TraineeId == traineeId
-                         && a.PhaseId   == phaseId
-                         && a.IsActive  == true)
-                .FirstOrDefaultAsync();
-        }
-
-        public async Task<IEnumerable<Assignment>> GetByMentorAsync(
-            int mentorId)
+        // ── Récupère tous les assignments actifs d'un mentor ──────────
+        // Charge Trainee + Phase + Weeks pour que le Handler puisse
+        // construire AssignmentDto sans appels supplémentaires
+        public async Task<IEnumerable<Assignment>> GetByMentorAsync(int mentorId)
         {
             return await _context.Assignments
                 .Include(a => a.Trainee)
+                .Include(a => a.Mentor)
                 .Include(a => a.Phase)
-                .Where(a => a.MentorId == mentorId
-                         && a.IsActive == true)
+                    .ThenInclude(p => p.Weeks)
+                        .ThenInclude(w => w.WeeklyFollowUps)
+                .Where(a => a.MentorId == mentorId && a.IsActive)
+                .OrderBy(a => a.Trainee.LastName)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Assignment>> GetByTraineeAsync(
-            int traineeId)
+
+        /*
+
+
+        public async Task<IEnumerable<Assignment>> GetByMentorAsync(int mentorId)
+        {
+            return await _context.Assignments
+                .Include(a => a.Trainee)                                     // ← Stagiaire
+                .Include(a => a.Phase)                                       // ← Phase
+                    .ThenInclude(p => p.Weeks)                               // ← Semaines
+                        .ThenInclude(w => w.WeeklyFollowUps)                 // ← WeeklyFollowUp (pour Statut)
+                .Where(a => a.MentorId == mentorId
+                        && a.IsActive == true)
+                .ToListAsync();
+        }
+*/
+        // ── Récupère tous les assignments d'un trainee ────────────────
+        public async Task<IEnumerable<Assignment>> GetByTraineeAsync(int traineeId)
         {
             return await _context.Assignments
                 .Include(a => a.Mentor)
                 .Include(a => a.Phase)
                 .Where(a => a.TraineeId == traineeId)
+                .OrderByDescending(a => a.AssignmentDate)
                 .ToListAsync();
         }
 
+        // ── Vérifie si un assignment existe déjà ─────────────────────
         public async Task<bool> AssignmentExistsAsync(
             int traineeId, int mentorId, int phaseId)
         {
             return await _context.Assignments
-                .AnyAsync(a => a.TraineeId == traineeId
-                            && a.MentorId  == mentorId
-                            && a.PhaseId   == phaseId
-                            && a.IsActive  == true);
+                .AnyAsync(a =>
+                    a.TraineeId == traineeId &&
+                    a.MentorId == mentorId &&
+                    a.PhaseId == phaseId &&
+                    a.IsActive);
+        }
+
+        // ── Récupère l'assignment actif d'un trainee sur une phase ────
+        public async Task<Assignment?> GetActiveAssignmentAsync(
+            int traineeId, int phaseId)
+        {
+            return await _context.Assignments
+                .Include(a => a.Mentor)
+                .FirstOrDefaultAsync(a =>
+                    a.TraineeId == traineeId &&
+                    a.PhaseId == phaseId &&
+                    a.IsActive);
         }
     }
 }

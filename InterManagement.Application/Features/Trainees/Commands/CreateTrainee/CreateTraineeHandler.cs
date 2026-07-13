@@ -3,22 +3,28 @@ using InterManagement.Domain.Entities;
 using InterManagement.Shared.Enums;
 using InterManagement.Domain.Exceptions;
 using InterManagement.Domain.Repositories;
+using InterManagement.Application.Common;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace InterManagement.Application.Features.Trainees.Commands.CreateTrainee
 {
-
-
     public class CreateTraineeHandler
     {
-
         private readonly ITraineeRepository _repository;
+        private readonly IActivityLogger _activityLogger;
+        private readonly IMemoryCache _cache;
+        private const string CacheKey = "trainees:all";
 
         // ITraineeRepository repository → paramètre reçu (injection de dépendances)
-        public CreateTraineeHandler(ITraineeRepository repository)
+        public CreateTraineeHandler(ITraineeRepository repository,
+        IActivityLogger activityLogger,
+        IMemoryCache cache)
         {
             // Stocke le repository reçu dans le champ _repository
             // Le Handler pourra maintenant appeler _repository.EmailExistsAsync()
             _repository = repository;
+            _activityLogger = activityLogger;
+            _cache = cache;
         }
 
 
@@ -27,7 +33,6 @@ namespace InterManagement.Application.Features.Trainees.Commands.CreateTrainee
         // ==================================================
         
         public async Task<TraineeDto> Handle(CreateTraineeCommand command)
-
         {
 
             // ==============================================
@@ -58,13 +63,17 @@ namespace InterManagement.Application.Features.Trainees.Commands.CreateTrainee
                 TraineeStatus.InProgress
                 
             );    //  "Je crée un stagiaire en mémoire pour l'envoyer à la base"
-            // À ce stade : trainee existe en mémoire, Id = 0 (pas encore en base)
 
+            trainee.IsActive = command.Data.IsActive;
+            // À ce stade : trainee existe en mémoire, Id = 0 (pas encore en base)
 
             // 3. Sauvegarder en base
             // Appelle le repository pour sauvegarder l'entité
             await _repository.AddAsync(trainee);
-            
+
+            // Invalide le cache
+            _cache.Remove(CacheKey);
+
             // ==============================================
             // ÉTAPE 4 : RETOURNER LE DTO AU CLIENT
             // ==============================================
@@ -72,10 +81,10 @@ namespace InterManagement.Application.Features.Trainees.Commands.CreateTrainee
           
             return new TraineeDto    
             {
-                Id        = trainee.Id,
-                FirstName = trainee.FirstName,  
-                LastName  = trainee.LastName,
-                Email     = trainee.Email,
+                Id         = trainee.Id,
+                FirstName  = trainee.FirstName,
+                LastName   = trainee.LastName,
+                Email      = trainee.Email,
                 University = trainee.University,
                 Specialty  = trainee.Specialty,
                 Theme      = trainee.Theme,

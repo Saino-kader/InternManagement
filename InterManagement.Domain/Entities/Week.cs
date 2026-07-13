@@ -13,6 +13,8 @@ namespace InterManagement.Domain.Entities
         public int PhaseId { get; private set; }
         public Phase Phase { get; private set; } = null!;
 
+        public ICollection<WeeklyFollowUp> WeeklyFollowUps { get; private set; }= new List<WeeklyFollowUp>();
+
         private Week() { }
 
         public Week(
@@ -24,16 +26,16 @@ namespace InterManagement.Domain.Entities
         {
             // ── Validations 
             if (weekNumber <= 0)
-                throw new InterManagement.Domain.Exceptions.DomainException("Numero must be greater than 0");
+                throw new DomainException("Numero must be greater than 0");
 
             if (string.IsNullOrWhiteSpace(course))
-                throw new InterManagement.Domain.Exceptions.DomainException("Course is required");
+                throw new DomainException("Course is required");
 
             if (endDate <= startDate)
-                throw new InterManagement.Domain.Exceptions.DomainException("End date must be after start date");
+                throw new DomainException("End date must be after start date");
 
             if (phaseId <= 0)
-                throw new InterManagement.Domain.Exceptions.DomainException("PhaseId is required");
+                throw new DomainException("PhaseId is required");
 
             // ── Assignation 
             WeekNumber = weekNumber;
@@ -50,10 +52,10 @@ namespace InterManagement.Domain.Entities
             DateOnly endDate)
         {
             if (string.IsNullOrWhiteSpace(course))
-                throw new InterManagement.Domain.Exceptions.DomainException("Course is required");
+                throw new DomainException("Course is required");
 
             if (endDate <= startDate)
-                throw new InterManagement.Domain.Exceptions.DomainException(
+                throw new DomainException(
                     "End date must be after start date");
 
             Course    = course;

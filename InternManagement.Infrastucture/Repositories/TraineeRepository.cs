@@ -32,14 +32,14 @@ namespace InternManagement.Infrastructure.Repositories
         public async Task<Trainee?> GetWithPhasesAsync(int traineeId)
         {
             return await _context.Trainees
-                .Include(t => t.Phases)
+                .Include(t => t.Assignments)
                 .FirstOrDefaultAsync(t => t.Id == traineeId);
         }
 
         public async Task<Trainee?> GetWithPhasesAndEvaluationsAsync(int traineeId)
         {
             return await _context.Trainees
-                .Include(t => t.Phases)
+                .Include(t => t.Assignments)
                 .FirstOrDefaultAsync(t => t.Id == traineeId);
         }
          */
@@ -50,19 +50,23 @@ namespace InternManagement.Infrastructure.Repositories
         }
 
         public Task<Trainee?> GetWithPhasesAsync(int traineeId)
-
         {
             return _context.Trainees
-                .Include(t => t.Email)
+                .Include(t => t.Assignments)
                 .FirstOrDefaultAsync(t => t.Id == traineeId);
         }
 
         public Task<Trainee?> GetWithPhasesAndEvaluationsAsync(int traineeId)
         {
             return _context.Trainees
-                .Include(t => t.Email)
+                .Include(t => t.Assignments)
                 .FirstOrDefaultAsync(t => t.Id == traineeId);
+        }
+
+        // Dashboard — compter par statut
+        public async Task<int> CountByStatusAsync(TraineeStatus status)
+        {
+            return await _context.Trainees.CountAsync(t => t.Status == status);
         }
     }
 }
-

@@ -13,8 +13,6 @@ namespace InterManagement.Domain.Interfaces
         IAssignmentRepository Assignments { get; }
         IWeeklyFollowUpRepository WeeklyFollowUps { get; }
         IFeedbackRepository Feedbacks { get; }
-        IInternFileRepository Files { get; }
-
         // ── Transaction 
         Task<int> SaveChangesAsync();
         Task BeginTransactionAsync();

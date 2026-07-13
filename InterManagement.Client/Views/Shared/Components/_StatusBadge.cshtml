@@ -1,0 +1,34 @@
+@*
+=================================================
+BADGE DE STATUT
+Reçoit une chaîne de statut et affiche le badge
+coloré correspondant. Couvre tous les statuts
+utilisés dans l'application (Trainee, Mentor,
+Phase, WeeklyFollowUp).
+=================================================
+*@
+@model string
+
+@{
+    var statusClass = Model switch
+    {
+        "InProgress" or "EnCours" or "En cours" or "Encour" => "status-inprogress",
+        "Validated" or "Validé" => "status-validated",
+        "Suspended" or "Suspendu" => "status-suspended",
+        "Actif" => "status-actif",
+        "Inactif" => "status-Inactif",
+        "Reprendre" => "status-EnAttente",
+        _ => "status-EnAttente"
+    };
+
+    var statusLabel = Model switch
+    {
+        "InProgress" => "Encour",
+        "Validated" => "Validé",
+        "Suspended" => "Suspendu",
+        "Inactif" => "Inactif",
+        _ => Model
+    };
+}
+
+<span class="status-badge @statusClass">@statusLabel</span>

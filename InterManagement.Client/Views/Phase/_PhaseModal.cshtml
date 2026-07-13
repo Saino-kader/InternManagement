@@ -1,0 +1,149 @@
+@*
+=================================================
+MODAL CONFIGURER UNE PHASE
+Permet de créer une phase pour plusieurs stagiaires
+en même temps, avec un mentor commun et un planning
+de semaines partagé.
+=================================================
+*@
+@model InterManagement.Client.Models.PhasesViewModel
+
+<div id="phaseModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="phaseModalTitle"><i class="fas fa-diagram-project"></i> Configurer une phase</h3>
+            <button class="modal-close" onclick="closeModal('phaseModal')">&times;</button>
+        </div>
+
+        <form id="phaseForm" method="post" asp-controller="Phase" asp-action="Create">
+            @Html.AntiForgeryToken()
+
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phaseNumero">Numéro de phase</label>
+                        <input type="number" name="PhaseNumber" id="phaseNumero" placeholder="1" />
+                    </div>
+                    <div class="form-group">
+                        <label for="phaseTitre">Titre de phase</label>
+                        <input type="text" name="Title" id="phaseTitre" placeholder="Découverte" autocomplete="off" />
+                    </div>
+                </div>
+
+                @* ===== MULTI-SÉLECTION STAGIAIRES ===== *@
+                <div class="form-group">
+                    <label>Stagiaires (sélection multiple)</label>
+                    <div class="multi-select">
+                        <div class="multi-select-header" onclick="toggleMultiSelect()">
+                            <span id="selectedStagiairesText">Aucun stagiaire sélectionné</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="multi-select-dropdown" id="stagiairesDropdown">
+                            @foreach (var s in Model.Stagiaires)
+                            {
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="TraineeIds" value="@s.Id"
+                                           data-name="@s.FirstName @s.LastName" class="stagiaire-cb" />
+                                    @s.FirstName @s.LastName
+                                </label>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phaseMentor">Mentor</label>
+                    <select name="MentorId" id="phaseMentor">
+                        <option value="">Sélectionner un mentor</option>
+                        @foreach (var m in Model.Mentors)
+                        {
+                            <option value="@m.Id">@m.FirstName @m.LastName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phaseDateDebut">Date début</label>
+                        <input type="date" name="StartDate" id="phaseDateDebut" />
+                    </div>
+                    <div class="form-group">
+                        <label for="phaseDateFin">Date fin</label>
+                        <input type="date" name="EndDate" id="phaseDateFin" />
+                    </div>
+                </div>
+
+                <h4 style="margin: 20px 0 10px;">Planning hebdomadaire</h4>
+                @* Rempli dynamiquement par phases.js (semaines independantes) *@
+                <div id="phaseWeeksContainer"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('phaseModal')">Annuler</button>
+                <button type="submit" class="btn-primary" id="phaseSaveBtn">Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="phaseEditModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-pen"></i> Modifier la phase</h3>
+            <button type="button" class="modal-close" onclick="closeModal('phaseEditModal')">&times;</button>
+        </div>
+
+        <form id="phaseEditForm" method="post" asp-controller="Phase" asp-action="EditFromModal">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="PhaseId" id="editPhaseId" />
+            <input type="hidden" name="WeekId" id="editWeekId" />
+
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editTraineeName">Stagiaire</label>
+                        <input type="text" id="editTraineeName" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="editMentorName">Mentor</label>
+                        <input type="text" id="editMentorName" readonly />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editStatus">Statut</label>
+                    <select id="editStatus" name="Status" required>
+                        <option value="InProgress">En cours</option>
+                        <option value="Validated">Validé</option>
+                        <option value="Suspended">Suspendu</option>
+                    </select>
+                </div>
+
+                <div class="week-card-modal">
+                    <h4>Semaine <span id="editWeekNumber">-</span></h4>
+                    <div class="form-group">
+                        <label for="editCourse">Cours</label>
+                        <input type="text" id="editCourse" name="Course" placeholder="Nom du cours" required />
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editWeekStartDate">Date début</label>
+                            <input type="date" id="editWeekStartDate" name="WeekStartDate" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="editWeekEndDate">Date fin</label>
+                            <input type="date" id="editWeekEndDate" name="WeekEndDate" required />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('phaseEditModal')">Annuler</button>
+                <button type="submit" class="btn-primary">Mettre a jour</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+

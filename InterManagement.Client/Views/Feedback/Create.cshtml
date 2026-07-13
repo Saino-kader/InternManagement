@@ -1,0 +1,44 @@
+@*
+=================================================
+CREATION FEEDBACK
+=================================================
+*@
+@model InterManagement.Application.Features.Feedbacks.DTOs.CreateFeedbackDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Créer feedback";
+    ViewData["ActivePage"] = "feedbacks";
+}
+
+<div class="head-title">
+    <div>
+        <h1>Créer un feedback</h1>
+        <div class="breadcrumb">
+            <span>Accueil</span>
+            <i class="fas fa-chevron-right"></i>
+            <span>Feedbacks</span>
+            <i class="fas fa-chevron-right"></i>
+            <span>Créer</span>
+        </div>
+    </div>
+</div>
+
+<form asp-action="Create" method="post" class="table-container">
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label for="TraineeId">Id stagiaire</label>
+        <input asp-for="TraineeId" />
+    </div>
+    <div class="form-group">
+        <label for="MentorId">Id mentor</label>
+        <input asp-for="MentorId" />
+    </div>
+    <div class="form-group">
+        <label for="Message">Message</label>
+        <textarea asp-for="Message"></textarea>
+    </div>
+    <div style="display:flex; gap: 1rem; margin-top: 1.5rem;">
+        <a asp-action="Index" class="btn-secondary">Annuler</a>
+        <button type="submit" class="btn-primary">Créer</button>
+    </div>
+</form>

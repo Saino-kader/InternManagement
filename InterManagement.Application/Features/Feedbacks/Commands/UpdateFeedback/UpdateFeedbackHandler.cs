@@ -35,7 +35,13 @@ namespace InterManagement.Application.Features.Feedbacks.Commands.UpdateFeedback
                 Message     = feedback.Message,
                 SentAt      = feedback.SentAt,
                 TraineeId   = feedback.TraineeId,
-                TraineeName = $"{feedback.Trainee.FirstName} {feedback.Trainee.LastName}"
+                TraineeName = feedback.Trainee != null
+                    ? $"{feedback.Trainee.FirstName} {feedback.Trainee.LastName}"
+                    : string.Empty,
+                MentorId    = feedback.MentorId,
+                MentorName  = feedback.Mentor != null
+                    ? $"{feedback.Mentor.FirstName} {feedback.Mentor.LastName}"
+                    : string.Empty
             };
         }
     }

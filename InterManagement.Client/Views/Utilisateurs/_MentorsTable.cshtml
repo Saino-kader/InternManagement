@@ -1,0 +1,84 @@
+@*
+=================================================
+TABLEAU MENTORS
+
+=================================================
+*@
+@model List<InterManagement.Application.Features.Mentors.DTOs.MentorDto>
+
+<div class="table-container">
+    <div class="table-header">
+        <h3><i class="fas fa-chalkboard-user"></i> Mentors</h3>
+    </div>
+    <div style="overflow-x: auto">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Mentor</th>
+                    <th>Email</th>
+                    <th>Spécialité</th>
+                    <th>Département</th>
+                    <th>Stagiaires</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="mentorsList">
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" style="text-align:center;">Aucun mentor</td></tr>
+                }
+                else
+                {
+                    @foreach (var m in Model)
+                    {
+                        var isActive = m.IsActive;
+                        <tr data-user-id="@m.Id"
+                            data-user-type="mentor"
+                            data-nom="@m.LastName"
+                            data-prenom="@m.FirstName"
+                            data-email="@m.Email"
+                            data-specialite="@m.Specialty"
+                            data-departement="@m.Department"
+                            data-statut="@(isActive ? "Actif" : "Inactif")">
+
+                            <td>@m.FirstName @m.LastName</td>
+                            <td>@m.Email</td>
+                            <td>@m.Specialty</td>
+                            <td>@m.Department</td>
+                            <td>@m.TraineeCount</td>
+                            <td>
+                                @await Html.PartialAsync("~/Views/Shared/Components/_StatusBadge.cshtml", isActive ? "Actif" : "Inactif")
+                            </td>
+                            <td class="action-btns">
+                                @if (isActive)
+                                {
+                                    <button class="action-btn edit" onclick="openEditUserModal(this)"
+                                            aria-label="Modifier @m.FirstName @m.LastName">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+
+                                    <button class="action-btn delete"
+                                            data-delete-url="/Utilisateurs/DeleteMentor/@m.Id"
+                                            data-delete-name="@m.FirstName @m.LastName"
+                                            aria-label="Supprimer @m.FirstName @m.LastName">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="action-btn edit" disabled aria-label="Utilisateur inactif">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                    <button class="action-btn delete" disabled aria-label="Utilisateur inactif">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

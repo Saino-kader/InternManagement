@@ -11,9 +11,11 @@ namespace InterManagement.Domain.Entities
         public string Department { get; private set; } = string.Empty;
         public string Specialty { get; private set; } = string.Empty;
 
-        // ── Collections de relations ────────────────────
-        public ICollection<Assignment> Assignments { get; private set; } = [];
-        public ICollection<WeeklyFollowUp> WeeklyFollowUps { get; private set; } = [];
+        // ── Collections de relations 
+        public ICollection<Assignment> Assignments { get; private set; } = new List<Assignment>(); // Un mentor peut avoir plusieurs assignments
+        public ICollection<WeeklyFollowUp> WeeklyFollowUps { get; private set; } = new List<WeeklyFollowUp>(); // Un mentor peut avoir plusieurs suivi hebdo (WeeklyFollowUp)
+        public ICollection<Feedback> Feedbacks { get; private set; } = new List<Feedback>();
+
 
         private Mentor() { }
 

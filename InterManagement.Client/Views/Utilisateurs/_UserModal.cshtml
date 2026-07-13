@@ -1,0 +1,117 @@
+@*
+=================================================
+MODAL UTILISATEUR UNIQUE
+Un seul modal pour créer/modifier Stagiaire, Mentor
+ou Administrateur, selon le radio bouton choisi.
+Le formulaire poste vers une action différente du
+UtilisateursController selon le type sélectionné
+(géré côté JS dans utilisateurs.js en construisant
+l'URL du <form>, ou via 3 boutons de soumission
+distincts — voir note d'implémentation plus bas).
+=================================================
+*@
+<div id="userModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="userModalTitle"><i class="fas fa-user"></i> Ajouter un utilisateur</h3>
+            <button class="modal-close" onclick="closeModal('userModal')">&times;</button>
+        </div>
+
+        <form id="userForm" method="post" asp-controller="Utilisateurs" asp-action="CreateStagiaire">
+            @Html.AntiForgeryToken()
+
+            <div class="modal-body">
+
+                <div class="user-type-selector">
+                    <label class="radio-label">
+                        <input type="radio" name="userType" value="stagiaire" checked> Stagiaire
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="userType" value="mentor"> Mentor
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="userType" value="admin"> Administrateur
+                    </label>
+                </div>
+
+                @* ===== CHAMPS COMMUNS ===== *@
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="userNom">Nom</label>
+                        <input type="text" name="LastName" id="userNom" placeholder="Moussa" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label for="userPrenom">Prénom</label>
+                        <input type="text" name="FirstName" id="userPrenom" placeholder="Ali" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="userEmail">Email</label>
+                    <input type="email" name="Email" id="userEmail" placeholder="email@exemple.com" autocomplete="off" />
+                </div>
+                <div class="form-group">
+                    <label for="userSpecialite">Spécialité</label>
+                    <input type="text" name="Specialty" id="userSpecialite" placeholder="Informatique" autocomplete="off" />
+                </div>
+                <div class="form-group">
+                    <label for="userStatut">Statut</label>
+                    <select name="IsActive" id="userStatut">
+                        <option value="true">Actif</option>
+                        <option value="false">Inactif</option>
+                    </select>
+                </div>
+
+                <input type="hidden" id="userTraineeStatus" name="Status" value="InProgress" />
+
+                @* ===== CHAMPS SPÉCIFIQUES STAGIAIRE ===== *@
+                <div id="stagiaireFields" class="conditional-fields active">
+                    <div class="form-group">
+                        <label for="userStructure">Structure</label>
+                        <input type="text" name="University" id="userStructure" placeholder="Université" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label for="userTheme">Thème du stage</label>
+                        <input type="text" name="Theme" id="userTheme" placeholder="Développement Web" autocomplete="off" />
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="userDateDebut">Date début</label>
+                            <input type="date" name="StartDate" id="userDateDebut" />
+                        </div>
+                        <div class="form-group">
+                            <label for="userDateFin">Date fin</label>
+                            <input type="date" name="EndDate" id="userDateFin" />
+                        </div>
+                    </div>
+                </div>
+
+                @* ===== CHAMPS SPÉCIFIQUES MENTOR ===== *@
+                <div id="mentorFields" class="conditional-fields">
+                    <div class="form-group">
+                        <label for="userDepartement">Département</label>
+                        <input type="text" name="Department" id="userDepartement" value="Engineering" autocomplete="off" />
+                    </div>
+                </div>
+
+                @* ===== CHAMPS SPÉCIFIQUES ADMIN ===== *@
+                <div id="adminFields" class="conditional-fields">
+                    <div class="form-group">
+                        <label for="userRole">Rôle</label>
+                        <select id="userRole">
+                            <option>Administrateur</option>
+                            <option>Super Admin</option>
+                            <option>Gestionnaire</option>
+                        </select>
+                    </div>
+                </div>
+
+                <input type="hidden" id="userId" name="Id" />
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('userModal')">Annuler</button>
+                <button type="submit" class="btn-primary">Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>

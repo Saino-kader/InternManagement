@@ -18,7 +18,7 @@ namespace InterManagement.Domain.Entities
         public User(string firstName, string lastName, string email, UserRole role)
         {
             
-            // ── Champs obligatoires ────────────────────
+            // ── Champs obligatoires 
             if (string.IsNullOrWhiteSpace(firstName))
                 throw new DomainException("Nom est obligatoire");
 
@@ -28,11 +28,11 @@ namespace InterManagement.Domain.Entities
             if (string.IsNullOrWhiteSpace(email))
                 throw new DomainException("Email est obligatoire");
 
-            // ── Format email ───────────────────────────
+            // ── Format email 
             if (!email.Contains("@") || !email.Contains("."))
                 throw new DomainException("Format Email  est invalide");
 
-            // ── Assignation ───────────────────────────
+            // ── Assignation 
 
             FirstName = firstName;
             LastName = lastName;

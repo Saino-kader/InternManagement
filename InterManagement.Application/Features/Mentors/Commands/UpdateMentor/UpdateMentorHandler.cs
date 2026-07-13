@@ -1,30 +1,41 @@
+using InterManagement.Application.Common;
 using InterManagement.Application.Features.Mentors.DTOs;
 using InterManagement.Domain.Exceptions;
 using InterManagement.Domain.Repositories;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace InterManagement.Application.Features.Mentors.Commands.UpdateMentor
 {
     public class UpdateMentorHandler
     {
         private readonly IMentorRepository _repository;
+        private readonly IActivityLogger _activityLogger;
+        private readonly IMemoryCache _cache;
+        private const string CacheKey = "mentors:all";
 
-        public UpdateMentorHandler(IMentorRepository repository)
+        public UpdateMentorHandler(
+            IMentorRepository repository,
+            IActivityLogger activityLogger,
+            IMemoryCache cache)
         {
             _repository = repository;
+            _activityLogger = activityLogger;
+            _cache = cache;
         }
 
         public async Task<MentorDto> Handle(UpdateMentorCommand command)
         {
-            // 1. Chercher le mentor
             var mentor = await _repository.GetByIdAsync(command.Id);
             if (mentor == null)
                 throw new MentorNotFoundException(command.Id);
 
-            // 2. Vérifier actif
             if (!mentor.IsActive)
                 throw new MentorNotActiveException(command.Id);
 
-            // 3. Modifier via méthode Update du Domain
+            var emailExists = await _repository.EmailExistsAsync(command.Data.Email);
+            if (emailExists && mentor.Email != command.Data.Email)
+                throw new MentorAlreadyExistsException(command.Data.Email);
+
             mentor.Update(
                 command.Data.FirstName,
                 command.Data.LastName,
@@ -33,10 +44,19 @@ namespace InterManagement.Application.Features.Mentors.Commands.UpdateMentor
                 command.Data.Specialty
             );
 
-            // 4. Sauvegarder
+            mentor.IsActive = command.Data.IsActive;
+
             await _repository.UpdateAsync(mentor);
 
-            // 5. Retourner DTO
+            // Invalide le cache
+            _cache.Remove(CacheKey);
+
+            await _activityLogger.LogAsync(
+                "Admin",
+                "Modification",
+                $"{mentor.FirstName} {mentor.LastName} modifié"
+            );
+
             return new MentorDto
             {
                 Id         = mentor.Id,

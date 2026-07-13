@@ -18,8 +18,18 @@ namespace InterManagement.Application.Features.WeeklyFollowUps.Commands.UpdateWe
             if (followUp == null)
                 throw new WeeklyFollowUpNotFoundException(command.Id);
 
-            // utilise UpdateComment() déjà existant dans Domain
-            followUp.UpdateComment(command.Data.Comment);
+            // utilise Update() pour mettre à jour tous les champs
+            followUp.Update(
+                command.Data.FollowUpDate,
+                command.Data.Comment,
+                command.Data.WeekId,
+                command.Data.TraineeId,
+                command.Data.MentorId,
+                command.Data.CourseName,
+                command.Data.Appreciation
+                );
+
+            followUp.SetStatus(command.Data.Status);
 
             await _repository.UpdateAsync(followUp);
         }

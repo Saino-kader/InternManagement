@@ -1,0 +1,96 @@
+@*
+=================================================
+MODAL SUIVI
+Permet d'ajouter ou modifier un suivi hebdomadaire.
+=================================================
+*@
+@model InterManagement.Client.Models.SuiviViewModel
+
+<div id="suiviModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="suiviModalTitle"><i class="fas fa-chart-line"></i> Ajouter un suivi</h3>
+            <button class="modal-close" onclick="closeModal('suiviModal')">&times;</button>
+        </div>
+
+        <form id="suiviForm" method="post" asp-controller="Suivi" asp-action="Create">
+            @Html.AntiForgeryToken()
+
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="suiviStagiaire">Stagiaire</label>
+                        <select name="TraineeId" id="suiviStagiaire">
+                            <option value="">Sélectionner</option>
+                            @foreach (var s in Model.Stagiaires)
+                            {
+                                <option value="@s.Id">@s.FirstName @s.LastName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="suiviMentor">Mentor</label>
+                        <select name="MentorId" id="suiviMentor">
+                            <option value="">Sélectionner</option>
+                            @foreach (var m in Model.Mentors)
+                            {
+                                <option value="@m.Id">@m.FirstName @m.LastName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="suiviDate">Date</label>
+                        <input type="date" name="FollowUpDate" id="suiviDate" />
+                    </div>
+                    <div class="form-group">
+                        <label for="suiviSemaine">Semaine</label>
+                        <select name="WeekId" id="suiviSemaine">
+                            <option value="">Sélectionner</option>
+                            @foreach (var w in Model.Weeks)
+                            {
+                                <option value="@w.Id">Semaine @w.WeekNumber (@w.PhaseTitle)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="suiviCours">Cours</label>
+                    <input type="text" name="CourseName" id="suiviCours" placeholder="Introduction" autocomplete="off" />
+                </div>
+
+                <div class="form-group">
+                    <label for="suiviAppreciation">Appréciation</label>
+                    <select name="Appreciation" id="suiviAppreciation">
+                        <option value="Passable">Passable</option>
+                        <option value="Assez bien">Assez bien</option>
+                        <option value="Bien">Bien</option>
+                        <option value="Très bien">Très bien</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="suiviCommentaire">Commentaire</label>
+                    <textarea name="Comment" id="suiviCommentaire" rows="3" placeholder="Commentaire du mentor"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="suiviStatut">Statut</label>
+                    <select name="Status" id="suiviStatut">
+                        <option value="InProgress">Encour</option>
+                        <option value="Validated">Validé</option>
+                        <option value="Suspended">Suspendu</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('suiviModal')">Annuler</button>
+                <button type="submit" class="btn-primary" id="suiviSaveBtn">Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>

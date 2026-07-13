@@ -17,6 +17,7 @@ namespace InterManagement.Domain.Repositories
         //Task<IEnumerable<Mentor>> GetAssignmentTraineesAsync();
 
         //Task<int> CountAssignedTraineesAsync(int mentorId);
+         Task<int> CountActiveAsync();  // ← AJOUTE CETTE LIGNE SI ELLE MANQUE
 
     }
 }
@@ -24,15 +25,23 @@ namespace InterManagement.Domain.Repositories
 
 
 
+/*
 
+// Domain/Repositories/IMentorRepository.cs
+using InterManagement.Domain.Entities;
 
+namespace InterManagement.Domain.Repositories
+{
+    public interface IMentorRepository : IBaseRepository<Mentor>
+    {
+        Task<IEnumerable<Mentor>> GetByDepartmentAsync(string department);
+        Task<bool> EmailExistsAsync(string email);
+        Task<IEnumerable<Mentor>> GetAllWithTraineeCountAsync();
+        Task<int> CountActiveAsync();  // ← AJOUTE CETTE LIGNE SI ELLE MANQUE
+    }
+}
 
-
-
-
-
-
-
+*/
 // page Mentor:
     //nombre des stagiaires assignés à un mentor
     // Tableau des informations de ces stagiaires (Stagiaire 	Phase 	Semaine 	Cours 	Date début 	Date fin 	Statut)

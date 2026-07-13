@@ -1,0 +1,53 @@
+@*
+=================================================
+PAGE UTILISATEURS (MIS À JOUR)
+Ajout : injection du mot de passe temporaire via
+data-attributes pour que utilisateurs.js puisse
+l'afficher dans #passwordModal.
+=================================================
+*@
+@model InterManagement.Client.Models.UtilisateursViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Utilisateurs";
+    ViewData["ActivePage"] = "utilisateurs";
+}
+
+@* Injecte le mot de passe temporaire si présent dans TempData *@
+@* Le JS lit ces data-attributes et affiche le modal          *@
+@if (TempData["TempPassword"] != null)
+{
+    <div id="passwordData"
+         data-password="@TempData["TempPassword"]"
+         data-email="@TempData["TempPasswordEmail"]"
+         data-role="@TempData["TempPasswordRole"]"
+         style="display:none;">
+    </div>
+}
+
+<div class="head-title">
+    <div>
+        <h1>Utilisateurs</h1>
+        <div class="breadcrumb">
+            <span>Accueil</span>
+            <i class="fas fa-chevron-right"></i>
+            <span>Utilisateurs</span>
+        </div>
+    </div>
+    <button class="btn-primary" id="openUserBtn">
+        <i class="fas fa-plus"></i> Ajouter un utilisateur
+    </button>
+</div>
+
+@await Html.PartialAsync("_StagiairesTable", Model.Stagiaires)
+@await Html.PartialAsync("_MentorsTable", Model.Mentors)
+@await Html.PartialAsync("_AdminsTable", Model.Admins)
+@await Html.PartialAsync("_UserModal")
+@await Html.PartialAsync("_TraineeDetailsModal")
+
+@* Modal mot de passe temporaire *@
+@await Html.PartialAsync("~/Views/Shared/Components/_PasswordModal.cshtml")
+
+@section Scripts {
+    <script src="~/js/utilisateurs.js"></script>
+}

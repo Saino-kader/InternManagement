@@ -1,0 +1,35 @@
+@*
+Views/Trainee/Details.cshtml
+Page de détail d'un stagiaire — version minimale
+*@
+@model InterManagement.Application.Features.Trainees.DTOs.TraineeDetailDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Détail stagiaire";
+}
+
+<div class="head-title">
+    <div>
+        <h1>@Model.FirstName @Model.LastName</h1>
+        <div class="breadcrumb">
+            <span>Accueil</span>
+            <i class="fas fa-chevron-right"></i>
+            <a asp-controller="Utilisateurs" asp-action="Index">Utilisateurs</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Détail</span>
+        </div>
+    </div>
+    <a asp-controller="Utilisateurs" asp-action="Index" class="btn-secondary">
+        <i class="fas fa-arrow-left"></i> Retour
+    </a>
+</div>
+
+<div class="table-container" style="padding: 2rem;">
+    <p><strong>Email :</strong> @Model.Email</p>
+    <p><strong>Spécialité :</strong> @Model.Specialty</p>
+    <p><strong>Structure :</strong> @Model.University</p>
+    <p><strong>Thème :</strong> @Model.Theme</p>
+    <p><strong>Date début :</strong> @Model.StartDate.ToString("dd/MM/yyyy")</p>
+    <p><strong>Date fin :</strong> @Model.EndDate.ToString("dd/MM/yyyy")</p>
+    <p><strong>Statut :</strong> @Model.Status</p>
+</div>

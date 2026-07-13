@@ -1,38 +1,54 @@
+using InterManagement.Application.Common;
 using InterManagement.Application.Features.Admins.DTOs;
 using InterManagement.Domain.Entities;
 using InterManagement.Domain.Exceptions;
 using InterManagement.Domain.Repositories;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace InterManagement.Application.Features.Admins.Commands.CreateAdmin
 {
     public class CreateAdminHandler
     {
         private readonly IAdminRepository _repository;
+        private readonly IActivityLogger _activityLogger;
+        private readonly IMemoryCache _cache;
+        private const string CacheKey = "admins:all";
 
-        public CreateAdminHandler(IAdminRepository repository)
+        public CreateAdminHandler(
+            IAdminRepository repository,
+            IActivityLogger activityLogger,
+            IMemoryCache cache)
         {
             _repository = repository;
+            _activityLogger = activityLogger;
+            _cache = cache;
         }
 
         public async Task<AdminDto> Handle(CreateAdminCommand command)
         {
-            // 1. Vérifier email
-            var emailExists = await _repository
-                .EmailExistsAsync(command.Data.Email);
+            var emailExists = await _repository.EmailExistsAsync(command.Data.Email);
             if (emailExists)
                 throw new AdminAlreadyExistsException(command.Data.Email);
 
-            // 2. Créer l'entité
             var admin = new Admin(
                 command.Data.FirstName,
                 command.Data.LastName,
                 command.Data.Email
             );
 
-            // 3. Sauvegarder
+            admin.IsActive = command.Data.IsActive;
+
             await _repository.AddAsync(admin);
 
-            // 4. Retourner DTO
+            // Invalide le cache
+            _cache.Remove(CacheKey);
+
+            await _activityLogger.LogAsync(
+                "Admin",
+                "Ajout utilisateur",
+                $"{admin.FirstName} {admin.LastName} ajouté"
+            );
+
             return new AdminDto
             {
                 Id        = admin.Id,

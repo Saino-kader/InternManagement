@@ -1,0 +1,51 @@
+@*
+=================================================
+MODAL DE CONNEXION
+Le formulaire poste réellement vers AccountController
+(à créer lors de l'implémentation de l'authentification).
+Le mot de passe n'est jamais stocké ni manipulé en JS,
+uniquement son affichage est togglé (UI pure).
+=================================================
+*@
+<div class="login-modal" id="loginModal">
+    <div class="login-modal-backdrop" id="loginBackdrop"></div>
+    <div class="login-modal-content">
+        <button class="login-modal-close" id="loginModalClose">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div class="login-modal-header">
+            <h2>Bienvenue</h2>
+            <p>Connectez-vous pour continuer votre parcours</p>
+        </div>
+
+        <form class="login-modal-form" id="loginForm" method="post"
+              asp-controller="Account" asp-action="Login">
+            @Html.AntiForgeryToken()
+
+            <div class="login-input-group">
+                <label for="loginEmail">Email</label>
+                <div class="login-input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" name="Email" id="loginEmail"
+                           placeholder="votre@email.com" required autocomplete="off" />
+                </div>
+            </div>
+
+            <div class="login-input-group">
+                <label for="loginPassword">Mot de passe</label>
+                <div class="login-input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="Password" id="loginPassword"
+                           placeholder="••••••••" required autocomplete="off" />
+                    <button type="button" class="login-password-toggle" id="passwordToggle"></button>
+                </div>
+            </div>
+
+            <button type="submit" class="login-submit-btn">
+                <span>Se connecter</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </form>
+    </div>
+</div>

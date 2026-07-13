@@ -1,50 +1,107 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+@*
+=================================================
+LAYOUT ADMIN
+Structure HTML commune à toutes les pages de
+l'espace Administrateur : sidebar, navbar, modal
+de suppression. Le contenu spécifique de chaque
+page s'insère via @RenderBody().
+=================================================
+*@
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - InterManagement.Client</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/InterManagement.Client.styles.css" asp-append-version="true" />
+    <title>@ViewData["Title"] — Intern Management</title>
+
+    @* CSS global, partagé par toutes les pages Admin *@
+    <link rel="stylesheet" href="~/css/admin-site.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    @* Bibliothèque de lecture Excel, utilisée uniquement par la page Suivi *@
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+
+    @* Chaque page peut ajouter son propre CSS ici *@
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">InterManagement.Client</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+
+    @* ===== SIDEBAR ===== *@
+    @await Html.PartialAsync("~/Views/Shared/Components/_Sidebar.cshtml")
+
+    <section id="content">
+
+        @* ===== NAVBAR ===== *@
+        @await Html.PartialAsync("~/Views/Shared/Components/_Navbar.cshtml")
+
+        <main>
+            @* ===== CONTENU SPÉCIFIQUE À CHAQUE PAGE ===== *@
             @RenderBody()
         </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - InterManagement.Client - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    </section>
+
+    @* ===== MODAL DE SUPPRESSION — partagé par toutes les pages ===== *@
+    @await Html.PartialAsync("~/Views/Shared/Components/_DeleteConfirmModal.cshtml")
+
+    @* JS global, chargé sur toutes les pages *@
+    <script src="~/js/site.js"></script>
+
+    @* Chaque page ajoute son propre JS ici *@
     @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- Overlay de chargement -->
+<div id="pageLoader" style="
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: var(--bg);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;">
+    <div style="text-align: center;">
+        <i class="fas fa-circle-notch fa-spin"
+           style="font<script>
+    // Affiche le loader avant de quitter la page
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a[href]');
+        if (link && !link.href.includes('#')
+                 && !link.href.includes('javascript')
+                 && link.target !== '_blank') {
+            document.getElementById('pageLoader').style.display = 'flex';
+        }
+    });
+
+    // Cache le loader quand la page est chargée
+    window.addEventListener('pageshow', function() {
+        document.getElementById('pageLoader').style.display = 'none';
+    });
+</script>
+-size: 2rem; color: var(--primary);"></i>
+        <p style="color: var(--text-soft); margin-top: 1rem;">
+            Chargement...
+        </p>
+    </div>
+</div>
+
+<script>
+    // Affiche le loader avant de quitter la page
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a[href]');
+        if (link && !link.href.includes('#')
+                 && !link.href.includes('javascript')
+                 && link.target !== '_blank') {
+            document.getElementById('pageLoader').style.display = 'flex';
+        }
+    });
+
+    // Cache le loader quand la page est chargée
+    window.addEventListener('pageshow', function() {
+        document.getElementById('pageLoader').style.display = 'none';
+    });
+</script>
+
 </body>
 </html>

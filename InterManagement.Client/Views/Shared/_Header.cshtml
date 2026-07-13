@@ -1,0 +1,69 @@
+@*
+=================================================
+HEADER PUBLIC
+Logo, navigation principale, panneau compte avec
+lien vers le modal de connexion.
+=================================================
+*@
+@{
+    var active = (ViewData["PublicNavActive"] as string ?? string.Empty).Trim();
+    int? traineeId = ViewData["CurrentTraineeId"] is int t ? t : null;
+    int? mentorId = ViewData["CurrentMentorId"] is int m ? m : null;
+}
+
+<header class="header" id="header">
+    <div class="header-container">
+        <a asp-controller="Home" asp-action="Index" class="logo">GABERA<span class="logo-dot"></span></a>
+
+        <div class="nav">
+            <a asp-controller="Home" asp-action="Index" class="nav-link @(active == "Accueil" ? "active" : "")">Accueil</a>
+
+            @if (traineeId.HasValue)
+            {
+                <a asp-controller="Stagiaire" asp-action="Index" asp-route-traineeId="@traineeId.Value" class="nav-link @(active == "Stagiaire" ? "active" : "")">Stagiaire</a>
+            }
+            else
+            {
+                <a href="#" class="nav-link @(active == "Stagiaire" ? "active" : "")" id="navStagiaireLink">Stagiaire</a>
+            }
+
+            @if (mentorId.HasValue)
+            {
+                <a asp-controller="MentorSpace" asp-action="Index" asp-route-mentorId="@mentorId.Value" class="nav-link @(active == "Mentor" ? "active" : "")">Mentor</a>
+            }
+            else
+            {
+                <a href="#" class="nav-link @(active == "Mentor" ? "active" : "")" id="navMentorLink">Mentor</a>
+            }
+        </div>
+
+        <div class="nav-actions">
+            <div class="account-dimension">
+                <button class="action-btn" id="accountTrigger">
+                    <i class="far fa-user"></i>
+                    <span class="action-tooltip">Compte</span>
+                </button>
+                <div class="account-panel" id="accountPanel">
+                    <div class="panel-dimension">
+                        <div class="panel-header">
+                            <div class="panel-icon"><i class="far fa-user"></i></div>
+                            <div>
+                                <div class="panel-title">Bienvenue</div>
+                                <div class="panel-sub">Connectez-vous</div>
+                            </div>
+                        </div>
+                        <div class="panel-items">
+                            <a href="#" class="panel-link" id="loginTrigger">
+                                <i class="fas fa-sign-in-alt"></i>Connexion
+                            </a>
+                            <div class="panel-divider"></div>
+                            <a asp-controller="Account" asp-action="Logout" class="panel-link" id="logoutTrigger">
+                                <i class="fas fa-sign-out-alt"></i>Déconnexion
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

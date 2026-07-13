@@ -18,18 +18,17 @@ namespace InternManagement.Infrastructure
                 options.UseNpgsql(
                     configuration.GetConnectionString("DefaultConnection")));
 
-            // ── Repositories 
+            // ── Repositories
             services.AddScoped<ITraineeRepository, TraineeRepository>();
-
             services.AddScoped<IMentorRepository, MentorRepository>();
             services.AddScoped<IAdminRepository, AdminRepository>();
             services.AddScoped<IPhaseRepository, PhaseRepository>();
             services.AddScoped<IAssignmentRepository, AssignmentRepository>();
             services.AddScoped<IWeeklyFollowUpRepository, WeeklyFollowUpRepository>();
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();
-            services.AddScoped<IInternFileRepository, InternFileRepository>();
             services.AddScoped<IWeekRepository, WeekRepository>();
-            
+            services.AddScoped<IActivityLogRepository, ActivityLogRepository>();
+            services.AddScoped<IImportedFollowUpRepository,ImportedFollowUpRepository>();
 
             return services;
         }

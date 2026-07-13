@@ -1,0 +1,64 @@
+@*
+=================================================
+TABLEAU STAGIAIRES ASSIGNÉS
+Affiche le suivi courant de chaque stagiaire
+assigné à ce mentor (Phase, Semaine, Cours, Statut).
+=================================================
+*@
+@model List<InterManagement.Client.Models.MentorAssignedTraineeItem>
+
+<div class="section-header">
+    <div>
+        <h2 class="section-title">Mes stagiaires assignés (@ViewBag.TraineeCount)</h2>
+        <div class="section-title-line"></div>
+    </div>
+</div>
+
+<div class="table-container">
+    <div style="overflow-x: auto">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Stagiaire</th>
+                    <th>Phase</th>
+                    <th>Semaine</th>
+                    <th>Cours</th>
+                    <th>Date début</th>
+                    <th>Date fin</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody id="stagiairesAssignesList">
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" style="text-align:center;">Aucun stagiaire assigné</td></tr>
+                }
+                else
+                {
+                    @foreach (var s in Model)
+                    {
+                        <tr data-trainee-id="@s.TraineeId"
+                            data-stagiaire-nom="@s.TraineeName"
+                            data-phase="@s.PhaseNumber"
+                            data-semaine="@s.WeekNumber"
+                            data-cours="@s.CourseName"
+                            data-date-debut="@(s.WeekStartDate?.ToString("yyyy-MM-dd") ?? string.Empty)"
+                            data-date-fin="@(s.WeekEndDate?.ToString("yyyy-MM-dd") ?? string.Empty)"
+                            data-statut="@s.StatusText">
+
+                            <td>@s.TraineeName</td>
+                            <td>Phase @s.PhaseNumber</td>
+                            <td>Semaine @s.WeekNumber</td>
+                            <td>@s.CourseName</td>
+                            <td>@(s.WeekStartDate?.ToString("dd/MM/yyyy") ?? "—")</td>
+                            <td>@(s.WeekEndDate?.ToString("dd/MM/yyyy") ?? "—")</td>
+                            <td>
+                                @await Html.PartialAsync("~/Views/Shared/Components/_StatusBadge.cshtml", s.StatusText)
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

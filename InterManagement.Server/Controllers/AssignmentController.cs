@@ -3,7 +3,10 @@ using InterManagement.Application.Features.Assignments.Commands.DeactivateAssign
 using InterManagement.Application.Features.Assignments.Commands.DeleteAssignment;
 using InterManagement.Application.Features.Assignments.Queries.GetAssignments;
 using InterManagement.Application.Features.Assignments.Queries.GetAssignmentById;
+using InterManagement.Application.Features.Assignments.Queries.GetMentorAssignments;
 using InterManagement.Application.Features.Assignments.DTOs;
+using InterManagement.Application.Features.Assignments.Queries.GetAssignmentsByMentor;
+
 using InterManagement.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,19 +21,24 @@ namespace InterManagement.Server.Controllers
         private readonly DeleteAssignmentHandler     _deleteHandler;
         private readonly GetAssignmentsHandler       _getHandler;
         private readonly GetAssignmentByIdHandler    _getByIdHandler;
+        private readonly GetMentorAssignmentsHandler _getMentorAssignmentsHandler;
+
 
         public AssignmentController(
             CreateAssignmentHandler     createHandler,
             DeactivateAssignmentHandler deactivateHandler,
             DeleteAssignmentHandler     deleteHandler,
             GetAssignmentsHandler       getHandler,
-            GetAssignmentByIdHandler    getByIdHandler)
+            GetAssignmentByIdHandler    getByIdHandler,
+            GetMentorAssignmentsHandler getMentorAssignmentsHandler)
         {
             _createHandler     = createHandler;
             _deactivateHandler = deactivateHandler;
             _deleteHandler     = deleteHandler;
             _getHandler        = getHandler;
             _getByIdHandler    = getByIdHandler;
+            _getMentorAssignmentsHandler = getMentorAssignmentsHandler;
+
         }
 
         // GET api/assignment
@@ -89,5 +97,18 @@ namespace InterManagement.Server.Controllers
             await _deleteHandler.Handle(command);
             return NoContent();
         }
+
+        // GET api/assignment/mentor/{mentorId}/details
+        // Retourne les assignments détaillés d'un mentor avec Trainee + Phase + Weeks
+        [HttpGet("mentor/{mentorId}/details")]
+        public async Task<IActionResult> GetMentorAssignmentsDetails(int mentorId)
+        {
+            var query = new GetMentorAssignmentsQuery(mentorId);
+            var result = await _getMentorAssignmentsHandler.Handle(query);
+            return Ok(result);
+        }
     }
 }
+
+
+

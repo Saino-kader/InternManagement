@@ -1,3 +1,4 @@
+// Infrastructure/Repositories/FeedbackRepository.cs
 using InterManagement.Domain.Entities;
 using InterManagement.Domain.Repositories;
 using InternManagement.Infrastructure.Data;
@@ -14,17 +15,20 @@ namespace InternManagement.Infrastructure.Repositories
             _context = context;
         }
 
-        // ── CRUD de base 
-
         public async Task<IEnumerable<Feedback>> GetAllAsync()
         {
-            return await _context.Feedbacks.Include(f => f.Trainee).ToListAsync();
+            return await _context.Feedbacks
+                .Include(f => f.Trainee)
+                .Include(f => f.Mentor)
+                .OrderByDescending(f => f.SentAt)
+                .ToListAsync();
         }
 
         public async Task<Feedback?> GetByIdAsync(int id)
         {
             return await _context.Feedbacks
                 .Include(f => f.Trainee)
+                .Include(f => f.Mentor)
                 .FirstOrDefaultAsync(f => f.Id == id);
         }
 
@@ -51,21 +55,35 @@ namespace InternManagement.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        // ── Méthodes spéciales 
-
-        public async Task<IEnumerable<Feedback>> GetByTraineeAsync(
-            int traineeId)
+        // Feedbacks reçus par un stagiaire
+        public async Task<IEnumerable<Feedback>> GetByTraineeAsync(int traineeId)
         {
             return await _context.Feedbacks
+                .Include(f => f.Trainee)
+                .Include(f => f.Mentor)
                 .Where(f => f.TraineeId == traineeId)
                 .OrderByDescending(f => f.SentAt)
                 .ToListAsync();
         }
 
+        // Feedbacks envoyés par un mentor
+        public async Task<IEnumerable<Feedback>> GetByMentorAsync(int mentorId)
+        {
+            return await _context.Feedbacks
+                .Include(f => f.Trainee)
+                .Include(f => f.Mentor)
+                .Where(f => f.MentorId == mentorId)
+                .OrderByDescending(f => f.SentAt)
+                .ToListAsync();
+        }
+
+        // Feedbacks récents d'un stagiaire
         public async Task<IEnumerable<Feedback>> GetRecentFeedbacksAsync(
             int traineeId, int count)
         {
             return await _context.Feedbacks
+                .Include(f => f.Trainee)
+                .Include(f => f.Mentor)
                 .Where(f => f.TraineeId == traineeId)
                 .OrderByDescending(f => f.SentAt)
                 .Take(count)

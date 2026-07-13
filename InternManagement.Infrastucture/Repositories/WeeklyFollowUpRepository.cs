@@ -1,7 +1,9 @@
+// Infrastructure/Repositories/WeeklyFollowUpRepository.cs
 using InterManagement.Domain.Entities;
 using InterManagement.Domain.Repositories;
 using InternManagement.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace InternManagement.Infrastructure.Repositories
 {
@@ -18,10 +20,11 @@ namespace InternManagement.Infrastructure.Repositories
 
         public async Task<IEnumerable<WeeklyFollowUp>> GetAllAsync()
         {
-            return await _context.WeeklyFollowUps
+
+                return await _context.WeeklyFollowUps
                 .Include(w => w.Trainee)
                 .Include(w => w.Mentor)
-                .Include(w => w.Phase)
+                .Include(w => w.Week)
                 .ToListAsync();
         }
 
@@ -30,12 +33,11 @@ namespace InternManagement.Infrastructure.Repositories
             return await _context.WeeklyFollowUps
                 .Include(w => w.Trainee)
                 .Include(w => w.Mentor)
-                .Include(w => w.Phase)
+                .Include(w => w.Week)
                 .FirstOrDefaultAsync(w => w.Id == id);
         }
 
-        public async Task<WeeklyFollowUp> AddAsync(
-            WeeklyFollowUp entity)
+        public async Task<WeeklyFollowUp> AddAsync(WeeklyFollowUp entity)
         {
             await _context.WeeklyFollowUps.AddAsync(entity);
             await _context.SaveChangesAsync();
@@ -60,43 +62,81 @@ namespace InternManagement.Infrastructure.Repositories
 
         // ── Méthodes spéciales 
 
+        // Suivis pour une phase donnée
         public async Task<IEnumerable<WeeklyFollowUp>> GetByPhaseAsync(
             int phaseId)
         {
             return await _context.WeeklyFollowUps
                 .Include(w => w.Trainee)
                 .Include(w => w.Mentor)
-                .Where(w => w.PhaseId == phaseId)
-                .OrderBy(w => w.WeekNumber)
+                .Include(w => w.Week)
+                .Where(w => w.Week.PhaseId == phaseId)
+                .OrderBy(w => w.Week.WeekNumber)
                 .ToListAsync();
         }
 
+        // Tous les suivis d'un mentor
         public async Task<IEnumerable<WeeklyFollowUp>> GetByMentorAsync(
             int mentorId)
         {
             return await _context.WeeklyFollowUps
                 .Include(w => w.Trainee)
-                .Include(w => w.Phase)
+                .Include(w => w.Week)
                 .Where(w => w.MentorId == mentorId)
                 .OrderBy(w => w.FollowUpDate)
                 .ToListAsync();
         }
 
-        public async Task<WeeklyFollowUp?> GetByTraineePhaseWeekAsync(
-            int traineeId, int phaseId, int weekNumber)
+        // Vérifie si un suivi existe déjà pour ce Trainee + cette Week
+        // Remplace l'ancienne GetByTraineePhaseWeekAsync(traineeId, phaseId, weekNumber)
+        // PhaseId et WeekNumber ayant été supprimés de WeeklyFollowUp
+        public async Task<WeeklyFollowUp?> GetByTraineeAndWeekAsync(
+            int traineeId, int weekId)
         {
             return await _context.WeeklyFollowUps
                 .FirstOrDefaultAsync(w =>
-                    w.TraineeId  == traineeId &&
-                    w.PhaseId    == phaseId   &&
-                    w.WeekNumber == weekNumber);
+                    w.TraineeId == traineeId &&
+                    w.WeekId == weekId);
         }
 
-        public async Task AddRangeAsync(
-            IEnumerable<WeeklyFollowUp> followUps)
+        // Import massif depuis un fichier Excel
+        public async Task AddRangeAsync(IEnumerable<WeeklyFollowUp> followUps)
         {
             await _context.WeeklyFollowUps.AddRangeAsync(followUps);
             await _context.SaveChangesAsync();
         }
+
+        // Export — tous les suivis d'un seul stagiaire
+        public async Task<IEnumerable<WeeklyFollowUp>> GetByTraineeForExportAsync(
+            int traineeId)
+        {
+            return await _context.WeeklyFollowUps
+                .Include(w => w.Trainee)
+                .Include(w => w.Mentor)
+                .Include(w => w.Week)
+                .Where(w => w.TraineeId == traineeId)
+                .OrderBy(w => w.FollowUpDate)
+                .ToListAsync();
+        }
+
+        // Recherche par nom complet pour l'import Excel
+        public async Task<int?> FindTraineeIdByFullNameAsync(string fullName)
+        {
+            var trainee = await _context.Trainees
+                .FirstOrDefaultAsync(t =>
+                    (t.FirstName + " " + t.LastName).ToLower()
+                    == fullName.Trim().ToLower());
+            return trainee?.Id;
+        }
+
+        public async Task<int?> FindMentorIdByFullNameAsync(string fullName)
+        {
+            var mentor = await _context.Mentors
+                .FirstOrDefaultAsync(m =>
+                    (m.FirstName + " " + m.LastName).ToLower()
+                    == fullName.Trim().ToLower());
+            return mentor?.Id;
+        }
     }
 }
+

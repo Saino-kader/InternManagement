@@ -14,6 +14,7 @@ namespace InterManagement.Application.Features.Trainees.DTOs
         public string Theme { get; set; } = string.Empty;
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }
 

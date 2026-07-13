@@ -1,0 +1,55 @@
+@*
+=================================================
+NAVBAR ADMIN — MIS À JOUR
+La cloche est maintenant un lien direct
+vers la page Messages (Feedback).
+Le badge affiche le nombre de feedbacks
+non lus via ViewBag.FeedbackCount.
+=================================================
+*@
+<nav>
+    <i class="fas fa-bars menu-toggle"></i>
+
+    <div class="search-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Rechercher..." />
+    </div>
+
+    <div class="nav-actions">
+
+        @* Nom de l'utilisateur connecté *@
+        @if (ViewBag.CurrentUserEmail != null)
+        {
+            <span style="color: var(--text-soft); font-size: 0.85rem; margin-right: 0.5rem;">
+                <i class="fas fa-user-circle"></i>
+                @ViewBag.CurrentUserEmail
+            </span>
+        }
+
+        @* Cloche → redirige vers la page Messages *@
+        <a asp-controller="Feedback" asp-action="Index"
+           class="notification"
+           id="notificationBell"
+           title="Messages"
+           style="text-decoration: none; color: var(--text-soft);">
+            <i class="fas fa-bell"></i>
+            @if (ViewBag.FeedbackCount != null && (int)ViewBag.FeedbackCount > 0)
+            {
+                <span class="badge" id="notificationBadge">@ViewBag.FeedbackCount</span>
+            }
+            else
+            {
+                <span class="badge" id="notificationBadge" style="display:none;">0</span>
+            }
+        </a>
+
+        <div class="profile">
+            <a asp-controller="Account" asp-action="Logout"
+               title="Se déconnecter"
+               style="color: var(--text-soft); text-decoration: none;">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </div>
+
+    </div>
+</nav>

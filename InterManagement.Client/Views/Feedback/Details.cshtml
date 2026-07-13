@@ -1,0 +1,47 @@
+@*
+=================================================
+DETAIL FEEDBACK
+Vue lecture seule d'un feedback.
+=================================================
+*@
+@model InterManagement.Application.Features.Feedbacks.DTOs.FeedbackDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Détail feedback";
+    ViewData["ActivePage"] = "feedbacks";
+}
+
+<div class="head-title">
+    <div>
+        <h1>Détail du feedback</h1>
+        <div class="breadcrumb">
+            <span>Accueil</span>
+            <i class="fas fa-chevron-right"></i>
+            <span>Feedbacks</span>
+            <i class="fas fa-chevron-right"></i>
+            <span>Détail</span>
+        </div>
+    </div>
+</div>
+
+<form style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
+<div class="table-container">
+    <p><strong>Stagiaire :</strong> @Model.TraineeName</p>
+    <p><strong>Source :</strong> @(string.IsNullOrWhiteSpace(Model.SenderType) ? "—" : Model.SenderType)</p>
+    <p><strong>Date :</strong> @Model.SentAt.ToString("dd/MM/yyyy HH:mm")</p>
+    <p><strong>Message :</strong></p>
+    <div class="message-content">@Model.Message</div>
+
+    <div style="display:flex; gap: 1rem; margin-top: 1.5rem;">
+        <a asp-controller="Feedback" asp-action="Index" class="btn-secondary">Retour</a>
+        <button type="button"
+                class="btn-danger action-btn delete"
+                data-delete-url="/Feedback/Delete/@Model.Id"
+                data-delete-name="ce feedback">
+            Supprimer
+        </button>
+    </div>
+</div>
