@@ -1,4 +1,5 @@
 // Controllers/MentorSpaceController.cs
+using InterManagement.Application.Features.Feedbacks.DTOs;
 using InterManagement.Client.Models;
 using InterManagement.Client.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -11,17 +12,20 @@ public class MentorSpaceController : BaseController
     private readonly IAssignmentApiService _assignmentService;
     private readonly ITraineeApiService _traineeService;
     private readonly IFeedbackApiService _feedbackService;
+    private readonly ILogger<MentorSpaceController> _logger;
 
     public MentorSpaceController(
         IMentorApiService mentorService,
         IAssignmentApiService assignmentService,
         ITraineeApiService traineeService,
-        IFeedbackApiService feedbackService)
+        IFeedbackApiService feedbackService,
+        ILogger<MentorSpaceController> logger)
     {
         _mentorService     = mentorService;
         _assignmentService = assignmentService;
         _traineeService    = traineeService;
         _feedbackService   = feedbackService;
+        _logger            = logger;
     }
 
     public async Task<IActionResult> Index(int mentorId)
@@ -115,7 +119,7 @@ public class MentorSpaceController : BaseController
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[MentorSpace] BuildAssigned error: {ex.Message}");
+            _logger.LogError(ex, "Error building assigned trainees for mentor {MentorId}", mentorId);
         }
 
         return rows.OrderBy(r => r.TraineeName).ThenBy(r => r.WeekNumber).ToList();
@@ -134,7 +138,7 @@ public class MentorSpaceController : BaseController
             return RedirectToAction(nameof(Index), new { mentorId });
         }
 
-        var dto = new InterManagement.Application.Features.Feedbacks.DTOs.CreateFeedbackDto
+        var dto = new CreateFeedbackDto
         {
             Message   = message.Trim(),
             MentorId  = mentorId,

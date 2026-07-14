@@ -29,13 +29,13 @@ public class WeekController : BaseController
         if (model.PhaseId <= 0)
         {
             SetError("Phase introuvable.");
-            return RedirectToAction("Index", "Phases");
+            return RedirectToAction("Index", "Phase");
         }
 
         if (model.WeekNumber <= 0)
         {
             SetError("Le numéro de semaine doit être supérieur à 0.");
-            return RedirectToAction("Index", "Phases");
+            return RedirectToAction("Index", "Phase");
         }
 
         var created = await _weekService.CreateAsync(model);
@@ -49,7 +49,7 @@ public class WeekController : BaseController
             SetSuccess($"Semaine {created.WeekNumber} ajoutée avec succès.");
         }
 
-        return RedirectToAction("Index", "Phases");
+        return RedirectToAction("Index", "Phase");
     }
 
     // ── Supprimer une semaine ─────────────────────────────────────────
@@ -67,6 +67,6 @@ public class WeekController : BaseController
         else
             SetSuccess("Semaine supprimée avec succès.");
 
-        return RedirectToAction("Index", "Phases");
+        return RedirectToAction("Index", "Phase");
     }
 }

@@ -13,15 +13,15 @@ public class AccountController : Controller
 {
     private readonly IAuthApiService _authService;
 
-        // Ajouter dans AccountController.cs
-    public IActionResult AccessDenied()
-    {
-        return View();
-    }
-
     public AccountController(IAuthApiService authService)
     {
         _authService = authService;
+    }
+
+    // ── Page affichée quand un rôle connecté n'a pas accès ───
+    public IActionResult AccessDenied()
+    {
+        return View();
     }
 
     // ── Page de connexion (GET) ──────────────────────────────

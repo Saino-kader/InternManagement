@@ -1,6 +1,6 @@
 // InterManagement.Client/Controllers/UtilisateursController.cs
-// MIS À JOUR : crée le compte Identity après chaque ajout d'utilisateur
-// et passe le mot de passe temporaire à la vue via TempData.
+// Crée le compte Identity après chaque ajout d'utilisateur et passe
+// le mot de passe temporaire à la vue via TempData.
 
 using InterManagement.Application.Features.Trainees.DTOs;
 using InterManagement.Application.Features.Mentors.DTOs;
@@ -16,13 +16,13 @@ public class UtilisateursController : BaseController
     private readonly ITraineeApiService _traineeService;
     private readonly IMentorApiService _mentorService;
     private readonly IAdminApiService _adminService;
-    private readonly IAuthApiService _authService; // ← AJOUTÉ
+    private readonly IAuthApiService _authService;
 
     public UtilisateursController(
         ITraineeApiService traineeService,
         IMentorApiService mentorService,
         IAdminApiService adminService,
-        IAuthApiService authService) // ← AJOUTÉ
+        IAuthApiService authService)
     {
         _traineeService = traineeService;
         _mentorService = mentorService;
@@ -32,7 +32,6 @@ public class UtilisateursController : BaseController
 
     public async Task<IActionResult> Index()
     {
-
         var check = RequireRole("Admin");
         if (check != null) return check;
 
@@ -179,77 +178,75 @@ public class UtilisateursController : BaseController
     }
 
 
-// Suppression
-
-[HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> DeleteStagiaire(int id)
-{
-    // Récupère l'email avant suppression (pour supprimer aussi
-    // le compte Identity correspondant)
-    var trainee = await _traineeService.GetByIdAsync(id);
-    if (trainee != null)
+    // ── SUPPRESSION ───────────────────────────────────────────
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteStagiaire(int id)
     {
-        var deleted = await _traineeService.DeleteAsync(id);
-        if (!deleted)
+        // Récupère l'email avant suppression (pour supprimer aussi
+        // le compte Identity correspondant)
+        var trainee = await _traineeService.GetByIdAsync(id);
+        if (trainee != null)
         {
-            SetError("Échec de la suppression du stagiaire.");
-            return RedirectToAction(nameof(Index));
+            var deleted = await _traineeService.DeleteAsync(id);
+            if (!deleted)
+            {
+                SetError("Échec de la suppression du stagiaire.");
+                return RedirectToAction(nameof(Index));
+            }
+            await _authService.DeleteAccountAsync(trainee.Email);
+            SetSuccess($"{trainee.FirstName} {trainee.LastName} supprimé.");
         }
-        await _authService.DeleteAccountAsync(trainee.Email);
-        SetSuccess($"{trainee.FirstName} {trainee.LastName} supprimé.");
-    }
-    else
-    {
-        SetError("Stagiaire introuvable.");
-    }
-    return RedirectToAction(nameof(Index));
-}
-
-[HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> DeleteMentor(int id)
-{
-    var mentor = await _mentorService.GetByIdAsync(id);
-    if (mentor != null)
-    {
-        var deleted = await _mentorService.DeleteAsync(id);
-        if (!deleted)
+        else
         {
-            SetError("Échec de la suppression du mentor.");
-            return RedirectToAction(nameof(Index));
+            SetError("Stagiaire introuvable.");
         }
-        await _authService.DeleteAccountAsync(mentor.Email);
-        SetSuccess($"{mentor.FirstName} {mentor.LastName} supprimé.");
+        return RedirectToAction(nameof(Index));
     }
-    else
-    {
-        SetError("Mentor introuvable.");
-    }
-    return RedirectToAction(nameof(Index));
-}
 
-[HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> DeleteAdmin(int id)
-{
-    var admin = await _adminService.GetByIdAsync(id);
-    if (admin != null)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteMentor(int id)
     {
-        var deleted = await _adminService.DeleteAsync(id);
-        if (!deleted)
+        var mentor = await _mentorService.GetByIdAsync(id);
+        if (mentor != null)
         {
-            SetError("Échec de la suppression de l'administrateur.");
-            return RedirectToAction(nameof(Index));
+            var deleted = await _mentorService.DeleteAsync(id);
+            if (!deleted)
+            {
+                SetError("Échec de la suppression du mentor.");
+                return RedirectToAction(nameof(Index));
+            }
+            await _authService.DeleteAccountAsync(mentor.Email);
+            SetSuccess($"{mentor.FirstName} {mentor.LastName} supprimé.");
         }
-        await _authService.DeleteAccountAsync(admin.Email);
-        SetSuccess($"{admin.FirstName} {admin.LastName} supprimé.");
+        else
+        {
+            SetError("Mentor introuvable.");
+        }
+        return RedirectToAction(nameof(Index));
     }
-    else
-    {
-        SetError("Administrateur introuvable.");
-    }
-    return RedirectToAction(nameof(Index));
-}
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteAdmin(int id)
+    {
+        var admin = await _adminService.GetByIdAsync(id);
+        if (admin != null)
+        {
+            var deleted = await _adminService.DeleteAsync(id);
+            if (!deleted)
+            {
+                SetError("Échec de la suppression de l'administrateur.");
+                return RedirectToAction(nameof(Index));
+            }
+            await _authService.DeleteAccountAsync(admin.Email);
+            SetSuccess($"{admin.FirstName} {admin.LastName} supprimé.");
+        }
+        else
+        {
+            SetError("Administrateur introuvable.");
+        }
+        return RedirectToAction(nameof(Index));
+    }
 }

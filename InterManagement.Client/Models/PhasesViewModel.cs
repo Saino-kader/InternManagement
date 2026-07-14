@@ -11,7 +11,7 @@ namespace InterManagement.Client.Models
         public List<PhaseDto> Phases { get; set; } = [];
 
         // Les 4 blocs d'accordéon (Phase 1 à 4), chacun avec ses
-        // semaines distinctes — préparés par PhasesController
+        // semaines distinctes — préparés par PhaseController
         public List<PhaseAccordionItem> AccordionItems { get; set; } = [];
 
         // Nécessaires pour remplir le multi-select et le <select> Mentor du modal

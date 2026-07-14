@@ -6,9 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InterManagement.Client.Controllers;
 
-// TODO : une fois l'authentification ajoutée, protéger ce Controller
-// avec [Authorize(Roles = "Trainee")] et récupérer traineeId depuis
-// la session de l'utilisateur connecté, plutôt qu'en paramètre d'URL.
 public class StagiaireController : BaseController
 {
     private readonly IPhaseApiService _phaseService;
@@ -30,17 +27,14 @@ public class StagiaireController : BaseController
 
     public async Task<IActionResult> Index(int traineeId)
     {
+        var check = RequireRole("Trainee");
+        if (check != null) return check;
 
-    var check = RequireRole("Trainee");
-    if (check != null) return check;
-
-    // Sécurité supplémentaire : le stagiaire connecté
-    // ne peut voir QUE SA PROPRE page, pas celle d'un autre
-    if (CurrentEntityId != traineeId)
-        return RedirectToAction("Index",
-            new { traineeId = CurrentEntityId });        
-
-
+        // Sécurité supplémentaire : le stagiaire connecté
+        // ne peut voir QUE SA PROPRE page, pas celle d'un autre
+        if (CurrentEntityId != traineeId)
+            return RedirectToAction("Index",
+                new { traineeId = CurrentEntityId });
 
         var trainee = await _traineeService.GetByIdAsync(traineeId);
         if (trainee is null) return NotFound();

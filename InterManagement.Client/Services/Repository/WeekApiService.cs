@@ -18,12 +18,12 @@ public class WeekApiService
         {
             var result = await _httpClient.GetFromJsonAsync<List<WeekDto>>(
                 $"{ResourcePath}?phaseId={phaseId}", JsonOptions);
-            return result ?? new List<WeekDto>();
+            return result ?? [];
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error fetching weeks for phase {PhaseId}", phaseId);
-            return new List<WeekDto>();
+            return [];
         }
     }
 }

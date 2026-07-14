@@ -19,15 +19,14 @@ public class WeeklyFollowUpApiService
         {
             var result = await _httpClient.GetFromJsonAsync<List<WeeklyFollowUpDto>>(
                 $"{ResourcePath}?weekId={weekId}", JsonOptions);
-            return result ?? new List<WeeklyFollowUpDto>();
+            return result ?? [];
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error fetching follow-ups for week {WeekId}", weekId);
-            return new List<WeeklyFollowUpDto>();
+            return [];
         }
     }
-
 
     public async Task<List<WeeklyFollowUpDto>> GetByMentorAsync(int mentorId)
     {
@@ -35,12 +34,12 @@ public class WeeklyFollowUpApiService
         {
             var result = await _httpClient.GetFromJsonAsync<List<WeeklyFollowUpDto>>(
                 $"{ResourcePath}?mentorId={mentorId}", JsonOptions);
-            return result ?? new List<WeeklyFollowUpDto>();
+            return result ?? [];
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error fetching follow-ups for mentor {MentorId}", mentorId);
-            return new List<WeeklyFollowUpDto>();
+            return [];
         }
     }
 

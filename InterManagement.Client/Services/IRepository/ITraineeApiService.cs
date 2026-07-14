@@ -1,5 +1,6 @@
 using InterManagement.Application.Features.Trainees.DTOs;
 using InterManagement.Shared.Enums;
+
 namespace InterManagement.Client.Services;
 
 public interface ITraineeApiService

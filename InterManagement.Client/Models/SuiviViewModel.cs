@@ -18,10 +18,5 @@ namespace InterManagement.Client.Models
 
         // Tableau 2 — Suivis importés depuis Excel
         public List<ImportedFollowUpDto> SuivisImportes { get; set; } = [];
-
     }
 }
-
-
-
-

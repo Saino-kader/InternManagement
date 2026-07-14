@@ -31,7 +31,6 @@ public class SuiviController : BaseController
 
     public async Task<IActionResult> Index()
     {
-
         var check = RequireRole("Admin");
         if (check != null) return check;
 
@@ -103,6 +102,7 @@ public class SuiviController : BaseController
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             result.Value.fileName);
     }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
@@ -115,9 +115,6 @@ public class SuiviController : BaseController
 
         return RedirectToAction(nameof(Index));
     }
-
-
-
 
     // ── Suivis importés depuis Excel ─────────────────────────────────
 

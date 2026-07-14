@@ -67,8 +67,3 @@ public abstract class BaseController : Controller
         base.OnActionExecuting(context);
     }
 }
-
-
-
-
-

@@ -42,8 +42,16 @@ public class PhaseController : BaseController
         var phases = await phasesTask;
 
         // ── Construit les accordéons ─────────────────────────────────
-        // Groupe les phases par PhaseNumber
-        // Pour chaque groupe : récupère les semaines réelles de chaque phase
+        // Groupe les phases par PhaseNumber. Le nom du stagiaire et les
+        // semaines de TOUTES les phases sont récupérés en parallèle
+        // (un aller-retour par phase au lieu d'attendre phase par phase).
+        var traineeTasks = phases.ToDictionary(
+            p => p.Id, p => _traineeService.GetByIdAsync(p.TraineeId));
+        var weekTasks = phases.ToDictionary(
+            p => p.Id, p => _weekService.GetByPhaseAsync(p.Id));
+
+        await Task.WhenAll(traineeTasks.Values.Concat<Task>(weekTasks.Values));
+
         var accordionItems = new List<PhaseAccordionItem>();
 
         var phaseGroups = phases
@@ -56,18 +64,12 @@ public class PhaseController : BaseController
 
             foreach (var phase in group)
             {
-                // Récupère le vrai nom du stagiaire et les semaines en parallèle
-                var traineeTask = _traineeService.GetByIdAsync(phase.TraineeId);
-                var weeksTask = _weekService.GetByPhaseAsync(phase.Id);
-
-                await Task.WhenAll(traineeTask, weeksTask);
-
-                var trainee = await traineeTask;
+                var trainee = traineeTasks[phase.Id].Result;
                 var traineeName = trainee != null
                     ? $"{trainee.FirstName} {trainee.LastName}"
                     : $"Stagiaire #{phase.TraineeId}";
 
-                var weeks = await weeksTask;
+                var weeks = weekTasks[phase.Id].Result;
 
                 rows.Add(new PhaseAccordionRowItem
                 {

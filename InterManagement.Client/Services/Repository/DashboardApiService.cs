@@ -1,6 +1,7 @@
 // Services/Repository/DashboardApiService.cs
 using System.Net.Http.Json;
-using InterManagement.Application.Features.Dashboard.DTOs;  // ← VÉRIFIE que cette ligne existe
+using System.Text.Json;
+using InterManagement.Application.Features.Dashboard.DTOs;
 
 namespace InterManagement.Client.Services;
 
@@ -9,10 +10,10 @@ public class DashboardApiService : IDashboardApiService
     private readonly HttpClient _httpClient;
     private readonly ILogger<DashboardApiService> _logger;
 
-    private static readonly System.Text.Json.JsonSerializerOptions JsonOptions = new()
+    private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
-        PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     public DashboardApiService(HttpClient httpClient, ILogger<DashboardApiService> logger)

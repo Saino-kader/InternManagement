@@ -7,9 +7,3 @@ public interface IAdminApiService
 {
     // Pas de méthode spéciale — Admin n'a que le CRUD de base
 }
-
-
-
-
-
-
