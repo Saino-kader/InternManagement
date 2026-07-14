@@ -66,13 +66,14 @@ namespace InternManagement.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        // Feedbacks envoyés par un mentor
+        // Feedbacks envoyés par un mentor (exclut les messages reçus d'un
+        // stagiaire, qui ont aussi MentorId renseigné mais un TraineeId)
         public async Task<IEnumerable<Feedback>> GetByMentorAsync(int mentorId)
         {
             return await _context.Feedbacks
                 .Include(f => f.Trainee)
                 .Include(f => f.Mentor)
-                .Where(f => f.MentorId == mentorId)
+                .Where(f => f.MentorId == mentorId && f.TraineeId == null)
                 .OrderByDescending(f => f.SentAt)
                 .ToListAsync();
         }

@@ -24,7 +24,40 @@ function toggleUserFields() {
     .getElementById("userSpecialite")
     .closest(".form-group").style.display = type === "admin" ? "none" : "block";
 
+  // "Terminé" n'a de sens que pour un Stagiaire (lié à TraineeStatus)
+  const statutSelect = document.getElementById("userStatut");
+  const termineOption = document.getElementById("userStatutTermineOption");
+  if (termineOption) {
+    termineOption.hidden = type !== "stagiaire";
+    if (type !== "stagiaire" && statutSelect.value === "Completed") {
+      statutSelect.value = "true";
+      applyUserStatutSelection("true");
+    }
+  }
+
   updateFormAction(type);
+}
+
+/* ============================================================
+   SYNCHRONISE LE SÉLECTEUR "Statut" AVEC IsActive ET Status
+   Actif → IsActive=true,  Status=InProgress
+   Inactif → IsActive=false, Status=Suspended
+   Terminé → IsActive=true,  Status=Completed
+============================================================ */
+function applyUserStatutSelection(value) {
+  const isActiveField = document.getElementById("userIsActiveField");
+  const traineeStatusField = document.getElementById("userTraineeStatus");
+
+  if (value === "Completed") {
+    isActiveField.value = "true";
+    traineeStatusField.value = "Completed";
+  } else if (value === "false") {
+    isActiveField.value = "false";
+    traineeStatusField.value = "Suspended";
+  } else {
+    isActiveField.value = "true";
+    traineeStatusField.value = "InProgress";
+  }
 }
 
 function updateFormAction(type) {
@@ -74,7 +107,7 @@ function openUserModal() {
   });
 
   document.getElementById("userStatut").value = "true";
-  document.getElementById("userTraineeStatus").value = "InProgress";
+  applyUserStatutSelection("true");
   document.getElementById("userDepartement").value = "Engineering";
   document.getElementById("userRole").value = "Administrateur";
 
@@ -101,10 +134,18 @@ function openEditUserModal(btn) {
   document.getElementById("userEmail").value = row.dataset.email || "";
   document.getElementById("userSpecialite").value =
     row.dataset.specialite || "";
-  document.getElementById("userStatut").value =
-    (row.dataset.statut || "Actif") === "Actif" ? "true" : "false";
-  document.getElementById("userTraineeStatus").value =
-    row.dataset.traineeStatus || "InProgress";
+  const rowIsActive = (row.dataset.statut || "Actif") === "Actif";
+  const rowTraineeStatus = row.dataset.traineeStatus || "InProgress";
+
+  // Reflète l'état réel du stagiaire (pas la correspondance par défaut)
+  document.getElementById("userIsActiveField").value = String(rowIsActive);
+  document.getElementById("userTraineeStatus").value = rowTraineeStatus;
+
+  document.getElementById("userStatut").value = !rowIsActive
+    ? "false"
+    : rowTraineeStatus === "Completed"
+      ? "Completed"
+      : "true";
 
   if (type === "stagiaire") {
     document.getElementById("userStructure").value =
@@ -134,8 +175,8 @@ function openTraineeDetailsModal(btn) {
   const traineeStatusLabel =
     traineeStatus === "InProgress"
       ? "En cours"
-      : traineeStatus === "Validated" || traineeStatus === "Completed"
-        ? "Validé"
+      : traineeStatus === "Completed"
+        ? "Terminé"
         : traineeStatus === "Suspended"
           ? "Suspendu"
           : traineeStatus;
@@ -214,6 +255,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document
     .getElementById("openUserBtn")
     ?.addEventListener("click", openUserModal);
+
+  document
+    .getElementById("userStatut")
+    ?.addEventListener("change", function () {
+      applyUserStatutSelection(this.value);
+    });
 
   // Si TempData contient un mot de passe temporaire → l'afficher
   // (valeur injectée par Razor dans un data-attribute)

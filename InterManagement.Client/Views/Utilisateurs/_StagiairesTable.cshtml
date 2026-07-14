@@ -35,6 +35,8 @@ Liste tous les stagiaires avec leurs actions.
                     {
                         var isActive = s.IsActive;
                         var activeLabel = isActive ? "Actif" : "Inactif";
+                        var isCompleted = s.Status == InterManagement.Shared.Enums.TraineeStatus.Completed;
+                        var badgeLabel = !isActive ? "Inactif" : isCompleted ? "Terminé" : "Actif";
                         <tr data-user-id="@s.Id"
                             data-user-type="stagiaire"
                             data-nom="@s.LastName"
@@ -55,7 +57,7 @@ Liste tous les stagiaires avec leurs actions.
                             <td>@s.StartDate.ToString("dd/MM/yyyy")</td>
                             <td>@s.EndDate.ToString("dd/MM/yyyy")</td>
                             <td>
-                                @await Html.PartialAsync("~/Views/Shared/Components/_StatusBadge.cshtml", activeLabel)
+                                @await Html.PartialAsync("~/Views/Shared/Components/_StatusBadge.cshtml", badgeLabel)
                             </td>
                             <td class="action-btns">
                                 @if (isActive)

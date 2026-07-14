@@ -55,12 +55,14 @@ distincts — voir note d'implémentation plus bas).
                 </div>
                 <div class="form-group">
                     <label for="userStatut">Statut</label>
-                    <select name="IsActive" id="userStatut">
+                    <select id="userStatut">
                         <option value="true">Actif</option>
                         <option value="false">Inactif</option>
+                        <option value="Completed" id="userStatutTermineOption">Terminé</option>
                     </select>
                 </div>
 
+                <input type="hidden" id="userIsActiveField" name="IsActive" value="true" />
                 <input type="hidden" id="userTraineeStatus" name="Status" value="InProgress" />
 
                 @* ===== CHAMPS SPÉCIFIQUES STAGIAIRE ===== *@
