@@ -95,7 +95,7 @@ public class StagiaireController : BaseController
         }
 
         model.MentorId = mentorId.Value;
-        model.Message = $"[STAGIAIRE:{model.TraineeId.Value}] {model.Message?.Trim()}";
+        model.Message = model.Message?.Trim() ?? string.Empty;
 
         var created = await _feedbackService.CreateAsync(model);
 

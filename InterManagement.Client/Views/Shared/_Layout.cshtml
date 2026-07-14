@@ -27,6 +27,8 @@ page s'insère via @RenderBody().
 </head>
 <body>
 
+    @await Html.PartialAsync("~/Views/Shared/_ToastMessages.cshtml")
+
     @* ===== SIDEBAR ===== *@
     @await Html.PartialAsync("~/Views/Shared/Components/_Sidebar.cshtml")
 

@@ -109,33 +109,6 @@ h5,
 }
 
 /* ============================================
-   CUSTOM CURSOR
-   ============================================ */
-.cursor {
-  width: 8px;
-  height: 8px;
-  background: var(--accent-primary);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  transition: transform 0.1s ease;
-  mix-blend-mode: difference;
-}
-
-.cursor-follower {
-  width: 40px;
-  height: 40px;
-  border: 1.5px solid var(--accent-primary);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9998;
-  transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-  opacity: 0.5;
-}
-
-/* ============================================
    HEADER
    ============================================ */
 .header {
@@ -708,10 +681,5 @@ footer {
   .footer-grid {
     grid-template-columns: 1fr;
     text-align: center;
-  }
-
-  .cursor,
-  .cursor-follower {
-    display: none;
   }
 }

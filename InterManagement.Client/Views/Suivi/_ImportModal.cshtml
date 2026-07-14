@@ -2,10 +2,11 @@
 =================================================
 MODAL IMPORT EXCEL
 Permet d'importer un fichier Excel/CSV contenant
-1 à plusieurs stagiaires. L'aperçu est généré côté
+1 à plusieurs stagiaires dans le tableau "Suivis
+importés depuis Excel". L'aperçu est généré côté
 navigateur (suivi.js, lecture seule) ; la validation
 réelle et l'enregistrement se font côté backend
-(POST /Suivi/Import → ImportWeeklyFollowUpsHandler).
+(POST /Suivi/ImportImported → ImportExcelHandler).
 =================================================
 *@
 <div id="importExportModal" class="modal">
@@ -16,7 +17,7 @@ réelle et l'enregistrement se font côté backend
         </div>
 
         <form id="importForm" method="post" enctype="multipart/form-data"
-              asp-controller="Suivi" asp-action="Import">
+              asp-controller="Suivi" asp-action="ImportImported">
             @Html.AntiForgeryToken()
 
             <div class="modal-body">

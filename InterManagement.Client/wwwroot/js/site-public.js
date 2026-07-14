@@ -25,35 +25,6 @@ function initHeaderScroll() {
 
 
 /* ============================================================
-   CURSEUR PERSONNALISÉ
-============================================================ */
-
-function initCursor() {
-  const cursor = document.querySelector('.cursor');
-  const follower = document.querySelector('.cursor-follower');
-  if (!cursor || !follower) return;
-
-  document.addEventListener('mousemove', (e) => {
-    cursor.style.transform = `translate(${e.clientX - 4}px, ${e.clientY - 4}px)`;
-    follower.style.transform = `translate(${e.clientX - 20}px, ${e.clientY - 20}px)`;
-  });
-
-  document
-    .querySelectorAll('a, button, .phase-orbit-btn, .premium-card')
-    .forEach((el) => {
-      el.addEventListener('mouseenter', () => {
-        follower.style.transform = 'scale(1.5)';
-        follower.style.opacity = '0.3';
-      });
-      el.addEventListener('mouseleave', () => {
-        follower.style.transform = 'scale(1)';
-        follower.style.opacity = '0.5';
-      });
-    });
-}
-
-
-/* ============================================================
    PANNEAU COMPTE (dropdown header)
 ============================================================ */
 
@@ -160,7 +131,6 @@ function initProtectedNavLinks() {
 ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
   initHeaderScroll();
-  initCursor();
   initAccountPanel();
   initLoginModal();
   initProtectedNavLinks();

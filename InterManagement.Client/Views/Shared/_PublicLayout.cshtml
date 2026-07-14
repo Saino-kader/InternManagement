@@ -21,6 +21,8 @@ classiques d'un site vitrine.
 </head>
 <body>
 
+    @await Html.PartialAsync("~/Views/Shared/_ToastMessages.cshtml")
+
     @RenderBody()
 
     @await RenderSectionAsync("Scripts", required: false)
