@@ -165,38 +165,49 @@ function openEditUserModal(btn) {
 /* ============================================================
    MODAL DÉTAIL STAGIAIRE
 ============================================================ */
+// Reproduit le classement de _StatusBadge.cshtml côté client
+// (le modal détail est rempli en JS, pas re-rendu par Razor).
+function traineeStatusBadgeHtml(row) {
+  const isActive = (row.dataset.statut || "Actif") === "Actif";
+  const isCompleted = row.dataset.traineeStatus === "Completed";
+  const label = !isActive ? "Inactif" : isCompleted ? "Terminé" : "Actif";
+  const cssClass = !isActive
+    ? "status-Inactif"
+    : isCompleted
+      ? "status-Completed"
+      : "status-actif";
+
+  return `<span class="status-badge ${cssClass}">${label}</span>`;
+}
+
 function openTraineeDetailsModal(btn) {
   const row = btn.closest("tr");
   if (!row) return;
 
-  const fullName = `${row.dataset.prenom || ""} ${row.dataset.nom || ""}`.trim();
-  const isActiveLabel = row.dataset.statut || "Actif";
-  const traineeStatus = row.dataset.traineeStatus || "InProgress";
-  const traineeStatusLabel =
-    traineeStatus === "InProgress"
-      ? "En cours"
-      : traineeStatus === "Completed"
-        ? "Terminé"
-        : traineeStatus === "Suspended"
-          ? "Suspendu"
-          : traineeStatus;
+  const firstName = row.dataset.prenom || "";
+  const lastName = row.dataset.nom || "";
+  const fullName = `${firstName} ${lastName}`.trim();
+  const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 
   const startDate = row.dataset.dateDebut || "";
   const endDate = row.dataset.dateFin || "";
 
-  document.getElementById("detailTraineeFullName").value = fullName;
-  document.getElementById("detailTraineeEmail").value = row.dataset.email || "";
-  document.getElementById("detailTraineeSpecialty").value = row.dataset.specialite || "";
-  document.getElementById("detailTraineeUniversity").value = row.dataset.structure || "";
-  document.getElementById("detailTraineeTheme").value = row.dataset.theme || "";
-  document.getElementById("detailTraineeStartDate").value = startDate
+  document.getElementById("detailTraineeAvatar").textContent = initials || "?";
+  document.getElementById("detailTraineeFullName").textContent = fullName || "—";
+  document.getElementById("detailTraineeEmail").textContent = row.dataset.email || "—";
+  document.getElementById("detailTraineeSpecialty").textContent =
+    row.dataset.specialite || "—";
+  document.getElementById("detailTraineeUniversity").textContent =
+    row.dataset.structure || "—";
+  document.getElementById("detailTraineeTheme").textContent = row.dataset.theme || "—";
+  document.getElementById("detailTraineeStartDate").textContent = startDate
     ? formatDate(startDate)
-    : "";
-  document.getElementById("detailTraineeEndDate").value = endDate
+    : "—";
+  document.getElementById("detailTraineeEndDate").textContent = endDate
     ? formatDate(endDate)
-    : "";
-  document.getElementById("detailTraineeStatus").value =
-    `${isActiveLabel} (${traineeStatusLabel})`;
+    : "—";
+  document.getElementById("detailTraineeStatusBadge").innerHTML =
+    traineeStatusBadgeHtml(row);
 
   openModal("traineeDetailsModal");
 }

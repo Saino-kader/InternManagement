@@ -2,7 +2,8 @@
 =================================================
 MODAL DETAIL STAGIAIRE
 Affiche les informations détaillées depuis la ligne
-sélectionnée du tableau stagiaires.
+sélectionnée du tableau stagiaires, en lecture seule
+(avatar, badge de statut, fiche d'informations).
 =================================================
 *@
 <div id="traineeDetailsModal" class="modal">
@@ -13,47 +14,40 @@ sélectionnée du tableau stagiaires.
         </div>
 
         <div class="modal-body">
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Nom complet</label>
-                    <input type="text" id="detailTraineeFullName" readonly />
+            <div class="detail-header">
+                <div class="detail-avatar" id="detailTraineeAvatar">--</div>
+                <div class="detail-header-info">
+                    <div class="detail-name" id="detailTraineeFullName">—</div>
+                    <div class="detail-email" id="detailTraineeEmail">—</div>
                 </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="text" id="detailTraineeEmail" readonly />
-                </div>
+                <div id="detailTraineeStatusBadge"></div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label>Spécialité</label>
-                    <input type="text" id="detailTraineeSpecialty" readonly />
+                    <div class="detail-value" id="detailTraineeSpecialty">—</div>
                 </div>
                 <div class="form-group">
                     <label>Structure</label>
-                    <input type="text" id="detailTraineeUniversity" readonly />
+                    <div class="detail-value" id="detailTraineeUniversity">—</div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Thème</label>
-                <input type="text" id="detailTraineeTheme" readonly />
+                <label>Thème du stage</label>
+                <div class="detail-value" id="detailTraineeTheme">—</div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Date début</label>
-                    <input type="text" id="detailTraineeStartDate" readonly />
+                    <label><i class="fas fa-calendar-day"></i> Date début</label>
+                    <div class="detail-value" id="detailTraineeStartDate">—</div>
                 </div>
                 <div class="form-group">
-                    <label>Date fin</label>
-                    <input type="text" id="detailTraineeEndDate" readonly />
+                    <label><i class="fas fa-calendar-check"></i> Date fin</label>
+                    <div class="detail-value" id="detailTraineeEndDate">—</div>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label>Statut</label>
-                <input type="text" id="detailTraineeStatus" readonly />
             </div>
         </div>
 

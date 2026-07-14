@@ -796,6 +796,57 @@ main {
   gap: 16px;
 }
 
+/* ── Fiche détail en lecture seule (ex: _TraineeDetailsModal) ── */
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-avatar {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  background: var(--primary-soft);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.detail-header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.detail-email {
+  font-size: 0.85rem;
+  color: var(--text-soft);
+}
+
+.detail-value {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 1.2em;
+}
+
 .modal-footer {
   padding: 16px 24px;
   border-top: 1px solid var(--border);
