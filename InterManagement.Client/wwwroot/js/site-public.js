@@ -67,6 +67,15 @@ function initLoginModal() {
     document.body.style.overflow = 'hidden';
   });
 
+  // Autres déclencheurs du même modal (ex. bouton du hero)
+  document.querySelectorAll('.login-trigger-hero').forEach((trigger) => {
+    trigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
   loginModalClose?.addEventListener('click', () => {
     loginModal.classList.remove('active');
     document.body.style.overflow = 'auto';

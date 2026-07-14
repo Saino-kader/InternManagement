@@ -4,98 +4,191 @@
    de connexion : voir common.css)
    ============================================ */
 
-.offre-title-alt,
-.hero-content h1 {
+.offre-title-alt {
   font-family: "Inter", sans-serif;
   font-weight: 600;
   letter-spacing: -0.02em;
 }
 
 /* ============================================
+   TONS "CARNET" — utilisés uniquement par le
+   hero et les 4 cartes ci-dessous
+   ============================================ */
+:root {
+  --moss: #55703f;
+  --moss-deep: #38492f;
+  --moss-marker: rgba(158, 189, 106, 0.55);
+  --tape: rgba(233, 224, 194, 0.85);
+  --tape-line: rgba(30, 34, 66, 0.1);
+}
+
+/* ============================================
      HERO SECTION
      ============================================ */
 .hero {
-  position: relative;
-  border-radius: 48px;
-  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 3.5rem;
+  align-items: center;
   margin-bottom: 5rem;
-  height: 75vh;
-  min-height: 550px;
-  box-shadow: var(--shadow-hover);
+  padding: 2rem 0;
 }
 
-.hero-media {
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--moss-deep);
+  margin-bottom: 1.25rem;
+}
+
+.hero-eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: var(--moss);
+}
+
+.hero-copy h1 {
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: 3rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  line-height: 1.14;
+  margin-bottom: 1.5rem;
+}
+
+.hero-marker {
   position: relative;
-  width: 100%;
-  height: 100%;
+  white-space: nowrap;
 }
 
-.hero-img {
+.hero-marker svg {
+  position: absolute;
+  left: -3%;
+  bottom: -0.1em;
+  width: 106%;
+  height: 0.42em;
+  z-index: -1;
+}
+
+.hero-marker svg path {
+  fill: var(--moss-marker);
+}
+
+.hero-copy p {
+  font-size: 1.05rem;
+  color: var(--text-soft);
+  max-width: 42ch;
+  line-height: 1.65;
+  margin-bottom: 2rem;
+}
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--accent-gradient);
+  color: #fff;
+  text-decoration: none;
+  padding: 0.9rem 1.9rem;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  box-shadow: 0 10px 24px -10px rgba(30, 34, 66, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -10px rgba(30, 34, 66, 0.45);
+}
+
+/* ---- Photo façon Polaroid, tenue par du ruban ---- */
+.hero-polaroid-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.polaroid {
+  position: relative;
+  background: var(--bg-secondary);
+  padding: 14px 14px 46px;
+  border-radius: 3px;
+  box-shadow: 0 18px 34px -14px rgba(30, 34, 66, 0.32);
+  transform: rotate(-4deg);
+  max-width: 300px;
+  transition: transform 0.3s ease;
+}
+
+.polaroid:hover {
+  transform: rotate(-1deg);
+}
+
+.polaroid-photo {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 4 / 4.6;
   object-fit: cover;
-  filter: brightness(0.75) contrast(1.05) saturate(0.95);
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 2px;
+  display: block;
 }
 
-.hero:hover .hero-img {
-  transform: scale(1.02);
-}
-
-.hero-overlay {
+.polaroid-caption {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(26, 26, 46, 0.55) 0%,
-    rgba(30, 34, 66, 0.35) 100%
-  );
-}
-
-.hero-content {
-  position: absolute;
-  bottom: 0;
+  bottom: 12px;
   left: 0;
   right: 0;
-  padding: 3rem 3.5rem;
-  background: linear-gradient(
-    to top,
-    rgba(26, 26, 46, 0.85) 0%,
-    transparent 100%
-  );
-  backdrop-filter: blur(2px);
+  text-align: center;
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--text);
 }
 
-.hero-content h1 {
-  font-size: 3.8rem;
-  font-weight: 700;
-  color: white;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  margin-bottom: 0.75rem;
+.polaroid-tape {
+  position: absolute;
+  width: 70px;
+  height: 26px;
+  background: var(--tape);
+  border: 1px solid var(--tape-line);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
-.hero-content p {
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.85);
-  max-width: 500px;
+.polaroid-tape-left {
+  top: -14px;
+  left: -10px;
+  transform: rotate(-38deg);
 }
 
-.hero-badge {
-  display: inline-block;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(8px);
-  padding: 0.4rem 1.2rem;
-  border-radius: 40px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: white;
-  margin-bottom: 1rem;
-  letter-spacing: 1px;
+.polaroid-tape-right {
+  top: -12px;
+  right: -14px;
+  transform: rotate(30deg);
+}
+
+.polaroid-badge {
+  position: absolute;
+  top: -18px;
+  right: -6px;
+  background: var(--moss);
+  color: #fff;
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic;
+  font-size: 0.85rem;
+  padding: 6px 16px 8px;
+  border-radius: 50% 50% 48% 52% / 60% 55% 45% 40%;
+  transform: rotate(9deg);
+  box-shadow: 0 6px 14px -6px rgba(30, 34, 66, 0.4);
 }
 
 /* ============================================
      PREMIUM EXPERIENCE SECTION
+     4 fiches légèrement penchées, comme épinglées
      ============================================ */
 .premium-experience {
   padding: 4rem 0;
@@ -108,9 +201,9 @@
 }
 
 .premium-header h2 {
-  font-family: "Inter", sans-serif;
-  font-size: 2.5rem;
-  font-weight: 700;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 2.4rem;
+  font-weight: 600;
   color: var(--text);
   margin-bottom: 1rem;
 }
@@ -124,63 +217,83 @@
 
 .premium-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2.25rem;
 }
 
 .premium-card {
-  background: var(--bg-secondary);
-  border-radius: 28px;
-  padding: 2rem;
-  text-align: center;
-  border: 1px solid var(--border);
-  transition: all 0.3s ease;
   position: relative;
-  overflow: hidden;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2rem 1.5rem 1.75rem;
+  box-shadow: 0 10px 22px -8px rgba(30, 34, 66, 0.16);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.premium-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: var(--accent-gradient);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s ease;
-}
+.premium-card:nth-child(1) { transform: rotate(-2.2deg); }
+.premium-card:nth-child(2) { transform: rotate(1.4deg); }
+.premium-card:nth-child(3) { transform: rotate(-1deg); }
+.premium-card:nth-child(4) { transform: rotate(2deg); }
 
 .premium-card:hover {
-  box-shadow: var(--shadow-hover);
+  transform: rotate(0deg) translateY(-4px);
+  box-shadow: 0 16px 28px -10px rgba(30, 34, 66, 0.24);
+  z-index: 1;
+}
+
+.premium-pin {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--moss);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25), inset 0 -2px 3px rgba(0, 0, 0, 0.2);
 }
 
 .premium-icon {
-  width: 70px;
-  height: 70px;
-  background: rgba(30, 34, 66, 0.08);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1.5rem;
-  font-size: 2rem;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 1rem;
   color: var(--accent-primary);
+}
+
+.premium-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
 .premium-card h3 {
   font-family: "Inter", sans-serif;
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: var(--text);
+  display: inline-block;
+}
+
+.premium-underline {
+  display: block;
+  margin-top: 2px;
+  width: 90%;
+}
+
+.premium-underline svg {
+  width: 100%;
+  height: 6px;
+}
+
+.premium-underline path {
+  fill: var(--moss-marker);
 }
 
 .premium-card p {
   font-size: 0.9rem;
   color: var(--text-soft);
   line-height: 1.6;
+  margin-top: 0.75rem;
 }
 
 /* ============================================
@@ -322,21 +435,21 @@
      ============================================ */
 @media (max-width: 768px) {
   .hero {
-    height: 50vh;
-    min-height: 400px;
-    border-radius: 32px;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    text-align: center;
   }
 
-  .hero-content {
-    padding: 1.5rem;
+  .hero-eyebrow {
+    justify-content: center;
   }
 
-  .hero-content h1 {
-    font-size: 2rem;
+  .hero-copy h1 {
+    font-size: 2.1rem;
   }
 
-  .hero-content p {
-    font-size: 0.85rem;
+  .hero-copy p {
+    max-width: none;
   }
 
   .premium-header h2 {
