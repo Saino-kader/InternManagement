@@ -16,7 +16,3 @@ namespace InterManagement.Application.Features.Phases.DTOs
         public ICollection<WeekDto> Weeks { get; set; } = [];
     }
 }
-
-
-
-

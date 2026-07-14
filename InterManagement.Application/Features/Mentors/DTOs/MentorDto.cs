@@ -12,5 +12,3 @@ namespace InterManagement.Application.Features.Mentors.DTOs
         public int TraineeCount { get; set; }
     }
 }
-
-

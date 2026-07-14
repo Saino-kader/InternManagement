@@ -10,7 +10,3 @@ namespace InterManagement.Application.Features.WeeklyFollowUps.Queries.GetWeekly
         }
     }
 }
-
-
-
-

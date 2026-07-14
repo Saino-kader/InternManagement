@@ -47,4 +47,3 @@ namespace InterManagement.Application.Features.Phases.Queries.GetPhaseById
         }
     }
 }
-

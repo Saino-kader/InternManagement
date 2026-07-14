@@ -30,4 +30,3 @@ namespace InterManagement.Application.Features.Admins.Queries.GetAdminById
         }
     }
 }
-

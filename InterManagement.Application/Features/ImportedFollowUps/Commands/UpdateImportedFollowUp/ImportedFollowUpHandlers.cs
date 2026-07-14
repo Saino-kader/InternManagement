@@ -52,5 +52,3 @@ namespace InterManagement.Application.Features.ImportedFollowUps.Commands.Update
         }
     }
 }
-
-

@@ -15,10 +15,3 @@ namespace InterManagement.Application.Features.Assignments.DTOs
         public DateTime AssignmentDate { get; set; }
     }
  }
-
-
-
-
-
-
-

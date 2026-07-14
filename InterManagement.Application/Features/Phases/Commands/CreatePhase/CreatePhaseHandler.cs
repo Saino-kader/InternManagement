@@ -51,4 +51,3 @@ namespace InterManagement.Application.Features.Phases.Commands.CreatePhase
         }
     }
 }
-

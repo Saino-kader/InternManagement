@@ -16,5 +16,3 @@ namespace InterManagement.Application.Features.WeeklyFollowUps.DTOs
 
     }
 }
-
-

@@ -96,4 +96,3 @@ namespace InterManagement.Application.Features.Trainees.Commands.CreateTrainee
         }
     }
 }
-
