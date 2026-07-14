@@ -28,7 +28,7 @@ namespace InternManagement.Infrastructure
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();
             services.AddScoped<IWeekRepository, WeekRepository>();
             services.AddScoped<IActivityLogRepository, ActivityLogRepository>();
-            services.AddScoped<IImportedFollowUpRepository,ImportedFollowUpRepository>();
+            services.AddScoped<IImportedFollowUpRepository, ImportedFollowUpRepository>();
 
             return services;
         }

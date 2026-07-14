@@ -26,8 +26,6 @@ namespace InternManagement.Infrastructure.Data
         public DbSet<Feedback>        Feedbacks     { get; set; }
         public DbSet<Week>            Weeks         { get; set; }
         public DbSet<ActivityLog>     ActivityLogs  { get; set; }
-
-        // ← AJOUTÉ
         public DbSet<ImportedFollowUp> ImportedFollowUps { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -47,8 +45,6 @@ namespace InternManagement.Infrastructure.Data
             modelBuilder.Entity<Feedback>().ToTable("feedbacks");
             modelBuilder.Entity<Week>().ToTable("weeks");
             modelBuilder.Entity<ActivityLog>().ToTable("activity_logs");
-
-            // ← AJOUTÉ
             modelBuilder.Entity<ImportedFollowUp>().ToTable("imported_followups");
 
             // ── Soft delete global ────────────────────────────
@@ -64,8 +60,6 @@ namespace InternManagement.Infrastructure.Data
                 .HasQueryFilter(w => !w.IsDeleted);
             modelBuilder.Entity<Feedback>()
                 .HasQueryFilter(f => !f.IsDeleted);
-
-            // ← AJOUTÉ
             modelBuilder.Entity<ImportedFollowUp>()
                 .HasQueryFilter(i => !i.IsDeleted);
 
@@ -100,14 +94,6 @@ namespace InternManagement.Infrastructure.Data
                 .WithMany(m => m.WeeklyFollowUps)
                 .HasForeignKey(w => w.MentorId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            /*
-            modelBuilder.Entity<WeeklyFollowUp>()
-                .HasOne(w => w.Phase)
-                .WithMany(p => p.WeeklyFollowUps)
-                .HasForeignKey(w => w.PhaseId)
-                .OnDelete(DeleteBehavior.Restrict);
-            */
 
             // ── Relations Feedback ────────────────────────────
             modelBuilder.Entity<Feedback>()
