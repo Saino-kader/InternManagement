@@ -16,7 +16,6 @@ namespace InterManagement.Domain.Entities
         public string Stagiaire   { get; private set; } = string.Empty;
         public string Mentor      { get; private set; } = string.Empty;
         public DateOnly Date      { get; private set; }
-        public int PhaseNumber    { get; private set; }
         public int WeekNumber     { get; private set; }
         public string Cours       { get; private set; } = string.Empty;
         public string Appreciation { get; private set; } = string.Empty;
@@ -33,7 +32,6 @@ namespace InterManagement.Domain.Entities
             string stagiaire,
             string mentor,
             DateOnly date,
-            int phaseNumber,
             int weekNumber,
             string cours,
             string appreciation,
@@ -44,10 +42,12 @@ namespace InterManagement.Domain.Entities
             if (string.IsNullOrWhiteSpace(stagiaire))
                 throw new DomainException("Le nom du stagiaire est obligatoire");
 
+            if (weekNumber <= 0)
+                throw new DomainException("Le numéro de semaine doit être un entier positif");
+
             Stagiaire    = stagiaire.Trim();
             Mentor       = mentor?.Trim() ?? "—";
             Date         = date;
-            PhaseNumber  = phaseNumber;
             WeekNumber   = weekNumber;
             Cours        = cours?.Trim() ?? "—";
             Appreciation = appreciation?.Trim() ?? "—";

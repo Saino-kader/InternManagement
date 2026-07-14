@@ -26,7 +26,6 @@ namespace InterManagement.Application.Features.ImportedFollowUps.Queries.GetImpo
                 Stagiaire    = i.Stagiaire,
                 Mentor       = i.Mentor,
                 Date         = i.Date,
-                PhaseNumber  = i.PhaseNumber,
                 WeekNumber   = i.WeekNumber,
                 Cours        = i.Cours,
                 Appreciation = i.Appreciation,

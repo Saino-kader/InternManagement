@@ -9,7 +9,6 @@ namespace InterManagement.Application.Features.ImportedFollowUps.DTOs
         public string Stagiaire    { get; set; } = string.Empty;
         public string Mentor       { get; set; } = string.Empty;
         public DateOnly Date       { get; set; }
-        public int PhaseNumber     { get; set; }
         public int WeekNumber      { get; set; }
         public string Cours        { get; set; } = string.Empty;
         public string Appreciation { get; set; } = string.Empty;

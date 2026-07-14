@@ -41,7 +41,6 @@ namespace InterManagement.Application.Features.ImportedFollowUps.Commands.Update
                 Stagiaire    = item.Stagiaire,
                 Mentor       = item.Mentor,
                 Date         = item.Date,
-                PhaseNumber  = item.PhaseNumber,
                 WeekNumber   = item.WeekNumber,
                 Cours        = item.Cours,
                 Appreciation = item.Appreciation,
