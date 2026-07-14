@@ -36,5 +36,3 @@ namespace InterManagement.Server.Controllers
         }
     }
 }
-
-

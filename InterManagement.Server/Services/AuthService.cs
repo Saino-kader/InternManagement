@@ -12,6 +12,7 @@ using InternManagement.Infrastructure.Data;
 using InterManagement.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace InterManagement.Server.Services
 {
@@ -170,6 +171,9 @@ namespace InterManagement.Server.Services
         // ── Génère un mot de passe temporaire sécurisé ──
         // Format : Lettre majuscule + minuscules + chiffres + symbole
         // Exemple : "Kx7#mP9v"
+        // Utilise RandomNumberGenerator (cryptographiquement sûr) plutôt
+        // que System.Random, qui est prévisible et ne doit jamais servir
+        // à générer un secret (mot de passe, jeton...).
         private static string GenerateTemporaryPassword()
         {
             const string upper = "ABCDEFGHJKLMNPQRSTUVWXYZ";
@@ -177,22 +181,20 @@ namespace InterManagement.Server.Services
             const string digits = "23456789";
             const string special = "#@!$";
 
-            var random = new Random();
-
             var password = new[]
             {
-                upper[random.Next(upper.Length)].ToString(),
-                lower[random.Next(lower.Length)].ToString(),
-                lower[random.Next(lower.Length)].ToString(),
-                digits[random.Next(digits.Length)].ToString(),
-                special[random.Next(special.Length)].ToString(),
-                upper[random.Next(upper.Length)].ToString(),
-                lower[random.Next(lower.Length)].ToString(),
-                digits[random.Next(digits.Length)].ToString()
+                upper[RandomNumberGenerator.GetInt32(upper.Length)].ToString(),
+                lower[RandomNumberGenerator.GetInt32(lower.Length)].ToString(),
+                lower[RandomNumberGenerator.GetInt32(lower.Length)].ToString(),
+                digits[RandomNumberGenerator.GetInt32(digits.Length)].ToString(),
+                special[RandomNumberGenerator.GetInt32(special.Length)].ToString(),
+                upper[RandomNumberGenerator.GetInt32(upper.Length)].ToString(),
+                lower[RandomNumberGenerator.GetInt32(lower.Length)].ToString(),
+                digits[RandomNumberGenerator.GetInt32(digits.Length)].ToString()
             };
 
             // Mélange les caractères pour éviter un pattern prévisible
-            return string.Concat(password.OrderBy(_ => random.Next()));
+            return string.Concat(password.OrderBy(_ => RandomNumberGenerator.GetInt32(int.MaxValue)));
         }
     }
 

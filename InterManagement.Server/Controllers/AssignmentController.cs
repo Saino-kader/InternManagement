@@ -109,6 +109,3 @@ namespace InterManagement.Server.Controllers
         }
     }
 }
-
-
-
