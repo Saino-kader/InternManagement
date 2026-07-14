@@ -35,11 +35,11 @@ public class AdminController : BaseController
         var created = await _adminService.CreateAsync(model);
         if (created is null)
         {
-            SetError("Failed to create admin. The email may already be in use.");
+            SetError("Échec de la création de l'administrateur. L'email est peut-être déjà utilisé.");
             return View(model);
         }
 
-        SetSuccess($"Admin {created.FirstName} {created.LastName} created successfully.");
+        SetSuccess($"Administrateur {created.FirstName} {created.LastName} créé avec succès.");
         return RedirectToAction(nameof(Index));
     }
 
@@ -66,12 +66,12 @@ public class AdminController : BaseController
         var updated = await _adminService.UpdateAsync(id, model);
         if (updated is null)
         {
-            SetError("Failed to update admin. Please verify the data and try again.");
+            SetError("Échec de la modification de l'administrateur. Vérifiez les données et réessayez.");
             ViewBag.AdminId = id;
             return View(model);
         }
 
-        SetSuccess($"Admin {updated.FirstName} {updated.LastName} updated successfully.");
+        SetSuccess($"Administrateur {updated.FirstName} {updated.LastName} modifié avec succès.");
         return RedirectToAction(nameof(Index));
     }
 
@@ -89,11 +89,11 @@ public class AdminController : BaseController
         var success = await _adminService.DeleteAsync(id);
         if (!success)
         {
-            SetError("Failed to delete admin.");
+            SetError("Échec de la suppression de l'administrateur.");
             return RedirectToAction(nameof(Delete), new { id });
         }
 
-        SetSuccess("Admin deleted successfully.");
+        SetSuccess("Administrateur supprimé avec succès.");
         return RedirectToAction(nameof(Index));
     }
 }

@@ -43,11 +43,11 @@ public class WeeklyFollowUpController : BaseController
         var created = await _followUpService.CreateAsync(model);
         if (created is null)
         {
-            SetError("Failed to create follow-up. It may already exist for this week.");
+            SetError("Échec de la création du suivi. Il existe peut-être déjà pour cette semaine.");
             return View(model);
         }
 
-        SetSuccess($"Follow-up for week {created.WeekId} created successfully.");
+        SetSuccess($"Suivi de la semaine {created.WeekId} créé avec succès.");
         return RedirectToAction(nameof(Index));
     }
 
@@ -58,11 +58,11 @@ public class WeeklyFollowUpController : BaseController
         var success = await _followUpService.CompleteAsync(id, comment);
         if (!success)
         {
-            SetError("Failed to mark follow-up as done.");
+            SetError("Échec du marquage du suivi comme validé.");
         }
         else
         {
-            SetSuccess("Follow-up marked as done.");
+            SetSuccess("Suivi marqué comme validé.");
         }
 
         return RedirectToAction(nameof(Index));
@@ -75,11 +75,11 @@ public class WeeklyFollowUpController : BaseController
         var success = await _followUpService.MarkMissedAsync(id);
         if (!success)
         {
-            SetError("Failed to mark follow-up as missed.");
+            SetError("Échec du marquage du suivi comme manqué.");
         }
         else
         {
-            SetSuccess("Follow-up marked as missed.");
+            SetSuccess("Suivi marqué comme manqué.");
         }
 
         return RedirectToAction(nameof(Index));
@@ -99,11 +99,11 @@ public class WeeklyFollowUpController : BaseController
         var success = await _followUpService.DeleteAsync(id);
         if (!success)
         {
-            SetError("Failed to delete follow-up.");
+            SetError("Échec de la suppression du suivi.");
             return RedirectToAction(nameof(Delete), new { id });
         }
 
-        SetSuccess("Follow-up deleted successfully.");
+        SetSuccess("Suivi supprimé avec succès.");
         return RedirectToAction(nameof(Index));
     }
 
@@ -132,8 +132,6 @@ public class WeeklyFollowUpController : BaseController
             SetError("L'import a échoué.");
             return View();
         }
-
-        SetSuccess($"{result.SuccessCount}/{result.TotalRowsRead} lignes importées.");
 
         SetSuccess($"{result.SuccessCount}/{result.TotalRowsRead} lignes importées.");
 

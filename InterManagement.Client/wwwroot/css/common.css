@@ -508,6 +508,21 @@ h5,
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
+.login-input-wrapper.login-input-error input {
+  border-color: #ef4444;
+}
+
+.login-input-wrapper.login-input-error input:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.login-field-error {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  color: #ef4444;
+}
+
 .login-password-toggle {
   position: absolute;
   right: 0.8rem;

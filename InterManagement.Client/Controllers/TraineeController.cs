@@ -133,13 +133,13 @@ public class TraineeController : BaseController
         if (created is null)
         {
             // SetError vient de BaseController → stocke un message d'erreur dans TempData
-            SetError("Failed to create trainee. The email may already be in use or the dates are invalid.");
+            SetError("Échec de la création du stagiaire. L'email est peut-être déjà utilisé ou les dates sont invalides.");
             // Retourne le formulaire avec les données saisies (pour que l'utilisateur corrige)
             return View(model);
         }
 
         // SetSuccess vient de BaseController → stocke un message de succès dans TempData
-        SetSuccess($"Trainee {created.FirstName} {created.LastName} created successfully.");
+        SetSuccess($"Stagiaire {created.FirstName} {created.LastName} créé avec succès.");
         
         // Redirige vers la liste des stagiaires (Index)
         return RedirectToAction(nameof(Index));
@@ -199,12 +199,12 @@ public class TraineeController : BaseController
         // Si la modification a échoué
         if (updated is null)
         {
-            SetError("Failed to update trainee. Please verify the data and try again.");
+            SetError("Échec de la modification du stagiaire. Vérifiez les données et réessayez.");
             ViewBag.TraineeId = id;  // Passe l'ID à la vue
             return View(model);       // Retourne le formulaire avec les données saisies
         }
 
-        SetSuccess($"Trainee {updated.FirstName} {updated.LastName} updated successfully.");
+        SetSuccess($"Stagiaire {updated.FirstName} {updated.LastName} modifié avec succès.");
         return RedirectToAction(nameof(Index));
     }
 
@@ -236,133 +236,11 @@ public class TraineeController : BaseController
         
         if (!success)
         {
-            SetError("Failed to delete trainee.");
+            SetError("Échec de la suppression du stagiaire.");
             return RedirectToAction(nameof(Delete), new { id });  // Revient à la page de confirmation
         }
         
-        SetSuccess("Trainee deleted successfully.");
+        SetSuccess("Stagiaire supprimé avec succès.");
         return RedirectToAction(nameof(Index));
     }
 }
-
-
-/*using InterManagement.Application.Features.Trainees.DTOs;
-using InterManagement.Client.Services;
-using InterManagement.Domain.Entities;
-using InterManagement.Shared.Enums;
-using Microsoft.AspNetCore.Mvc;
-
-namespace InterManagement.Client.Controllers;
-
-public class TraineeController : BaseController
-{
-    private readonly ITraineeApiService _traineeService;
-
-    public TraineeController(ITraineeApiService traineeService)
-    {
-        _traineeService = traineeService;
-    }
-
-    public async Task<IActionResult> Index(TraineeStatus? status = null)
-    {
-        var trainees = status.HasValue    // est-ce que status n'est pas null ?
-            ? await _traineeService.GetByStatusAsync(TraineeStatus.Value)         // Si status a une valeur (ex: ?status=0) → appel GetByStatusAsync  : Filtre par statut
-            : await _traineeService.GetAllAsync();          // Si status est null → appel GetAllAsync  // Tous les stagiaires
-
-
-
-        // ViewBag = objet dynamique qui passe des données à la vue
-        // ViewBag.CurrentStatus = status → la vue saura quel filtre est actif
-        ViewBag.CurrentStatus = status;
-        return View(trainees);          // Return View(trainees) → envoie la liste des stagiaires à la vue Index.cshtml
-    }
-
-    public async Task<IActionResult> Details(int id)
-    {
-        // Si le stagiaire n'existe pas (API a retourné null)
-        var trainee = await _traineeService.GetDetailsAsync(id);
-        if (trainee is null) return NotFound(); // Retourne une page 404
-        return View(trainee);
-    }
-
-
-    public IActionResult Create() => View(new CreateTraineeDto());
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateTraineeDto model)
-    {
-        var created = await _traineeService.CreateAsync(model);
-        if (created is null)
-        {
-            SetError("Failed to create trainee. The email may already be in use or the dates are invalid.");
-            return View(model);
-        }
-
-        SetSuccess($"Trainee {created.FirstName} {created.LastName} created successfully.");
-        return RedirectToAction(nameof(Index));
-    }
-
-    public async Task<IActionResult> Edit(int id)
-    {
-        var trainee = await _traineeService.GetByIdAsync(id);
-        if (trainee is null) return NotFound();
-
-        var dto = new UpdateTraineeDto
-        {
-            FirstName = trainee.FirstName,
-            LastName = trainee.LastName,
-            Email = trainee.Email,
-            University = trainee.University,
-            Specialty = trainee.Specialty,
-            Theme = trainee.Theme,
-            StartDate = trainee.StartDate,
-            EndDate = trainee.EndDate,
-            Status = trainee.Status
-        };
-
-        ViewBag.TraineeId = id;
-        return View(dto);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, UpdateTraineeDto model)
-    {
-        var updated = await _traineeService.UpdateAsync(id, model);
-        if (updated is null)
-        {
-            SetError("Failed to update trainee. Please verify the data and try again.");
-            ViewBag.TraineeId = id;
-            return View(model);
-        }
-
-        SetSuccess($"Trainee {updated.FirstName} {updated.LastName} updated successfully.");
-        return RedirectToAction(nameof(Index));
-    }
-
-    public async Task<IActionResult> Delete(int id)
-    {
-        var trainee = await _traineeService.GetByIdAsync(id);
-        if (trainee is null) return NotFound();
-        return View(trainee);
-    }
-
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int id)
-    {
-        var success = await _traineeService.DeleteAsync(id);
-        if (!success)
-        {
-            SetError("Failed to delete trainee.");
-            return RedirectToAction(nameof(Delete), new { id });
-        }
-
-        SetSuccess("Trainee deleted successfully.");
-        return RedirectToAction(nameof(Index));
-    }
-}
-
-
-*/

@@ -47,11 +47,11 @@ public class FeedbackController : BaseController
         var created = await _feedbackService.CreateAsync(model);
         if (created is null)
         {
-            SetError("Failed to send feedback. Please verify the trainee.");
+            SetError("Échec de l'envoi du message. Vérifiez le stagiaire sélectionné.");
             return View(model);
         }
 
-        SetSuccess("Feedback sent successfully.");
+        SetSuccess("Message envoyé avec succès.");
         return RedirectToAction(nameof(Index));
     }
 
@@ -76,12 +76,12 @@ public class FeedbackController : BaseController
         var updated = await _feedbackService.UpdateAsync(id, model);
         if (updated is null)
         {
-            SetError("Failed to update feedback.");
+            SetError("Échec de la modification du message.");
             ViewBag.FeedbackId = id;
             return View(model);
         }
 
-        SetSuccess("Feedback updated successfully.");
+        SetSuccess("Message modifié avec succès.");
         return RedirectToAction(nameof(Index));
     }
 
@@ -99,11 +99,11 @@ public class FeedbackController : BaseController
         var success = await _feedbackService.DeleteAsync(id);
         if (!success)
         {
-            SetError("Failed to delete feedback.");
+            SetError("Échec de la suppression du message.");
             return RedirectToAction(nameof(Delete), new { id });
         }
 
-        SetSuccess("Feedback deleted successfully.");
+        SetSuccess("Message supprimé avec succès.");
         return RedirectToAction(nameof(Index));
     }
 }

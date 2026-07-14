@@ -43,10 +43,14 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginDto model, string? returnUrl = null)
     {
-        if (string.IsNullOrWhiteSpace(model.Email) ||
-            string.IsNullOrWhiteSpace(model.Password))
+        var emailMissing = string.IsNullOrWhiteSpace(model.Email);
+        var passwordMissing = string.IsNullOrWhiteSpace(model.Password);
+
+        if (emailMissing || passwordMissing)
         {
             ViewBag.Error = "Email et mot de passe sont obligatoires.";
+            ViewBag.EmailFieldError = emailMissing ? "L'email est obligatoire." : null;
+            ViewBag.PasswordFieldError = passwordMissing ? "Le mot de passe est obligatoire." : null;
             return View(model);
         }
 
@@ -56,6 +60,8 @@ public class AccountController : Controller
         if (result == null)
         {
             ViewBag.Error = "Email ou mot de passe incorrect.";
+            ViewBag.EmailFieldHighlight = true;
+            ViewBag.PasswordFieldHighlight = true;
             return View(model);
         }
 
