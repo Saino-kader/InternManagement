@@ -12,13 +12,9 @@ essaie d'accéder à une page protégée.
     ViewData["Title"] = "Connexion";
 }
 
-@section Styles {
-    @* On charge home.css qui contient déjà toutes les
-       classes du modal : login-modal-content,
-       login-input-group, login-input-wrapper,
-       login-submit-btn, login-password-toggle *@
-    <link rel="stylesheet" href="~/css/home.css" />
-}
+@* Les classes du modal (login-modal-content, login-input-group,
+   login-input-wrapper, login-submit-btn, login-password-toggle)
+   viennent de common.css, déjà chargé par _PublicLayout.cshtml *@
 
 @* Même fond sombre que le modal *@
 <div style="min-height: 100vh; display: flex;

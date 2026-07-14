@@ -248,7 +248,7 @@ function initDeleteConfirmButton() {
 function initDeleteButtons() {
   document
     .querySelectorAll(
-      ".action-btn.delete[data-delete-url], .action-btn.delete[data-delete-form-id]",
+      ".action-btn.delete[data-delete-url], .action-btn.delete[data-delete-form-id], .table-action-btn.delete[data-delete-url], .table-action-btn.delete[data-delete-form-id]",
     )
     .forEach((btn) => {
       btn.addEventListener("click", (e) => {

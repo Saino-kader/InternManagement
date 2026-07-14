@@ -46,7 +46,7 @@ Date | Message (icône œil → modal) | Action (poubelle)
 
                             @* Icône œil → ouvre le modal avec le message *@
                             <td>
-                                <button class="action-btn view"
+                                <button class="table-action-btn view"
                                         onclick="viewMentorMessage(this)"
                                         aria-label="Voir le message">
                                     <i class="fas fa-eye"></i>
@@ -55,7 +55,7 @@ Date | Message (icône œil → modal) | Action (poubelle)
 
                             @* Icône poubelle → supprime *@
                             <td>
-                                <button class="action-btn delete"
+                                <button class="table-action-btn delete"
                                         data-delete-url="/MentorSpace/DeleteFeedback/@f.Id?mentorId=@ViewBag.MentorId"
                                         data-delete-name="ce message"
                                         aria-label="Supprimer le message">

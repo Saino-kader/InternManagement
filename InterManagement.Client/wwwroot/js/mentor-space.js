@@ -107,7 +107,7 @@ let deleteCallback = null;
 function initDeleteButtons() {
   document
     .querySelectorAll(
-      ".btn-delete[data-delete-url], .action-btn.delete[data-delete-url]",
+      ".btn-delete[data-delete-url], .action-btn.delete[data-delete-url], .table-action-btn.delete[data-delete-url]",
     )
     .forEach((btn) => {
       btn.addEventListener("click", (e) => {
