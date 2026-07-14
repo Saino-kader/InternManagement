@@ -52,7 +52,7 @@ namespace InterManagement.Application.Features.Mentors.Commands.UpdateMentor
             _cache.Remove(CacheKey);
 
             await _activityLogger.LogAsync(
-                "Admin",
+                "Mentor",
                 "Modification",
                 $"{mentor.FirstName} {mentor.LastName} modifié"
             );

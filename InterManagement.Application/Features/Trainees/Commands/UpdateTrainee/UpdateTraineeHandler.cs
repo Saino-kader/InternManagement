@@ -53,7 +53,7 @@ namespace InterManagement.Application.Features.Trainees.Commands.UpdateTrainee
             _cache.Remove(CacheKey);
 
             await _activityLogger.LogAsync(
-                "Admin",
+                "Stagiaire",
                 "Modification",
                 $"{trainee.FirstName} {trainee.LastName} modifié"
             );

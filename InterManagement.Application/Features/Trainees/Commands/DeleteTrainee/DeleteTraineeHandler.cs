@@ -35,7 +35,7 @@ namespace InterManagement.Application.Features.Trainees.Commands.DeleteTrainee
             _cache.Remove(CacheKey);
 
             await _activityLogger.LogAsync(
-                "Admin",
+                "Stagiaire",
                 "Suppression",
                 $"{fullName} supprimé"
             );

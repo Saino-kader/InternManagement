@@ -46,7 +46,7 @@ namespace InterManagement.Application.Features.Mentors.Commands.CreateMentor
             _cache.Remove(CacheKey);
 
             await _activityLogger.LogAsync(
-                "Admin",
+                "Mentor",
                 "Ajout utilisateur",
                 $"{mentor.FirstName} {mentor.LastName} ajouté"
             );

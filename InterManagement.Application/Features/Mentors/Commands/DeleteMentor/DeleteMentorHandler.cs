@@ -35,7 +35,7 @@ namespace InterManagement.Application.Features.Mentors.Commands.DeleteMentor
             _cache.Remove(CacheKey);
 
             await _activityLogger.LogAsync(
-                "Admin",
+                "Mentor",
                 "Suppression",
                 $"{fullName} supprimé"
             );
