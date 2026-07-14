@@ -39,9 +39,34 @@ l'afficher dans #passwordModal.
     </button>
 </div>
 
-@await Html.PartialAsync("_StagiairesTable", Model.Stagiaires)
-@await Html.PartialAsync("_MentorsTable", Model.Mentors)
-@await Html.PartialAsync("_AdminsTable", Model.Admins)
+@* Onglets : un seul tableau visible à la fois — voir site.js → initDataTabs() *@
+<div class="tabs-section">
+    <div class="tab-nav">
+        <button class="tab-btn active" data-tab-target="stagiaires">
+            <i class="fas fa-user-graduate"></i> Stagiaires
+            <span class="tab-count">@Model.Stagiaires.Count</span>
+        </button>
+        <button class="tab-btn" data-tab-target="mentors">
+            <i class="fas fa-chalkboard-user"></i> Mentors
+            <span class="tab-count">@Model.Mentors.Count</span>
+        </button>
+        <button class="tab-btn" data-tab-target="admins">
+            <i class="fas fa-user-shield"></i> Admins
+            <span class="tab-count">@Model.Admins.Count</span>
+        </button>
+    </div>
+
+    <div class="tab-panel active" data-tab-panel="stagiaires">
+        @await Html.PartialAsync("_StagiairesTable", Model.Stagiaires)
+    </div>
+    <div class="tab-panel" data-tab-panel="mentors">
+        @await Html.PartialAsync("_MentorsTable", Model.Mentors)
+    </div>
+    <div class="tab-panel" data-tab-panel="admins">
+        @await Html.PartialAsync("_AdminsTable", Model.Admins)
+    </div>
+</div>
+
 @await Html.PartialAsync("_UserModal")
 @await Html.PartialAsync("_TraineeDetailsModal")
 

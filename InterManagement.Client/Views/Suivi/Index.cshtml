@@ -23,11 +23,26 @@ commentaire).
     </div>
 </div>
 
-@* TABLEAU 1 — Suivis manuels *@
-@await Html.PartialAsync("_SuiviTable", Model.Suivis)
+@* Onglets : un seul tableau visible à la fois — voir site.js → initDataTabs() *@
+<div class="tabs-section">
+    <div class="tab-nav">
+        <button class="tab-btn active" data-tab-target="suivi">
+            <i class="fas fa-chart-line"></i> Suivi
+            <span class="tab-count">@Model.Suivis.Count</span>
+        </button>
+        <button class="tab-btn" data-tab-target="suivi-importe">
+            <i class="fas fa-file-import"></i> Suivi importé
+            <span class="tab-count">@Model.SuivisImportes.Count</span>
+        </button>
+    </div>
 
-@* TABLEAU 2 — Suivis importés depuis Excel *@
-@await Html.PartialAsync("_SuiviImporteTable", Model.SuivisImportes)
+    <div class="tab-panel active" data-tab-panel="suivi">
+        @await Html.PartialAsync("_SuiviTable", Model.Suivis)
+    </div>
+    <div class="tab-panel" data-tab-panel="suivi-importe">
+        @await Html.PartialAsync("_SuiviImporteTable", Model.SuivisImportes)
+    </div>
+</div>
 
 @await Html.PartialAsync("_SuiviModal", Model)
 @await Html.PartialAsync("_ImportModal")

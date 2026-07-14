@@ -126,6 +126,32 @@ function initPhaseAccordion() {
 }
 
 /* ============================================================
+   ONGLETS DE TABLEAUX (Utilisateurs, Suivi)
+   Chaque groupe ".tabs-section" contient une nav ".tab-nav" et
+   ses panneaux ".tab-panel" ; un clic sur un bouton affiche le
+   panneau correspondant (data-tab-target) et cache les autres.
+============================================================ */
+
+function initDataTabs() {
+  document.querySelectorAll(".tabs-section").forEach((section) => {
+    const buttons = section.querySelectorAll(".tab-btn");
+    const panels = section.querySelectorAll(".tab-panel");
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        buttons.forEach((b) => b.classList.remove("active"));
+        panels.forEach((p) => p.classList.remove("active"));
+
+        btn.classList.add("active");
+        section
+          .querySelector(`.tab-panel[data-tab-panel="${btn.dataset.tabTarget}"]`)
+          ?.classList.add("active");
+      });
+    });
+  });
+}
+
+/* ============================================================
    NOTIFICATIONS — DROPDOWN CLOCHE
 ============================================================ */
 
@@ -370,6 +396,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initSidebarToggle();
   initNavigation();
   initPhaseAccordion();
+  initDataTabs();
   initNotificationDropdown();
   initDeleteConfirmButton();
   initDeleteButtons(); 
