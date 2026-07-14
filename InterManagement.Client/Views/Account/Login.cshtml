@@ -23,18 +23,10 @@ essaie d'accéder à une page protégée.
 
     @* On réutilise EXACTEMENT la même boîte blanche du modal *@
     <div class="login-modal-content" style="position: relative;
-         transform: none; max-width: 450px; width: 100%;
-         margin: 2rem;">
+         transform: none; margin: 2rem;">
 
-        @* Logo GABERA en haut *@
+        @* Même en-tête, à l'identique du modal (mêmes dimensions) *@
         <div class="login-modal-header">
-            <a asp-controller="Home" asp-action="Index"
-               style="text-decoration: none;">
-                <h1 style="font-size: 1.8rem; font-weight: 800;
-                            color: white; margin-bottom: 0.5rem;">
-                    GABERA<span style="color: var(--accent, #6c63ff);">.</span>
-                </h1>
-            </a>
             <h2>Bienvenue</h2>
             <p>Connectez-vous pour accéder à votre espace</p>
         </div>

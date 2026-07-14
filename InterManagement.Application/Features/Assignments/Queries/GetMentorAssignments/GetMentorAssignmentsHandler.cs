@@ -34,7 +34,8 @@ namespace InterManagement.Application.Features.Assignments.Queries.GetMentorAssi
                     MentorName = $"{assignment.Mentor.FirstName} {assignment.Mentor.LastName}",
                     PhaseId = assignment.PhaseId,
                     PhaseTitle = assignment.Phase.Title,
-                    PhaseNumber = assignment.Phase.PhaseNumber
+                    PhaseNumber = assignment.Phase.PhaseNumber,
+                    PhaseStatus = assignment.Phase.Status.ToString()
                 };
 
                 // Ajouter les semaines de la phase avec leurs WeeklyFollowUps

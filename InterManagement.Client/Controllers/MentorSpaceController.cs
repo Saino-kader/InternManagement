@@ -9,23 +9,17 @@ public class MentorSpaceController : BaseController
 {
     private readonly IMentorApiService _mentorService;
     private readonly IAssignmentApiService _assignmentService;
-    private readonly IPhaseApiService _phaseService;
-    private readonly IWeekApiService _weekService;
     private readonly ITraineeApiService _traineeService;
     private readonly IFeedbackApiService _feedbackService;
 
     public MentorSpaceController(
         IMentorApiService mentorService,
         IAssignmentApiService assignmentService,
-        IPhaseApiService phaseService,
-        IWeekApiService weekService,
         ITraineeApiService traineeService,
         IFeedbackApiService feedbackService)
     {
         _mentorService     = mentorService;
         _assignmentService = assignmentService;
-        _phaseService      = phaseService;
-        _weekService       = weekService;
         _traineeService    = traineeService;
         _feedbackService   = feedbackService;
     }
@@ -70,55 +64,50 @@ public class MentorSpaceController : BaseController
     }
 
     // ── Construction tableau stagiaires ──────────────────────────────
+    // Un seul appel réseau (assignment/mentor/{id}/details, qui charge
+    // Trainee/Phase/Weeks/WeeklyFollowUps en une seule requête EF côté
+    // API) au lieu d'une boucle Trainee+Phase+Week par assignation.
     private async Task<List<MentorAssignedTraineeItem>> BuildAssignedTraineesAsync(
         int mentorId)
     {
         var rows = new List<MentorAssignedTraineeItem>();
         try
         {
-            var assignments = await _assignmentService.GetByMentorAsync(mentorId);
+            var assignments = await _assignmentService.GetMentorAssignmentsDetailsAsync(mentorId);
             if (assignments == null || !assignments.Any()) return rows;
 
             foreach (var assignment in assignments.Where(a => a.IsActive))
             {
-                var trainee = await _traineeService.GetByIdAsync(assignment.TraineeId);
-                if (trainee == null) continue;
-
-                var phase = await _phaseService.GetByIdAsync(assignment.PhaseId);
-                if (phase == null) continue;
-
-                var weeks = await _weekService.GetByPhaseAsync(assignment.PhaseId);
-
-                if (weeks == null || !weeks.Any())
+                if (!assignment.Weeks.Any())
                 {
                     rows.Add(new MentorAssignedTraineeItem
                     {
                         TraineeId     = assignment.TraineeId,
-                        TraineeName   = $"{trainee.FirstName} {trainee.LastName}",
-                        PhaseTitle    = phase.Title,
-                        PhaseNumber   = phase.PhaseNumber.ToString(),
+                        TraineeName   = assignment.TraineeName,
+                        PhaseTitle    = assignment.PhaseTitle,
+                        PhaseNumber   = assignment.PhaseNumber?.ToString() ?? string.Empty,
                         WeekNumber    = 0,
                         CourseName    = "—",
                         WeekStartDate = null,
                         WeekEndDate   = null,
-                        StatusText    = phase.Status.ToString()
+                        StatusText    = assignment.PhaseStatus
                     });
                 }
                 else
                 {
-                    foreach (var week in weeks.OrderBy(w => w.WeekNumber))
+                    foreach (var week in assignment.Weeks.OrderBy(w => w.WeekNumber))
                     {
                         rows.Add(new MentorAssignedTraineeItem
                         {
                             TraineeId     = assignment.TraineeId,
-                            TraineeName   = $"{trainee.FirstName} {trainee.LastName}",
-                            PhaseTitle    = phase.Title,
-                            PhaseNumber   = phase.PhaseNumber.ToString(),
+                            TraineeName   = assignment.TraineeName,
+                            PhaseTitle    = assignment.PhaseTitle,
+                            PhaseNumber   = assignment.PhaseNumber?.ToString() ?? string.Empty,
                             WeekNumber    = week.WeekNumber,
                             CourseName    = week.Course,
                             WeekStartDate = week.StartDate,
                             WeekEndDate   = week.EndDate,
-                            StatusText    = phase.Status.ToString()
+                            StatusText    = assignment.PhaseStatus
                         });
                     }
                 }

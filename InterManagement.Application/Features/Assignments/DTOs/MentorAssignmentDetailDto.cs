@@ -16,6 +16,7 @@ namespace InterManagement.Application.Features.Assignments.DTOs
         public int PhaseId { get; set; }
         public string PhaseTitle { get; set; } = string.Empty;
         public int? PhaseNumber { get; set; }
+        public string PhaseStatus { get; set; } = string.Empty;
 
         // Weeks de la phase
         public List<MentorWeekItemDto> Weeks { get; set; } = new();

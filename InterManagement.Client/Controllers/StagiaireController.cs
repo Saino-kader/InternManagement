@@ -46,21 +46,26 @@ public class StagiaireController : BaseController
         if (trainee is null) return NotFound();
 
         var phases = await _phaseService.GetByTraineeAsync(traineeId);
+        var orderedPhases = phases.OrderBy(p => p.PhaseNumber).ToList();
 
-        var phaseItems = new List<StagiairePhaseItem>();
-        foreach (var phase in phases.OrderBy(p => p.PhaseNumber))
-        {
-            var weeks = await _weekService.GetByPhaseAsync(phase.Id);
-            phaseItems.Add(new StagiairePhaseItem
+        // Lance les appels "semaines par phase" en parallèle plutôt
+        // qu'en série (une phase n'attend pas la précédente).
+        var weeksByPhaseTasks = orderedPhases
+            .Select(phase => _weekService.GetByPhaseAsync(phase.Id))
+            .ToList();
+        await Task.WhenAll(weeksByPhaseTasks);
+
+        var phaseItems = orderedPhases
+            .Select((phase, index) => new StagiairePhaseItem
             {
                 PhaseId = phase.Id,
                 PhaseNumber = phase.PhaseNumber,
                 Title = phase.Title,
                 MentorId = phase.MentorId,
                 MentorName = phase.MentorName,
-                Weeks = weeks
-            });
-        }
+                Weeks = weeksByPhaseTasks[index].Result
+            })
+            .ToList();
 
         var model = new StagiaireViewModel
         {
