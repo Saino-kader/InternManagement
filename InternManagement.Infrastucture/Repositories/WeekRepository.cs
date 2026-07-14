@@ -73,29 +73,5 @@ namespace InternManagement.Infrastructure.Repositories
                             && w.WeekNumber == weekNumber
                             && !w.IsDeleted);
         }
-
-        public async Task DeleteByPhaseAndNumberAsync(
-            int phaseId, int weekNumber)
-        {
-            var week = await _context.Weeks
-                .FirstOrDefaultAsync(w =>
-                    w.PhaseId    == phaseId &&
-                    w.WeekNumber == weekNumber);
-
-            if (week == null) return;
-
-            week.IsDeleted = true;
-            week.UpdatedAt = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<WeeklyFollowUp?> GetByTraineeAndWeekAsync(
-            int traineeId, int weekId)
-        {
-            return await _context.WeeklyFollowUps
-                .FirstOrDefaultAsync(w =>
-                    w.TraineeId == traineeId &&
-                    w.WeekId    == weekId);
-        }
     }
 }

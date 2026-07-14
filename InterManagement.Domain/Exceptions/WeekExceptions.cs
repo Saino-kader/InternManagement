@@ -3,15 +3,14 @@ namespace InterManagement.Domain.Exceptions
     public class WeekNotFoundException : DomainException
     {
         public WeekNotFoundException(int id)
-            : base($"Week with Id {id} was not found")
+            : base($"La semaine avec l'identifiant {id} est introuvable")
         { }
     }
 
     public class WeekAlreadyExistsException : DomainException
     {
         public WeekAlreadyExistsException(int phaseId, int weekNumber)
-            : base($"Week {weekNumber} already exists " +
-                   $"for Phase {phaseId}")
+            : base($"La semaine {weekNumber} existe déjà pour la phase {phaseId}")
         { }
     }
 }

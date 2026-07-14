@@ -1,10 +1,9 @@
-
 namespace InterManagement.Domain.Exceptions
 {
     public class AdminNotFoundException : DomainException
     {
         public AdminNotFoundException(int id)
-            : base($"Le administrateur avec l'identifiant {id} est introuvable")
+            : base($"L'administrateur avec l'identifiant {id} est introuvable")
         { }
     }
 
@@ -18,7 +17,7 @@ namespace InterManagement.Domain.Exceptions
     public class AdminNotActiveException : DomainException
     {
         public AdminNotActiveException(int id)
-            : base($"Le administrateur avec l'identifiant {id} n'est pas actif")
+            : base($"L'administrateur avec l'identifiant {id} n'est pas actif")
         { }
     }
 }

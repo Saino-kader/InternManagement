@@ -4,20 +4,10 @@ namespace InterManagement.Domain.Repositories
 {
     public interface IWeekRepository : IBaseRepository<Week>
     {
-        // Phase → ses semaines
+        /// <summary>Toutes les semaines d'une phase.</summary>
         Task<IEnumerable<Week>> GetByPhaseAsync(int phaseId);
 
-        // Vérifier numéro semaine pas déjà existant
+        /// <summary>Empêche de créer deux fois le même numéro de semaine sur une phase.</summary>
         Task<bool> WeekExistsAsync(int phaseId, int weekNumber);
-
-        // Supprimer par phase et numéro
-        Task DeleteByPhaseAndNumberAsync(
-            int phaseId, int weekNumber);
-
-
-        // APRÈS — nouvelle signature simplifiée
-        Task<WeeklyFollowUp?> GetByTraineeAndWeekAsync(
-            int traineeId, int weekId);
-
     }
 }

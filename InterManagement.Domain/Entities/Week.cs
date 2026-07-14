@@ -24,18 +24,18 @@ namespace InterManagement.Domain.Entities
             DateOnly endDate,
             int phaseId)
         {
-            // ── Validations 
+            // ── Validations
             if (weekNumber <= 0)
-                throw new DomainException("Numero must be greater than 0");
+                throw new DomainException("Le numéro de semaine doit être supérieur à 0");
 
             if (string.IsNullOrWhiteSpace(course))
-                throw new DomainException("Course is required");
+                throw new DomainException("Le cours est obligatoire");
 
             if (endDate <= startDate)
-                throw new DomainException("End date must be after start date");
+                throw new DomainException("La date de fin doit être après la date de début");
 
             if (phaseId <= 0)
-                throw new DomainException("PhaseId is required");
+                throw new DomainException("La phase est obligatoire");
 
             // ── Assignation 
             WeekNumber = weekNumber;
@@ -52,11 +52,11 @@ namespace InterManagement.Domain.Entities
             DateOnly endDate)
         {
             if (string.IsNullOrWhiteSpace(course))
-                throw new DomainException("Course is required");
+                throw new DomainException("Le cours est obligatoire");
 
             if (endDate <= startDate)
                 throw new DomainException(
-                    "End date must be after start date");
+                    "La date de fin doit être après la date de début");
 
             Course    = course;
             StartDate = startDate;

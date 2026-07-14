@@ -9,5 +9,3 @@ namespace InterManagement.Domain.Repositories
     }
 }
 
-
-

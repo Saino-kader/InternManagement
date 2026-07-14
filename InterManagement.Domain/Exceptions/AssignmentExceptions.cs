@@ -3,7 +3,7 @@ namespace InterManagement.Domain.Exceptions
     public class AssignmentNotFoundException : DomainException
     {
         public AssignmentNotFoundException(int id)
-            : base($"L'affectation  avec cet Stagiaire {id} n'a pas été trouvée")
+            : base($"L'affectation avec l'identifiant {id} est introuvable")
         { }
     }
 
@@ -18,7 +18,7 @@ namespace InterManagement.Domain.Exceptions
     public class AssignmentNotActiveException : DomainException
     {
         public AssignmentNotActiveException(int id)
-            : base($"L'affectation  avec cet Stagiaire {id} n'est pas active")
+            : base($"L'affectation avec l'identifiant {id} n'est pas active")
         { }
     }
 }

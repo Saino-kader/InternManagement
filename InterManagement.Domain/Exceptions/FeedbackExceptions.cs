@@ -3,7 +3,7 @@ namespace InterManagement.Domain.Exceptions
     public class FeedbackNotFoundException : DomainException
     {
         public FeedbackNotFoundException(int id)
-            : base($"Feedback with Id {id} was not found")
+            : base($"Le message avec l'identifiant {id} est introuvable")
         { }
     }
 }

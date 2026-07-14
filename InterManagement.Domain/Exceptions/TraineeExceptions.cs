@@ -4,7 +4,7 @@ namespace InterManagement.Domain.Exceptions
     public class TraineeNotFoundException : DomainException
     {
         public TraineeNotFoundException(int id)
-            : base($"Le stagiaire avec Id {id} est introuvable")
+            : base($"Le stagiaire avec l'identifiant {id} est introuvable")
         { }
     }
 
@@ -20,17 +20,15 @@ namespace InterManagement.Domain.Exceptions
     public class TraineeNotActiveException : DomainException
     {
         public TraineeNotActiveException(int id)
-            : base($"Le stagiaire avec Id {id} n'est pas actif")
+            : base($"Le stagiaire avec l'identifiant {id} n'est pas actif")
         { }
     }
 
-        // ── Déjà assigné ──────────────────────────
+    // ── Déjà assigné ───────────────────────────────
     public class TraineeAlreadyAssignedException : DomainException
     {
         public TraineeAlreadyAssignedException(int id)
-            : base($"Le stagiaire avec l'ID {id} a déjà un mentor assigné actif")
+            : base($"Le stagiaire avec l'identifiant {id} a déjà un mentor assigné actif")
         { }
     }
 }
-
-

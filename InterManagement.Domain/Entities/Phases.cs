@@ -41,7 +41,7 @@ namespace InterManagement.Domain.Entities
                 throw new DomainException("La date de fin doit être après la date de début");
 
             if (traineeId <= 0)
-                throw new DomainException("Le nom du stagiaire  est obligatoire");
+                throw new DomainException("Le stagiaire est obligatoire");
 
             // ── Assignation 
             PhaseNumber = phaseNumber;

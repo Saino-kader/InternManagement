@@ -3,7 +3,7 @@ namespace InterManagement.Domain.Exceptions
     public class WeeklyFollowUpNotFoundException : DomainException
     {
         public WeeklyFollowUpNotFoundException(int id)
-            : base($"Weekly follow-up with Id {id} was not found")
+            : base($"Le suivi hebdomadaire avec l'identifiant {id} est introuvable")
         { }
     }
 
@@ -11,16 +11,15 @@ namespace InterManagement.Domain.Exceptions
     {
         public WeeklyFollowUpAlreadyExistsException(
             int traineeId, int weekId)
-            : base($"A follow-up already exists for " +
-                   $"Trainee {traineeId}, " +
-                   $"Week {weekId}")
+            : base($"Un suivi existe déjà pour le stagiaire {traineeId}, " +
+                   $"semaine {weekId}")
         { }
     }
 
     public class WeeklyFollowUpAlreadyDoneException : DomainException
     {
         public WeeklyFollowUpAlreadyDoneException(int id)
-            : base($"Weekly follow-up with Id {id} is already done")
+            : base($"Le suivi hebdomadaire avec l'identifiant {id} est déjà terminé")
         { }
     }
 }

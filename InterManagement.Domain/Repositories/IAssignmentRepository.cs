@@ -9,7 +9,7 @@ namespace InterManagement.Domain.Repositories
             int traineeId, int phaseId);
 
         // Mentor → ses stagiaires assignés
-        Task<IEnumerable<Assignment>> GetByMentorAsync(int mentorId);   // Pour quoi on dit à chaque fois  IEnumerable<Assignment> ça doit returné liste assignment .  et pour quoi on int mentorId à quoi ça sert
+        Task<IEnumerable<Assignment>> GetByMentorAsync(int mentorId);
 
         // Admin → assignments d'un stagiaire
         Task<IEnumerable<Assignment>> GetByTraineeAsync(int traineeId);

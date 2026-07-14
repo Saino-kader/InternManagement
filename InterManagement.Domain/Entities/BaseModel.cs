@@ -1,18 +1,14 @@
-
 namespace InterManagement.Domain.Entities
 {
-
-
+    /// <summary>
+    /// Champs communs à toutes les entités persistées : identifiant,
+    /// horodatage et suppression logique (soft delete).
+    /// </summary>
     public class BaseModel
     {
-        public int Id { get; set; }    // ID unique de l'entité
-        public DateTime CreatedAt { get; set; }   // Date de création
-        public DateTime? UpdatedAt { get; set; }  // Date de dernière mise à jour (nullable)
-        public bool IsDeleted { get; set; } = false; // Indique si l'entité est supprimé
-
-    }   
-
-
-
-
+        public int Id { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public bool IsDeleted { get; set; } = false;
+    }
 }

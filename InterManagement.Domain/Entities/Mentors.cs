@@ -1,21 +1,17 @@
 using InterManagement.Domain.Exceptions;
 using InterManagement.Shared.Enums;
 
-
-
 namespace InterManagement.Domain.Entities
 {
-
     public class Mentor : User
     {
         public string Department { get; private set; } = string.Empty;
         public string Specialty { get; private set; } = string.Empty;
 
-        // ── Collections de relations 
-        public ICollection<Assignment> Assignments { get; private set; } = new List<Assignment>(); // Un mentor peut avoir plusieurs assignments
-        public ICollection<WeeklyFollowUp> WeeklyFollowUps { get; private set; } = new List<WeeklyFollowUp>(); // Un mentor peut avoir plusieurs suivi hebdo (WeeklyFollowUp)
+        // ── Collections de relations ───────────
+        public ICollection<Assignment> Assignments { get; private set; } = new List<Assignment>();
+        public ICollection<WeeklyFollowUp> WeeklyFollowUps { get; private set; } = new List<WeeklyFollowUp>();
         public ICollection<Feedback> Feedbacks { get; private set; } = new List<Feedback>();
-
 
         private Mentor() { }
 
@@ -47,14 +43,14 @@ namespace InterManagement.Domain.Entities
             string department,
             string specialty)
         {
-           // if (string.IsNullOrWhiteSpace(firstName))
-                //throw new DomainException("Le prénom est obligatoire"); // est ce que c'est obligatoire de verifier les champs lors d'une modification
+            if (string.IsNullOrWhiteSpace(firstName))
+                throw new DomainException("Le prénom est obligatoire");
 
-            //if (string.IsNullOrWhiteSpace(department))
-                //throw new DomainException("Le département est obligatoire");
-            
-            //if (string.IsNullOrWhiteSpace(specialty))
-                //throw new DomainException("La spécialité est obligatoire");
+            if (string.IsNullOrWhiteSpace(department))
+                throw new DomainException("Le département est obligatoire");
+
+            if (string.IsNullOrWhiteSpace(specialty))
+                throw new DomainException("La spécialité est obligatoire");
 
             FirstName  = firstName;
             LastName   = lastName;
