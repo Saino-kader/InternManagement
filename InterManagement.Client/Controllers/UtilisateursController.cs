@@ -123,14 +123,19 @@ public class UtilisateursController : BaseController
         var tempPassword = await _authService.CreateAccountAsync(
             model.Email, "Admin");
 
-        SetSuccess($"Admin {created.FirstName} {created.LastName} créé.");
-
-        if (tempPassword != null)
+        if (tempPassword == null)
         {
-            TempData["TempPassword"] = tempPassword;
-            TempData["TempPasswordEmail"] = model.Email;
-            TempData["TempPasswordRole"] = "Admin";
+            SetError($"Admin {created.FirstName} {created.LastName} créé, mais la création " +
+                     "du compte de connexion a échoué (cet email est peut-être déjà utilisé " +
+                     "par un autre compte). Il ne pourra pas se connecter tant que ce n'est pas résolu.");
+            return RedirectToAction(nameof(Index));
         }
+
+        TempData["TempPassword"] = tempPassword;
+        TempData["TempPasswordEmail"] = model.Email;
+        TempData["TempPasswordRole"] = "Admin";
+
+        SetSuccess($"Admin {created.FirstName} {created.LastName} créé.");
 
         return RedirectToAction(nameof(Index));
     }
