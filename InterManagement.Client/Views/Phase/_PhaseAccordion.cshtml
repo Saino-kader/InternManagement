@@ -131,7 +131,7 @@ Structure :
                                                     <td>
                                                         @await Html.PartialAsync(
                                                             "~/Views/Shared/Components/_StatusBadge.cshtml",
-                                                            row.Status)
+                                                            weekData.Status.ToString())
                                                     </td>
                                                     <td>
                                                         <div class="action-btns">
@@ -144,7 +144,8 @@ Structure :
                                                                     data-week-id="@weekData.Id"
                                                                     data-trainee-name="@row.TraineeName"
                                                                     data-mentor-name="@row.MentorName"
-                                                                    data-status="@row.Status"
+                                                                    data-phase-status="@row.Status"
+                                                                    data-week-status="@weekData.Status"
                                                                     data-week-number="@week.WeekNumber"
                                                                     data-course="@weekData.Course"
                                                                     data-start-date="@weekData.StartDate.ToString("yyyy-MM-dd")"
@@ -153,12 +154,12 @@ Structure :
                                                                 <i class="fas fa-pen"></i>
                                                             </button>
 
-                                                            @* Poubelle → supprime la phase *@
+                                                            @* Poubelle → supprime uniquement cette semaine *@
                                                             <button type="button"
                                                                     class="action-btn delete"
-                                                                    data-delete-url="/Phase/Delete/@row.PhaseId"
-                                                                    data-delete-name="la phase de @row.TraineeName"
-                                                                    aria-label="Supprimer la phase de @row.TraineeName">
+                                                                    data-delete-url="/Week/Delete/@weekData.Id"
+                                                                    data-delete-name="la semaine @week.WeekNumber de @row.TraineeName"
+                                                                    aria-label="Supprimer la semaine @week.WeekNumber de @row.TraineeName">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
 

@@ -24,7 +24,8 @@ namespace InterManagement.Application.Features.Weeks.Commands.UpdateWeek
             week.Update(
                 command.Data.Course,
                 command.Data.StartDate,
-                command.Data.EndDate
+                command.Data.EndDate,
+                command.Data.Status
             );
 
             // 3. Sauvegarder
@@ -38,6 +39,7 @@ namespace InterManagement.Application.Features.Weeks.Commands.UpdateWeek
                 Course     = week.Course,
                 StartDate  = week.StartDate,
                 EndDate    = week.EndDate,
+                Status     = week.Status,
                 PhaseId    = week.PhaseId,
                 PhaseTitle = week.Phase.Title
             };

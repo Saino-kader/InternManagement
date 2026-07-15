@@ -180,7 +180,8 @@ public class PhaseController : BaseController
         {
             Course = model.Course,
             StartDate = model.WeekStartDate,
-            EndDate = model.WeekEndDate
+            EndDate = model.WeekEndDate,
+            Status = model.WeekStatus
         };
 
         var weekResult = await _weekService.UpdateAsync(model.WeekId, weekUpdate);

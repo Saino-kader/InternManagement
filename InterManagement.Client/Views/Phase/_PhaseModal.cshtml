@@ -111,7 +111,7 @@ de semaines partagé.
                 </div>
 
                 <div class="form-group">
-                    <label for="editStatus">Statut</label>
+                    <label for="editStatus">Statut de la phase</label>
                     <select id="editStatus" name="Status" required>
                         <option value="InProgress">En cours</option>
                         <option value="Validated">Validé</option>
@@ -121,6 +121,14 @@ de semaines partagé.
 
                 <div class="week-card-modal">
                     <h4>Semaine <span id="editWeekNumber">-</span></h4>
+                    <div class="form-group">
+                        <label for="editWeekStatus">Statut de la semaine</label>
+                        <select id="editWeekStatus" name="WeekStatus" required>
+                            <option value="InProgress">En cours</option>
+                            <option value="Validated">Validé</option>
+                            <option value="Suspended">Suspendu</option>
+                        </select>
+                    </div>
                     <div class="form-group">
                         <label for="editCourse">Cours</label>
                         <input type="text" id="editCourse" name="Course" placeholder="Nom du cours" required />

@@ -219,7 +219,8 @@ function openPhaseEditModal(btn) {
   document.getElementById('editWeekId').value        = weekId;
   document.getElementById('editTraineeName').value   = btn.dataset.traineeName || '';
   document.getElementById('editMentorName').value    = btn.dataset.mentorName  || '';
-  document.getElementById('editStatus').value        = normalizePhaseStatus(btn.dataset.status);
+  document.getElementById('editStatus').value        = normalizePhaseStatus(btn.dataset.phaseStatus);
+  document.getElementById('editWeekStatus').value    = normalizePhaseStatus(btn.dataset.weekStatus);
   document.getElementById('editWeekNumber').textContent = btn.dataset.weekNumber || '-';
   document.getElementById('editCourse').value        = btn.dataset.course    || '';
   document.getElementById('editWeekStartDate').value = btn.dataset.startDate || '';

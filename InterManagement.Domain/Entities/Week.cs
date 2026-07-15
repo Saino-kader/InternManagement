@@ -1,4 +1,5 @@
 using InterManagement.Domain.Exceptions;
+using InterManagement.Shared.Enums;
 
 namespace InterManagement.Domain.Entities
 {
@@ -8,8 +9,9 @@ namespace InterManagement.Domain.Entities
         public string Course { get; private set; } = string.Empty;
         public DateOnly StartDate { get; private set; }
         public DateOnly EndDate { get; private set; }
+        public PhaseStatus Status { get; private set; }
 
-        // ── FK 
+        // ── FK
         public int PhaseId { get; private set; }
         public Phase Phase { get; private set; } = null!;
 
@@ -37,19 +39,24 @@ namespace InterManagement.Domain.Entities
             if (phaseId <= 0)
                 throw new DomainException("La phase est obligatoire");
 
-            // ── Assignation 
+            // ── Assignation
             WeekNumber = weekNumber;
             Course     = course;
             StartDate  = startDate;
             EndDate    = endDate;
             PhaseId    = phaseId;
+            Status     = PhaseStatus.InProgress;
         }
 
         // ── Méthode Update ────────────────────
+        // Chaque semaine a son propre statut, indépendant des autres
+        // semaines de la même phase (voir aussi Phase.Status, qui reste
+        // un statut distinct au niveau de la phase entière).
         public void Update(
             string course,
             DateOnly startDate,
-            DateOnly endDate)
+            DateOnly endDate,
+            PhaseStatus status)
         {
             if (string.IsNullOrWhiteSpace(course))
                 throw new DomainException("Le cours est obligatoire");
@@ -61,6 +68,7 @@ namespace InterManagement.Domain.Entities
             Course    = course;
             StartDate = startDate;
             EndDate   = endDate;
+            Status    = status;
             UpdatedAt = DateTime.UtcNow;
         }
     }

@@ -31,6 +31,7 @@ namespace InterManagement.Application.Features.Weeks.Queries.GetWeeks
                 Course     = w.Course,
                 StartDate  = w.StartDate,
                 EndDate    = w.EndDate,
+                Status     = w.Status,
                 PhaseId    = w.PhaseId,
                 PhaseTitle = w.Phase.Title
             });

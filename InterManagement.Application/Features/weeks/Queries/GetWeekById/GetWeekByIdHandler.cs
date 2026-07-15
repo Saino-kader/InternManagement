@@ -26,6 +26,7 @@ namespace InterManagement.Application.Features.Weeks.Queries.GetWeekById
                 Course     = week.Course,
                 StartDate  = week.StartDate,
                 EndDate    = week.EndDate,
+                Status     = week.Status,
                 PhaseId    = week.PhaseId,
                 PhaseTitle = week.Phase.Title
             };

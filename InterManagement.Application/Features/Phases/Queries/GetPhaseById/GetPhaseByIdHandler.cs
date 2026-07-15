@@ -39,6 +39,7 @@ namespace InterManagement.Application.Features.Phases.Queries.GetPhaseById
                         Course = w.Course,
                         StartDate = w.StartDate,
                         EndDate = w.EndDate,
+                        Status = w.Status,
                         PhaseId = w.PhaseId,
                         PhaseTitle = phase.Title
                     })
