@@ -19,6 +19,7 @@ namespace InternManagement.Infrastructure.Repositories
         public async Task<IEnumerable<Admin>> GetAllAsync()
         {
             return await _context.Admins
+                .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
         }
 

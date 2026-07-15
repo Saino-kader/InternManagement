@@ -20,11 +20,11 @@ namespace InternManagement.Infrastructure.Repositories
 
         public async Task<IEnumerable<WeeklyFollowUp>> GetAllAsync()
         {
-
-                return await _context.WeeklyFollowUps
+            return await _context.WeeklyFollowUps
                 .Include(w => w.Trainee)
                 .Include(w => w.Mentor)
                 .Include(w => w.Week)
+                .OrderByDescending(w => w.CreatedAt)
                 .ToListAsync();
         }
 

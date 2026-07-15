@@ -16,7 +16,9 @@ namespace InternManagement.Infrastructure.Repositories
 
         public async Task<IEnumerable<Mentor>> GetAllAsync()
         {
-            return await _context.Mentors.ToListAsync();
+            return await _context.Mentors
+                .OrderByDescending(m => m.CreatedAt)
+                .ToListAsync();
         }
 
         public async Task<Mentor?> GetByIdAsync(int id)
@@ -66,6 +68,7 @@ namespace InternManagement.Infrastructure.Repositories
         {
             return await _context.Mentors
                 .Include(m => m.Assignments)
+                .OrderByDescending(m => m.CreatedAt)
                 .ToListAsync();
         }
 

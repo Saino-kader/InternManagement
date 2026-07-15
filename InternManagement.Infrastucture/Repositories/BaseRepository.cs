@@ -25,7 +25,9 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseModel
 
     public virtual async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await _dbSet.ToListAsync();
+        return await _dbSet
+            .OrderByDescending(e => e.CreatedAt)
+            .ToListAsync();
     }
 
     public virtual async Task<T> AddAsync(T entity)

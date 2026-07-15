@@ -20,12 +20,14 @@ namespace InternManagement.Infrastructure.Repositories
 
         public async Task<IEnumerable<Trainee>> GetAllWithFiltersAsync(TraineeStatus? status)
         {
-            var query = _context.Trainees.AsQueryable();     
+            var query = _context.Trainees.AsQueryable();
 
-            if (status.HasValue)                             
+            if (status.HasValue)
                 query = query.Where(t => t.Status == status.Value);
 
-            return await query.ToListAsync();
+            return await query
+                .OrderByDescending(t => t.CreatedAt)
+                .ToListAsync();
         }
 
         /*
