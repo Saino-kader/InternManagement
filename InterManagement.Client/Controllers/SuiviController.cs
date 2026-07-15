@@ -89,6 +89,9 @@ public class SuiviController : BaseController
     // GET car déclenché par un lien <a> de téléchargement, pas un formulaire
     public async Task<IActionResult> Export(int traineeId)
     {
+        var check = RequireRole("Admin");
+        if (check != null) return check;
+
         var result = await _suiviService.ExportByTraineeAsync(traineeId);
 
         if (result == null)

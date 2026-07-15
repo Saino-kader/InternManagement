@@ -44,7 +44,7 @@ namespace InterManagement.Application.Features.Feedbacks.Queries.GetFeedbackById
             return new FeedbackDto
             {
                 Id          = feedback.Id,
-                Message     = feedback.Message,
+                Message     = FeedbackMessageCleaner.Clean(feedback.Message),
                 SentAt      = feedback.SentAt,
                 SenderType  = senderType,
                 SenderName  = senderName,

@@ -287,6 +287,31 @@ function initFollowUpStatusColorListener() {
   });
 }
 
+/**
+ * Le bouton "Exporter" déclenche un téléchargement de fichier : la page
+ * ne navigue jamais, donc le loader global de _Layout.cshtml ne s'affiche
+ * pas pour ce lien (voir son exclusion pour la classe "export"). Sans
+ * retour visuel, le clic peut sembler ne rien faire pendant les quelques
+ * secondes de génération du fichier. On affiche donc une icône de
+ * chargement directement sur le bouton, remise à l'état normal après un
+ * court délai.
+ */
+function initExportFeedback() {
+  document.querySelectorAll(".action-btn.export").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const icon = btn.querySelector("i");
+      if (!icon) return;
+
+      const originalClass = icon.className;
+      icon.className = "fas fa-circle-notch fa-spin";
+
+      setTimeout(() => {
+        icon.className = originalClass;
+      }, 3000);
+    });
+  });
+}
+
 /* ============================================================
    INITIALISATION — ÉVÉNEMENTS PROPRES À CETTE PAGE
 ============================================================ */
@@ -302,6 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ?.addEventListener("click", downloadTemplate);
   initExcelPreview();
   initFollowUpStatusColorListener();
+  initExportFeedback();
 });
 
 /* ============================================================

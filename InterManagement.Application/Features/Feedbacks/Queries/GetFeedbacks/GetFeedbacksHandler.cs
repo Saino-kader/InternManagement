@@ -63,7 +63,7 @@ namespace InterManagement.Application.Features.Feedbacks.Queries.GetFeedbacks
             return new FeedbackDto
             {
                 Id          = f.Id,
-                Message     = f.Message,
+                Message     = FeedbackMessageCleaner.Clean(f.Message),
                 SentAt      = f.SentAt,
                 SenderType  = senderType,
                 SenderName  = senderName,
