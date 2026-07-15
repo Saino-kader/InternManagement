@@ -69,23 +69,7 @@ page s'insère via @RenderBody().
     justify-content: center;">
     <div style="text-align: center;">
         <i class="fas fa-circle-notch fa-spin"
-           style="font<script>
-    // Affiche le loader avant de quitter la page
-    document.addEventListener('click', function(e) {
-        const link = e.target.closest('a[href]');
-        if (link && !link.href.includes('#')
-                 && !link.href.includes('javascript')
-                 && link.target !== '_blank') {
-            document.getElementById('pageLoader').style.display = 'flex';
-        }
-    });
-
-    // Cache le loader quand la page est chargée
-    window.addEventListener('pageshow', function() {
-        document.getElementById('pageLoader').style.display = 'none';
-    });
-</script>
--size: 2rem; color: var(--primary);"></i>
+           style="font-size: 2rem; color: var(--primary);"></i>
         <p style="color: var(--text-soft); margin-top: 1rem;">
             Chargement...
         </p>
@@ -93,13 +77,25 @@ page s'insère via @RenderBody().
 </div>
 
 <script>
-    // Affiche le loader avant de quitter la page
+    // Affiche le loader avant de quitter la page — sauf pour les liens
+    // de téléchargement (ex. export Excel) : ils ne rechargent jamais
+    // la page, donc "pageshow" ne se déclenche pas et le loader
+    // resterait affiché indéfiniment.
     document.addEventListener('click', function(e) {
         const link = e.target.closest('a[href]');
         if (link && !link.href.includes('#')
                  && !link.href.includes('javascript')
+                 && !link.classList.contains('export')
                  && link.target !== '_blank') {
             document.getElementById('pageLoader').style.display = 'flex';
+
+            // Filet de sécurité : si aucune nouvelle page ne se charge
+            // (téléchargement, erreur réseau...), on masque quand même
+            // le loader après quelques secondes plutôt que de bloquer
+            // l'interface indéfiniment.
+            setTimeout(function() {
+                document.getElementById('pageLoader').style.display = 'none';
+            }, 6000);
         }
     });
 
