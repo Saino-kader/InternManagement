@@ -102,19 +102,12 @@ Données en texte brut — sans lien aux entités.
                                 </button>
 
                                 @* Supprimer *@
-                                <form asp-controller="Suivi"
-                                      asp-action="DeleteImported"
-                                      asp-route-id="@s.Id"
-                                      method="post"
-                                      style="display:inline;">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit"
-                                            class="action-btn delete"
-                                            onclick="return confirm('Supprimer ce suivi importé ?')"
-                                            aria-label="Supprimer">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                                <button class="action-btn delete"
+                                        data-delete-url="/Suivi/DeleteImported/@s.Id"
+                                        data-delete-name="ce suivi importé de @s.Stagiaire"
+                                        aria-label="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
 
                             </td>
                         </tr>

@@ -34,51 +34,14 @@
   padding: 2rem 0;
 }
 
-.hero-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--moss-deep);
-  margin-bottom: 1.25rem;
-}
-
-.hero-eyebrow::before {
-  content: "";
-  width: 22px;
-  height: 1px;
-  background: var(--moss);
-}
-
 .hero-copy h1 {
-  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
-  font-size: 3rem;
-  font-weight: 600;
+  font-family: "Inter", sans-serif;
+  font-size: 2.4rem;
+  font-weight: 700;
   color: var(--text);
   letter-spacing: -0.01em;
-  line-height: 1.14;
+  line-height: 1.25;
   margin-bottom: 1.5rem;
-}
-
-.hero-marker {
-  position: relative;
-  white-space: nowrap;
-}
-
-.hero-marker svg {
-  position: absolute;
-  left: -3%;
-  bottom: -0.1em;
-  width: 106%;
-  height: 0.42em;
-  z-index: -1;
-}
-
-.hero-marker svg path {
-  fill: var(--moss-marker);
 }
 
 .hero-copy p {
@@ -201,9 +164,9 @@
 }
 
 .premium-header h2 {
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 2.4rem;
-  font-weight: 600;
+  font-family: "Inter", sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
   color: var(--text);
   margin-bottom: 1rem;
 }
@@ -440,12 +403,8 @@
     text-align: center;
   }
 
-  .hero-eyebrow {
-    justify-content: center;
-  }
-
   .hero-copy h1 {
-    font-size: 2.1rem;
+    font-size: 1.9rem;
   }
 
   .hero-copy p {
