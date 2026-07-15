@@ -1,3 +1,5 @@
+using InterManagement.Domain.Repositories;
+
 namespace InterManagement.Application.Features.ImportedFollowUps.Commands.DeleteImportedFollowUp
 {
     public class DeleteImportedFollowUpCommand
