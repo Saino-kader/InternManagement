@@ -135,6 +135,11 @@ public class SuiviController : BaseController
         {
             SetError("L'import a échoué. Vérifiez le format du fichier.");
         }
+        else if (result.SuccessCount == 0)
+        {
+            var reason = result.Errors.FirstOrDefault() ?? "Vérifiez le format du fichier.";
+            SetError($"Aucun suivi n'a pu être importé. {reason}");
+        }
         else
         {
             SetSuccess($"{result.SuccessCount} suivi(s) importé(s) avec succès. " +

@@ -118,7 +118,6 @@ namespace InterManagement.Application.Features.ImportedFollowUps.Commands.Import
                         );
 
                         rows.Add(followUp);
-                        result.SuccessCount++;
                     }
                     catch (DomainException ex)
                     {
@@ -127,9 +126,25 @@ namespace InterManagement.Application.Features.ImportedFollowUps.Commands.Import
                     }
                 }
 
-                // Sauvegarde tout en une seule opération
+                // Sauvegarde tout en une seule opération. SuccessCount ne
+                // reflète que les lignes réellement enregistrées en base,
+                // pas seulement lues/validées en mémoire : si l'écriture
+                // échoue, aucune ligne n'est comptée comme importée.
                 if (rows.Any())
-                    await _repository.AddRangeAsync(rows);
+                {
+                    try
+                    {
+                        await _repository.AddRangeAsync(rows);
+                        result.SuccessCount = rows.Count;
+                    }
+                    catch (Exception ex)
+                    {
+                        result.ErrorCount += rows.Count;
+                        result.Errors.Add(
+                            $"Échec de l'enregistrement en base de données : {ex.Message}. " +
+                            $"Aucune des {rows.Count} ligne(s) valides n'a été importée.");
+                    }
+                }
             }
             catch (Exception ex)
             {
